@@ -1,0 +1,1205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="theme-color" content="#0f1115" />
+<title>TESTCheckerCIES — Offline Bubble Sheet Checker</title>
+<style>
+  :root {
+    --bg: #0f1115;
+    --panel: #171a21;
+    --panel-2: #1e222b;
+    --border: #2a2f3a;
+    --text: #e6e8ee;
+    --muted: #8b93a7;
+    --accent: #4f8cff;
+    --accent-2: #3ad29f;
+    --danger: #ff5d5d;
+    --warn: #ffb454;
+    --radius: 10px;
+    --shadow: 0 6px 24px rgba(0,0,0,0.35);
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0; height: 100%;
+    background: var(--bg); color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-size: 15px; line-height: 1.45;
+    -webkit-font-smoothing: antialiased;
+    -webkit-text-size-adjust: 100%;
+  }
+  .app { max-width: 1100px; margin: 0 auto; padding: 16px; padding-bottom: 96px; }
+
+  header.topbar {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 12px; padding: 12px 14px;
+    background: var(--panel); border: 1px solid var(--border);
+    border-radius: var(--radius); margin-bottom: 16px;
+    box-shadow: var(--shadow);
+  }
+  header.topbar h1 { font-size: 16px; margin: 0; font-weight: 600; letter-spacing: 0.2px; }
+  header.topbar .sub { color: var(--muted); font-size: 12px; margin-top: 2px; }
+  .pill {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 4px 10px; border-radius: 999px;
+    background: var(--panel-2); border: 1px solid var(--border);
+    font-size: 12px; color: var(--muted);
+  }
+  .pill.ok { color: var(--accent-2); border-color: #1e4a3b; }
+  .pill.warn { color: var(--warn); border-color: #4a3a1e; }
+
+  section.card {
+    background: var(--panel); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 16px;
+    margin-bottom: 16px; box-shadow: var(--shadow);
+  }
+  section.card h2 {
+    font-size: 13px; text-transform: uppercase; letter-spacing: 0.8px;
+    color: var(--muted); margin: 0 0 12px; font-weight: 600;
+  }
+  label.field { display: block; margin-bottom: 12px; }
+  label.field .label {
+    display: block; font-size: 12px; color: var(--muted);
+    margin-bottom: 6px; letter-spacing: 0.3px;
+  }
+  input[type="text"], select {
+    width: 100%; padding: 10px 12px;
+    background: var(--panel-2); border: 1px solid var(--border);
+    border-radius: 8px; color: var(--text); font-size: 16px;
+    font-family: inherit; outline: none;
+    -webkit-appearance: none; appearance: none;
+    transition: border-color 0.15s ease;
+  }
+  input[type="text"]:focus, select:focus { border-color: var(--accent); }
+  .hint { font-size: 12px; color: var(--muted); margin-top: 6px; }
+  .hint.ok { color: var(--accent-2); }
+  .hint.warn { color: var(--warn); }
+
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  @media (max-width: 640px) { .row { grid-template-columns: 1fr; } }
+
+  button {
+    font-family: inherit; font-size: 15px; padding: 11px 16px;
+    border-radius: 8px; border: 1px solid var(--border);
+    background: var(--panel-2); color: var(--text); cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition: background 0.15s ease, border-color 0.15s ease, transform 0.05s ease;
+  }
+  button:hover { background: #252b36; }
+  button:active { transform: translateY(1px); }
+  button.primary { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 600; }
+  button.primary:hover { background: #3f7df0; }
+  button.ghost { background: transparent; }
+  button.danger { border-color: #5a2323; color: var(--danger); background: #241717; }
+  button:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .btn-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+
+  .export-menu { position: relative; display: inline-block; }
+  #exportOptions {
+    position: absolute; top: calc(100% + 4px); right: 0;
+    background: var(--panel-2); border: 1px solid var(--border);
+    border-radius: 8px; list-style: none; margin: 0; padding: 4px 0;
+    min-width: 180px; box-shadow: var(--shadow); z-index: 10;
+  }
+  #exportOptions li { padding: 9px 14px; cursor: pointer; font-size: 14px; color: var(--text); }
+  #exportOptions li:hover { background: #2a3140; }
+
+  .roster-wrap {
+    max-height: 360px; overflow: auto;
+    border: 1px solid var(--border); border-radius: 8px;
+    background: var(--panel-2); -webkit-overflow-scrolling: touch;
+  }
+  table.roster { width: 100%; border-collapse: collapse; font-size: 13px; }
+  table.roster th, table.roster td {
+    padding: 8px 10px; text-align: left;
+    border-bottom: 1px solid var(--border); white-space: nowrap;
+  }
+  table.roster th {
+    position: sticky; top: 0; background: #20252f; color: var(--muted);
+    font-weight: 600; font-size: 11px; text-transform: uppercase;
+    letter-spacing: 0.5px; z-index: 1;
+  }
+  table.roster tr:last-child td { border-bottom: none; }
+  table.roster td.score {
+    font-variant-numeric: tabular-nums; font-weight: 600; color: var(--accent-2);
+  }
+  table.roster td.score.empty { color: var(--muted); font-weight: 400; }
+
+  .empty-state { padding: 28px 16px; text-align: center; color: var(--muted); font-size: 13px; }
+
+  .camera-wrap {
+    position: relative; width: 100%; background: #000;
+    border-radius: var(--radius); overflow: hidden;
+    aspect-ratio: 4 / 3;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .camera-wrap video, .camera-wrap canvas {
+    width: 100%; height: 100%; object-fit: cover; display: block;
+  }
+  .camera-overlay {
+    position: absolute; inset: 0; pointer-events: none;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .camera-overlay .frame {
+    width: 72%; height: 82%;
+    border: 2px dashed rgba(79, 140, 255, 0.6);
+    border-radius: 8px; position: relative;
+  }
+  .camera-overlay .frame::before,
+  .camera-overlay .frame::after {
+    content: ""; position: absolute; width: 24px; height: 24px;
+    border: 3px solid var(--accent);
+  }
+  .camera-overlay .frame::before {
+    top: -3px; left: -3px; border-right: none; border-bottom: none;
+    border-top-left-radius: 8px;
+  }
+  .camera-overlay .frame::after {
+    bottom: -3px; right: -3px; border-left: none; border-top: none;
+    border-bottom-right-radius: 8px;
+  }
+  .camera-hint {
+    position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%);
+    background: rgba(0,0,0,0.6); color: #fff; font-size: 12px;
+    padding: 4px 10px; border-radius: 999px; white-space: nowrap;
+  }
+
+  .log {
+    background: #0b0d11; border: 1px solid var(--border);
+    border-radius: 8px; padding: 10px 12px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 12px; color: #b8c0d0; max-height: 200px; overflow: auto;
+    white-space: pre-wrap; word-break: break-word;
+    -webkit-overflow-scrolling: touch;
+  }
+  .log .t { color: var(--muted); }
+  .log .ok { color: var(--accent-2); }
+  .log .err { color: var(--danger); }
+  .log .warn { color: var(--warn); }
+
+  .toast {
+    position: fixed; left: 50%; bottom: 24px;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--panel-2); border: 1px solid var(--border);
+    color: var(--text); padding: 10px 16px; border-radius: 8px;
+    box-shadow: var(--shadow); font-size: 13px;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    z-index: 100; max-width: 90vw;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  .toast.ok { border-color: #1e4a3b; }
+  .toast.err { border-color: #5a2323; }
+
+  .modal-backdrop {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.6);
+    display: none; align-items: center; justify-content: center;
+    z-index: 50; padding: 16px;
+  }
+  .modal-backdrop.show { display: flex; }
+  .modal {
+    background: var(--panel); border: 1px solid var(--border);
+    border-radius: var(--radius); box-shadow: var(--shadow);
+    width: 100%; max-width: 480px; padding: 18px;
+    max-height: 90vh; overflow: auto;
+  }
+  .modal h3 { margin: 0 0 8px; font-size: 16px; }
+  .modal p { margin: 0 0 14px; color: var(--muted); font-size: 13px; white-space: pre-wrap; }
+  .divider { height: 1px; background: var(--border); margin: 14px 0; }
+  .footer-note { text-align: center; color: var(--muted); font-size: 12px; margin-top: 24px; }
+  .visually-hidden {
+    position: absolute; width: 1px; height: 1px;
+    padding: 0; margin: -1px; overflow: hidden;
+    clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+  }
+
+  .key-grid {
+    max-height: 340px; overflow: auto;
+    border: 1px solid var(--border); border-radius: 8px;
+    background: var(--panel-2); padding: 8px;
+    -webkit-overflow-scrolling: touch;
+  }
+  .key-row {
+    display: flex; align-items: center; gap: 10px;
+    padding: 4px 6px; border-bottom: 1px solid var(--border);
+  }
+  .key-row:last-child { border-bottom: none; }
+  .key-num {
+    width: 32px; text-align: right; color: var(--muted);
+    font-variant-numeric: tabular-nums; font-size: 12px;
+  }
+  .key-bubbles { display: flex; gap: 6px; flex-wrap: wrap; }
+  .key-bubble {
+    width: 38px; height: 38px; border-radius: 50%;
+    border: 1px solid var(--border); background: transparent;
+    color: var(--text); font-weight: 600; font-size: 14px;
+    cursor: pointer; padding: 0;
+    -webkit-tap-highlight-color: transparent;
+    transition: background 0.12s ease, border-color 0.12s ease, transform 0.05s ease;
+  }
+  .key-bubble:hover { background: #2a3140; }
+  .key-bubble.active {
+    background: var(--accent); border-color: var(--accent);
+    color: #fff; transform: scale(1.05);
+  }
+
+  .review-table {
+    width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 8px;
+  }
+  .review-table td {
+    padding: 3px 6px; border-bottom: 1px solid var(--border);
+    font-variant-numeric: tabular-nums;
+  }
+  .review-table td.ok { color: var(--accent-2); }
+  .review-table td.bad { color: var(--danger); }
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <div>
+      <h1>TESTCheckerCIES</h1>
+      <div class="sub">Offline bubble sheet checker &middot; CSV / XLSX</div>
+    </div>
+    <span id="netPill" class="pill ok">● Offline-ready</span>
+  </header>
+
+  <section class="card">
+    <h2>1 &middot; Session</h2>
+    <label class="field">
+      <span class="label">Class Info (Grade Level - Class Section)</span>
+      <input id="classInfo" type="text" placeholder="Grade 11 - ASSH4" autocomplete="off" autocapitalize="words" />
+    </label>
+    <label class="field">
+      <span class="label">Test Context (Subject - Term - Test)</span>
+      <input id="testContext" type="text" placeholder="General Mathematics - T1 - WW1" autocomplete="off" />
+      <div class="hint">Leave blank for roster-only mode. Fill in to enable key capture and scoring.</div>
+    </label>
+    <div class="btn-row">
+      <button id="applySessionBtn" class="primary">Apply Session</button>
+      <button id="clearSessionBtn" class="ghost">Reset</button>
+    </div>
+    <div id="sessionSummary" class="hint" style="margin-top:10px;"></div>
+  </section>
+
+  <section class="card">
+    <h2>2 &middot; Roster</h2>
+    <div class="btn-row" style="margin-bottom:12px;">
+      <button id="importRosterBtn">Import Roster (CSV / XLSX)</button>
+      <button id="downloadTemplateBtn" class="ghost">Download Roster Template</button>
+      <button id="clearRosterBtn" class="ghost danger">Clear Roster</button>
+      <input id="rosterFile" type="file" accept=".csv,.xlsx,.xls" class="visually-hidden" />
+    </div>
+    <div id="rosterWrap" class="roster-wrap">
+      <div class="empty-state">No roster loaded. Import a CSV/XLSX with columns: No, Gender, LastName, FirstName, MiddleName.</div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>3 &middot; Master Answer Key</h2>
+    <div id="answerKeyStatus" class="hint" style="margin-bottom:10px;">No key defined.</div>
+    <div class="btn-row" style="margin-bottom:10px;">
+      <button id="captureKeyBtn" class="primary" disabled>📷 Capture Master Answer Key</button>
+      <button id="keyImportBtn">Import Key (CSV / XLSX)</button>
+      <button id="keyExportBtn" class="ghost">Download Key Template</button>
+      <button id="keyClearBtn" class="ghost danger">Clear Key</button>
+      <input id="keyFile" type="file" accept=".csv,.xlsx,.xls" class="visually-hidden" />
+    </div>
+    <div class="divider"></div>
+    <div class="row">
+      <label class="field">
+        <span class="label">Manual: Number of Items</span>
+        <input id="keyTotalItems" type="text" placeholder="20" inputmode="numeric" />
+      </label>
+      <label class="field">
+        <span class="label">Choices</span>
+        <input id="keyChoices" type="text" placeholder="A,B,C,D" value="A,B,C,D" />
+      </label>
+    </div>
+    <div class="btn-row" style="margin-bottom:12px;">
+      <button id="keyInitBtn">Set / Resize Key (Manual)</button>
+    </div>
+    <div id="answerKeyGrid" class="key-grid">
+      <div class="empty-state">Capture the master key from camera, import a key file, or set items manually.</div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>4 &middot; Capture</h2>
+    <div class="camera-wrap" id="cameraWrap">
+      <video id="video" playsinline webkit-playsinline autoplay muted></video>
+      <canvas id="snapshot" style="display:none;"></canvas>
+      <div class="camera-overlay" id="cameraOverlay" style="display:none;">
+        <div class="frame"></div>
+        <div class="camera-hint" id="cameraHint">Align the sheet inside the frame</div>
+      </div>
+      <div id="cameraIdle" class="empty-state" style="color:#8b93a7;">
+        Camera off. Tap "Start Camera" to begin.
+      </div>
+    </div>
+    <div class="btn-row" style="margin-top:12px;">
+      <button id="startCameraBtn" class="primary">Start Camera</button>
+      <button id="stopCameraBtn" class="ghost" disabled>Stop Camera</button>
+      <button id="switchCameraBtn" class="ghost" disabled>Switch Camera</button>
+    </div>
+    <div class="divider"></div>
+    <div class="btn-row">
+      <button id="scanScoreBtn" class="primary" disabled>✓ Scan &amp; Score Student</button>
+      <button id="scanAllBtn" class="ghost" disabled>Auto-fill All Remaining (Demo)</button>
+    </div>
+    <div id="modeStatus" class="hint" style="margin-top:10px;">
+      Step 1: capture the master answer key. Step 2: scan student sheets.
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>5 &middot; Export</h2>
+    <div class="btn-row">
+      <div class="export-menu">
+        <button id="exportBtn" class="primary" aria-haspopup="true" aria-expanded="false">Export ▾</button>
+        <ul id="exportOptions" role="menu" hidden>
+          <li role="menuitem" data-format="csv">CSV (.csv)</li>
+          <li role="menuitem" data-format="xlsx">Excel (.xlsx)</li>
+        </ul>
+      </div>
+      <button id="exportKeyBtn" class="ghost">Export Answer Key</button>
+      <button id="copyJsonBtn" class="ghost">Copy JSON</button>
+      <button id="clearScoresBtn" class="ghost danger">Clear Scores</button>
+    </div>
+    <div class="hint" style="margin-top:8px;">
+      On iPhone/iPad, exports open the native Share Sheet so you can save to Files or Mail.
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>6 &middot; Activity Log</h2>
+    <div id="log" class="log"></div>
+  </section>
+
+  <div class="footer-note">
+    TESTCheckerCIES &middot; fully offline &middot; no data leaves this device
+  </div>
+</div>
+
+<div class="modal-backdrop" id="modalBackdrop">
+  <div class="modal">
+    <h3 id="modalTitle">Confirm</h3>
+    <p id="modalBody">Are you sure?</p>
+    <div class="btn-row" style="justify-content:flex-end;">
+      <button id="modalCancel" class="ghost">Cancel</button>
+      <button id="modalConfirm" class="primary">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="reviewBackdrop">
+  <div class="modal">
+    <h3 id="reviewTitle">Review Score</h3>
+    <p id="reviewSummary"></p>
+    <div id="reviewDetail" style="max-height: 220px; overflow:auto;"></div>
+    <div class="btn-row" style="justify-content:flex-end; margin-top:14px;">
+      <button id="reviewReject" class="ghost danger">Discard</button>
+      <button id="reviewAccept" class="primary">Accept &amp; Save</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script>
+/* =========================================================
+   TESTCheckerCIES — single-file offline checker
+   iOS-safe edition
+   ========================================================= */
+
+const $ = (sel) => document.querySelector(sel);
+
+const state = {
+  meta: { grade: "", section: "", subject: "", term: "", test: "" },
+  students: [],
+  answerKey: {
+    testTitle: "",
+    totalItems: 0,
+    choices: ["A", "B", "C", "D"],
+    answers: {},
+    capturedAt: null,
+  },
+  cameraStream: null,
+  facingMode: "environment",
+  logLines: [],
+  pendingReview: null,
+};
+
+/* ------------------------- Utils ------------------------- */
+function nowStamp() {
+  const d = new Date();
+  const pad = (n) => String(n).padStart(2, "0");
+  return `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+}
+function log(msg, kind = "") {
+  const line = `<span class="t">[${nowStamp()}]</span> <span class="${kind}">${escapeHtml(msg)}</span>`;
+  state.logLines.push(line);
+  const el = $("#log");
+  el.innerHTML = state.logLines.slice(-200).join("\n");
+  el.scrollTop = el.scrollHeight;
+}
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, (c) => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;",
+  }[c]));
+}
+let toastTimer = null;
+function toast(msg, kind = "") {
+  const el = $("#toast");
+  el.textContent = msg;
+  el.className = "toast show " + kind;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { el.className = "toast " + kind; }, 2400);
+}
+function confirmModal(title, body) {
+  return new Promise((resolve) => {
+    $("#modalTitle").textContent = title;
+    $("#modalBody").textContent = body;
+    $("#modalBackdrop").classList.add("show");
+    const cleanup = () => {
+      $("#modalBackdrop").classList.remove("show");
+      $("#modalConfirm").removeEventListener("click", onYes);
+      $("#modalCancel").removeEventListener("click", onNo);
+    };
+    const onYes = () => { cleanup(); resolve(true); };
+    const onNo = () => { cleanup(); resolve(false); };
+    $("#modalConfirm").addEventListener("click", onYes);
+    $("#modalCancel").addEventListener("click", onNo);
+  });
+}
+
+/* ------------------- Class identifier -------------------- */
+function buildIdentifier() {
+  const parts = [
+    state.meta.grade && `Grade ${state.meta.grade}`,
+    state.meta.section, state.meta.subject, state.meta.term, state.meta.test,
+  ].filter(Boolean);
+  return parts.join(" - ");
+}
+function buildFilenameStem() {
+  const parts = [
+    state.meta.grade && `Grade${state.meta.grade}`,
+    state.meta.section,
+    state.meta.subject && state.meta.subject.replace(/\s+/g, ""),
+    state.meta.term, state.meta.test,
+  ].filter(Boolean);
+  return (parts.join("-") || "TESTCheckerCIES") + "_scores";
+}
+function parseClassInfo(raw) {
+  const parts = raw.split("-").map((s) => s.trim()).filter(Boolean);
+  const out = { grade: "", section: "" };
+  if (!parts.length) return out;
+  let i = 0;
+  const gm = parts[0].match(/^grade\s*(\d+)$/i);
+  if (gm) { out.grade = gm[1]; i = 1; }
+  if (parts[i]) out.section = parts[i];
+  return out;
+}
+function parseTestContext(raw) {
+  const parts = raw.split("-").map((s) => s.trim()).filter(Boolean);
+  const out = { subject: "", term: "", test: "" };
+  if (!parts.length) return out;
+  if (parts.length >= 3) {
+    out.test = parts[parts.length - 1];
+    out.term = parts[parts.length - 2];
+    out.subject = parts.slice(0, parts.length - 2).join(" - ");
+  } else if (parts.length === 2) {
+    out.term = parts[0]; out.test = parts[1];
+  } else out.subject = parts[0];
+  return out;
+}
+
+/* --------------------- Session UI ------------------------ */
+function applySession() {
+  const c = parseClassInfo($("#classInfo").value.trim());
+  const t = parseTestContext($("#testContext").value.trim());
+  state.meta.grade = c.grade;
+  state.meta.section = c.section;
+  state.meta.subject = t.subject;
+  state.meta.term = t.term;
+  state.meta.test = t.test;
+  renderSessionSummary();
+  refreshCaptureButtons();
+  log(`Session applied: ${buildIdentifier() || "(empty)"}`, "ok");
+}
+function renderSessionSummary() {
+  const id = buildIdentifier();
+  const el = $("#sessionSummary");
+  if (!id) { el.textContent = "No session set."; return; }
+  const target = state.meta.term && state.meta.test
+    ? `Target column: ${state.meta.term}_${state.meta.test}`
+    : "Roster-only mode (no test selected)";
+  el.innerHTML = `Identifier: <strong>${escapeHtml(id)}</strong><br>${escapeHtml(target)}`;
+}
+function resetSession() {
+  $("#classInfo").value = "";
+  $("#testContext").value = "";
+  state.meta = { grade: "", section: "", subject: "", term: "", test: "" };
+  renderSessionSummary();
+  refreshCaptureButtons();
+  log("Session reset.");
+}
+
+/* ------------------- Roster import ----------------------- */
+function normalizeHeader(h) {
+  return String(h || "").trim().toLowerCase().replace(/\s+/g, "");
+}
+function rowsFromJsonArray(rawRows) {
+  const map = {
+    no: "no", number: "no",
+    gender: "gender", sex: "gender",
+    lastname: "lastName", surname: "lastName",
+    firstname: "firstName", givenname: "firstName",
+    middlename: "middleName",
+  };
+  return rawRows.map((r, idx) => {
+    const out = { no: idx + 1, gender: "", lastName: "", firstName: "", middleName: "", score: null };
+    for (const [k, v] of Object.entries(r)) {
+      const key = map[normalizeHeader(k)];
+      if (!key) continue;
+      if (key === "no") {
+        const n = parseInt(v, 10);
+        if (!isNaN(n)) out.no = n;
+      } else out[key] = v == null ? "" : String(v).trim();
+    }
+    return out;
+  }).filter((s) => s.lastName || s.firstName);
+}
+function parseCsv(text) {
+  text = text.replace(/^\uFEFF/, "");
+  const rows = [];
+  let cur = [], field = "", inQuotes = false;
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+    if (inQuotes) {
+      if (c === '"') {
+        if (text[i + 1] === '"') { field += '"'; i++; }
+        else inQuotes = false;
+      } else field += c;
+    } else {
+      if (c === '"') inQuotes = true;
+      else if (c === ",") { cur.push(field); field = ""; }
+      else if (c === "\n") { cur.push(field); rows.push(cur); cur = []; field = ""; }
+      else if (c === "\r") { /* skip */ }
+      else field += c;
+    }
+  }
+  if (field.length || cur.length) { cur.push(field); rows.push(cur); }
+  if (!rows.length) return [];
+  const header = rows[0];
+  const out = [];
+  for (let r = 1; r < rows.length; r++) {
+    const obj = {};
+    header.forEach((h, i) => { obj[h] = rows[r][i] ?? ""; });
+    out.push(obj);
+  }
+  return out;
+}
+async function readRosterFile(file) {
+  const name = file.name.toLowerCase();
+  if (name.endsWith(".csv")) return rowsFromJsonArray(parseCsv(await file.text()));
+  if (name.endsWith(".xlsx") || name.endsWith(".xls")) {
+    const XLSX = await loadSheetJS();
+    const buf = await file.arrayBuffer();
+    const wb = XLSX.read(buf, { type: "array" });
+    const ws = wb.Sheets[wb.SheetNames[0]];
+    return rowsFromJsonArray(XLSX.utils.sheet_to_json(ws, { defval: "" }));
+  }
+  throw new Error("Unsupported file type. Use .csv, .xlsx, or .xls.");
+}
+function setRoster(students) {
+  state.students = students;
+  renderRoster();
+  log(`Roster loaded: ${students.length} student(s).`, "ok");
+}
+function renderRoster() {
+  const wrap = $("#rosterWrap");
+  const list = state.students;
+  if (!list.length) {
+    wrap.innerHTML = '<div class="empty-state">No roster loaded. Import a CSV/XLSX with columns: No, Gender, LastName, FirstName, MiddleName.</div>';
+    return;
+  }
+  const rows = list.map((s) => {
+    const scoreCell = s.score == null
+      ? '<td class="score empty">—</td>'
+      : `<td class="score">${escapeHtml(s.score)}</td>`;
+    return `<tr>
+      <td>${escapeHtml(s.no)}</td>
+      <td>${escapeHtml(s.gender)}</td>
+      <td>${escapeHtml(s.lastName)}</td>
+      <td>${escapeHtml(s.firstName)}</td>
+      <td>${escapeHtml(s.middleName)}</td>
+      ${scoreCell}
+    </tr>`;
+  }).join("");
+  wrap.innerHTML = `
+    <table class="roster">
+      <thead><tr>
+        <th>No</th><th>Gender</th><th>Last Name</th><th>First Name</th><th>Middle Name</th><th>Score</th>
+      </tr></thead>
+      <tbody>${rows}</tbody>
+    </table>`;
+}
+function downloadRosterTemplate() {
+  const header = "No,Gender,LastName,FirstName,MiddleName";
+  const sample = [
+    "1,MALE,Adlaon,Vince Kenneth,",
+    "2,MALE,Bermejo,JAN KARL,",
+    "3,FEMALE,Acosta,Amber Teffame,",
+  ].join("\r\n");
+  downloadBlob("\uFEFF" + header + "\r\n" + sample + "\r\n", "roster_template.csv", "text/csv;charset=utf-8");
+  log("Roster template downloaded.");
+}
+
+/* --------------------- SheetJS lazy ---------------------- */
+let sheetJsPromise = null;
+function loadSheetJS() {
+  if (window.XLSX) return Promise.resolve(window.XLSX);
+  if (sheetJsPromise) return sheetJsPromise;
+  sheetJsPromise = new Promise((resolve, reject) => {
+    const s = document.createElement("script");
+    s.src = "https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js";
+    s.onload = () => resolve(window.XLSX);
+    s.onerror = () => reject(new Error("Failed to load SheetJS from CDN."));
+    document.head.appendChild(s);
+    log("Loading SheetJS (Excel support)…");
+  });
+  return sheetJsPromise;
+}
+
+/* =========================================================
+   Answer Key Module
+   ========================================================= */
+function initAnswerKey(totalItems, choices = ["A", "B", "C", "D"]) {
+  state.answerKey.totalItems = totalItems;
+  state.answerKey.choices = choices;
+  const answers = {};
+  for (let i = 1; i <= totalItems; i++) answers[i] = state.answerKey.answers[i] || "";
+  state.answerKey.answers = answers;
+  renderAnswerKeyGrid();
+  renderAnswerKeyStatus();
+  document.dispatchEvent(new Event("key-changed"));
+  log(`Answer key initialized: ${totalItems} items, choices ${choices.join("/")}.`);
+}
+function renderAnswerKeyGrid() {
+  const wrap = $("#answerKeyGrid");
+  const { totalItems, choices, answers } = state.answerKey;
+  if (!totalItems) {
+    wrap.innerHTML = '<div class="empty-state">Capture the master key from camera, import a key file, or set items manually.</div>';
+    return;
+  }
+  const rows = [];
+  for (let i = 1; i <= totalItems; i++) {
+    const bubbles = choices.map((c) => {
+      const active = answers[i] === c ? " active" : "";
+      return `<button type="button" class="key-bubble${active}" data-item="${i}" data-choice="${c}">${c}</button>`;
+    }).join("");
+    rows.push(`<div class="key-row"><span class="key-num">${i}</span><div class="key-bubbles">${bubbles}</div></div>`);
+  }
+  wrap.innerHTML = rows.join("");
+}
+function initAnswerKeyHandlers() {
+  const wrap = $("#answerKeyGrid");
+  wrap.addEventListener("click", (e) => {
+    const btn = e.target.closest(".key-bubble");
+    if (!btn) return;
+    const item = parseInt(btn.dataset.item, 10);
+    const choice = btn.dataset.choice;
+    state.answerKey.answers[item] = (state.answerKey.answers[item] === choice) ? "" : choice;
+    renderAnswerKeyGrid();
+    renderAnswerKeyStatus();
+  });
+}
+function clearAnswerKey() {
+  const { totalItems } = state.answerKey;
+  for (let i = 1; i <= totalItems; i++) state.answerKey.answers[i] = "";
+  renderAnswerKeyGrid();
+  renderAnswerKeyStatus();
+  log("Answer key cleared.");
+}
+function renderAnswerKeyStatus() {
+  const el = $("#answerKeyStatus");
+  const { totalItems, answers } = state.answerKey;
+  if (!totalItems) { el.textContent = "No key defined."; el.className = "hint"; return; }
+  const filled = Object.values(answers).filter(Boolean).length;
+  const complete = filled === totalItems;
+  el.textContent = `${filled} / ${totalItems} items defined${complete ? " — ready to score." : ""}`;
+  el.className = "hint " + (complete ? "ok" : "warn");
+}
+async function importAnswerKeyFile(file) {
+  const name = file.name.toLowerCase();
+  let rows = [];
+  if (name.endsWith(".csv")) rows = parseCsv(await file.text());
+  else if (name.endsWith(".xlsx") || name.endsWith(".xls")) {
+    const XLSX = await loadSheetJS();
+    const buf = await file.arrayBuffer();
+    const wb = XLSX.read(buf, { type: "array" });
+    const ws = wb.Sheets[wb.SheetNames[0]];
+    rows = XLSX.utils.sheet_to_json(ws, { defval: "" });
+  } else throw new Error("Unsupported file type. Use .csv, .xlsx, or .xls.");
+
+  const answers = {};
+  let maxItem = 0;
+  for (const r of rows) {
+    const itemKey = Object.keys(r).find((k) => /item|no|number|#/i.test(k));
+    const ansKey  = Object.keys(r).find((k) => /answer|key|choice|letter/i.test(k));
+    if (!itemKey || !ansKey) continue;
+    const item = parseInt(r[itemKey], 10);
+    const answer = String(r[ansKey]).trim().toUpperCase();
+    if (!isNaN(item) && answer) {
+      answers[item] = answer;
+      if (item > maxItem) maxItem = item;
+    }
+  }
+  if (!maxItem) throw new Error("No valid Item/Answer rows found.");
+  const choices = [...new Set(Object.values(answers))].sort();
+  state.answerKey = {
+    testTitle: state.meta.test || "",
+    totalItems: maxItem,
+    choices,
+    answers,
+    capturedAt: new Date().toISOString(),
+  };
+  renderAnswerKeyGrid();
+  renderAnswerKeyStatus();
+  document.dispatchEvent(new Event("key-changed"));
+  log(`Answer key imported: ${maxItem} items, choices ${choices.join("/")}.`, "ok");
+}
+function exportAnswerKeyRows() {
+  const { totalItems, answers } = state.answerKey;
+  const rows = [];
+  for (let i = 1; i <= totalItems; i++) rows.push({ Item: i, Answer: answers[i] || "" });
+  return rows;
+}
+function scoreAgainstKey(detectedAnswers) {
+  const { totalItems, answers } = state.answerKey;
+  let correct = 0;
+  const detail = [];
+  for (let i = 1; i <= totalItems; i++) {
+    const expected = answers[i];
+    const got = detectedAnswers[i] || "";
+    const isCorrect = !!(expected && got && expected === got);
+    if (isCorrect) correct++;
+    detail.push({ item: i, expected, got, correct: isCorrect });
+  }
+  return { correct, total: totalItems, detail };
+}
+
+/* =========================================================
+   Master Key Capture + Scan & Score
+   ========================================================= */
+function grabFrame() {
+  const video = $("#video");
+  if (!video || !video.videoWidth) return null;
+  const canvas = $("#snapshot");
+  canvas.width = video.videoWidth;
+  canvas.height = video.videoHeight;
+  const ctx = canvas.getContext("2d", { willReadFrequently: true });
+  ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+  return canvas;
+}
+function simulateDetectedAnswers(totalItems = 20) {
+  const choices = ["A", "B", "C", "D"];
+  const out = {};
+  for (let i = 1; i <= totalItems; i++) out[i] = choices[Math.floor(Math.random() * choices.length)];
+  return out;
+}
+function simulateStudentAnswers(key) {
+  const out = {};
+  const noiseRate = 0.25;
+  for (const [item, answer] of Object.entries(key.answers)) {
+    if (Math.random() < noiseRate) {
+      const others = key.choices.filter((c) => c !== answer);
+      out[item] = others[Math.floor(Math.random() * others.length)];
+    } else out[item] = answer;
+  }
+  return out;
+}
+async function captureMasterAnswerKey() {
+  if (!state.meta.term || !state.meta.test) {
+    toast("Set a test context (Term - Test) first.", "err");
+    return;
+  }
+  const frame = grabFrame();
+  if (!frame) { toast("Camera not ready.", "err"); return; }
+  log("Capturing master answer key…");
+  // ---- REAL OMR GOES HERE ----
+  const totalItems = parseInt($("#keyTotalItems").value, 10) || 20;
+  const detected = simulateDetectedAnswers(totalItems);
+  state.answerKey = {
+    testTitle: state.meta.test,
+    totalItems: Object.keys(detected).length,
+    choices: [...new Set(Object.values(detected))].sort(),
+    answers: detected,
+    capturedAt: new Date().toISOString(),
+  };
+  renderAnswerKeyGrid();
+  renderAnswerKeyStatus();
+  document.dispatchEvent(new Event("key-changed"));
+  log(`Master key captured: ${state.answerKey.totalItems} items.`, "ok");
+  toast("Master answer key captured.", "ok");
+}
+async function scanAndScore() {
+  if (!state.meta.term || !state.meta.test) { toast("Set a test context first.", "err"); return; }
+  if (!state.students.length) { toast("Load a roster first.", "err"); return; }
+  if (!state.answerKey.totalItems) { toast("Capture the master answer key first.", "err"); return; }
+  const frame = grabFrame();
+  if (!frame) { toast("Camera not ready.", "err"); return; }
+  log("Scanning student sheet…");
+  // ---- REAL OMR GOES HERE ----
+  const detected = simulateStudentAnswers(state.answerKey);
+  const result = scoreAgainstKey(detected);
+  const idx = state.students.findIndex((s) => s.score == null);
+  if (idx === -1) { toast("All students already have scores.", "warn"); return; }
+  const student = state.students[idx];
+  openReview(student, detected, result);
+}
+function openReview(student, detected, result) {
+  state.pendingReview = { student, detected, result };
+  $("#reviewTitle").textContent = `Review: #${student.no} ${student.lastName}, ${student.firstName}`;
+  $("#reviewSummary").textContent =
+    `${result.correct} / ${result.total} correct\n` +
+    `Detected: ${Object.entries(detected).map(([k, v]) => `${k}:${v}`).join("  ")}`;
+  const rows = result.detail.map((d) =>
+    `<tr>
+      <td>#${d.item}</td>
+      <td>key: <strong>${escapeHtml(d.expected || "—")}</strong></td>
+      <td>got: <strong>${escapeHtml(d.got || "—")}</strong></td>
+      <td class="${d.correct ? "ok" : "bad"}">${d.correct ? "✓" : "✗"}</td>
+    </tr>`
+  ).join("");
+  $("#reviewDetail").innerHTML = `<table class="review-table">${rows}</table>`;
+  $("#reviewBackdrop").classList.add("show");
+}
+function closeReview() {
+  $("#reviewBackdrop").classList.remove("show");
+  state.pendingReview = null;
+}
+function acceptReview() {
+  const p = state.pendingReview;
+  if (!p) return;
+  p.student.score = p.result.correct;
+  renderRoster();
+  log(`Scanned #${p.student.no} ${p.student.lastName} → ${p.result.correct}/${p.result.total}`, "ok");
+  toast(`#${p.student.no} ${p.student.lastName} → ${p.result.correct}/${p.result.total}`, "ok");
+  closeReview();
+}
+function rejectReview() {
+  log("Score discarded by operator.");
+  closeReview();
+}
+function autoFillRemaining() {
+  if (!state.answerKey.totalItems) { toast("Capture key first.", "err"); return; }
+  let count = 0;
+  state.students.forEach((s) => {
+    if (s.score == null) {
+      const detected = simulateStudentAnswers(state.answerKey);
+      const result = scoreAgainstKey(detected);
+      s.score = result.correct;
+      count++;
+    }
+  });
+  renderRoster();
+  log(`Auto-filled ${count} remaining student(s) (demo).`, "ok");
+  toast(`Auto-filled ${count} student(s).`, "ok");
+}
+
+/* --------------------- Export ---------------------------- */
+function buildExportRows() {
+  return state.students.map((s) => ({
+    Grade: state.meta.grade,
+    Section: state.meta.section,
+    Subject: state.meta.subject,
+    Term: state.meta.term,
+    TestTitle: state.meta.test,
+    No: s.no,
+    Gender: s.gender,
+    LastName: s.lastName,
+    FirstName: s.firstName,
+    MiddleName: s.middleName,
+    Score: s.score == null ? "" : s.score,
+  }));
+}
+function toCsv(rows) {
+  if (!rows.length) return "";
+  const headers = Object.keys(rows[0]);
+  const esc = (v) => {
+    const s = v == null ? "" : String(v);
+    return /[",\n\r]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+  };
+  return "\uFEFF" + [
+    headers.join(","),
+    ...rows.map((r) => headers.map((h) => esc(r[h])).join(",")),
+  ].join("\r\n");
+}
+async function downloadBlob(content, filename, mime) {
+  // On iOS Safari, use the native Share Sheet when available.
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+                (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+
+  if (isIOS && navigator.canShare && typeof File !== "undefined") {
+    try {
+      const file = new File([content], filename, { type: mime });
+      if (navigator.canShare({ files: [file] })) {
+        await navigator.share({ files: [file], title: filename });
+        return;
+      }
+    } catch (err) {
+      if (err && err.name === "AbortError") return; // user cancelled
+      // fall through to blob download
+    }
+  }
+
+  // Default: blob download
+  const blob = content instanceof Blob ? content : new Blob([content], { type: mime });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url; a.download = filename;
+  document.body.appendChild(a);
+  a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 4000);
+}
+async function exportData(format) {
+  if (!state.students.length) { toast("Nothing to export — roster is empty.", "err"); return; }
+  const rows = buildExportRows();
+  const stem = buildFilenameStem();
+
+  if (format === "csv") {
+    await downloadBlob(toCsv(rows), `${stem}.csv`, "text/csv;charset=utf-8");
+    log(`Exported CSV: ${stem}.csv`, "ok");
+    toast("CSV ready.", "ok");
+    return;
+  }
+  if (format === "xlsx") {
+    try {
+      const XLSX = await loadSheetJS();
+      const ws = XLSX.utils.json_to_sheet(rows);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "Scores");
+      const buf = XLSX.write(wb, { type: "array", bookType: "xlsx" });
+      await downloadBlob(new Blob([buf], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" }),
+        `${stem}.xlsx`,
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+      log(`Exported XLSX: ${stem}.xlsx`, "ok");
+      toast("Excel ready.", "ok");
+    } catch (err) {
+      log(`Excel export failed: ${err.message}`, "err");
+      toast("Excel export failed.", "err");
+    }
+  }
+}
+async function exportKeyFile() {
+  const rows = exportAnswerKeyRows();
+  if (!rows.length) { toast("No key to export.", "err"); return; }
+  const header = "Item,Answer";
+  const body = rows.map((r) => `${r.Item},${r.Answer}`).join("\r\n");
+  await downloadBlob("\uFEFF" + header + "\r\n" + body + "\r\n", "answer_key.csv", "text/csv;charset=utf-8");
+  log("Answer key exported.");
+}
+function copyJson() {
+  const text = JSON.stringify(buildExportRows(), null, 2);
+  navigator.clipboard.writeText(text).then(
+    () => { toast("JSON copied.", "ok"); log("Copied JSON to clipboard."); },
+    () => { toast("Clipboard blocked.", "err"); }
+  );
+}
+
+/* --------------------- Camera ---------------------------- */
+async function startCamera() {
+  try {
+    stopCamera();
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      throw new Error("Camera API not available. Use HTTPS and a modern browser.");
+    }
+    const constraints = {
+      video: { facingMode: state.facingMode, width: { ideal: 1280 }, height: { ideal: 960 } },
+      audio: false,
+    };
+    const stream = await navigator.mediaDevices.getUserMedia(constraints);
+    state.cameraStream = stream;
+    const video = $("#video");
+    video.setAttribute("playsinline", "");
+    video.setAttribute("webkit-playsinline", "");
+    video.muted = true;
+    video.srcObject = stream;
+    // iOS sometimes needs an explicit play()
+    try { await video.play(); } catch (_) {}
+    $("#cameraIdle").style.display = "none";
+    $("#cameraOverlay").style.display = "flex";
+    $("#stopCameraBtn").disabled = false;
+    $("#switchCameraBtn").disabled = false;
+    $("#startCameraBtn").disabled = true;
+    document.dispatchEvent(new Event("camera-changed"));
+    log(`Camera started (${state.facingMode}).`, "ok");
+  } catch (err) {
+    log(`Camera error: ${err.message}`, "err");
+    toast("Camera unavailable. Check permissions & HTTPS.", "err");
+  }
+}
+function stopCamera() {
+  if (state.cameraStream) {
+    state.cameraStream.getTracks().forEach((t) => t.stop());
+    state.cameraStream = null;
+  }
+  const video = $("#video");
+  video.srcObject = null;
+  $("#cameraOverlay").style.display = "none";
+  $("#cameraIdle").style.display = "flex";
+  $("#stopCameraBtn").disabled = true;
+  $("#switchCameraBtn").disabled = true;
+  $("#startCameraBtn").disabled = false;
+  document.dispatchEvent(new Event("camera-changed"));
+}
+async function switchCamera() {
+  state.facingMode = state.facingMode === "environment" ? "user" : "environment";
+  await startCamera();
+}
+
+/* ------------------- Button state ------------------------ */
+function refreshCaptureButtons() {
+  const cameraOn = !!state.cameraStream;
+  const hasKey = state.answerKey.totalItems > 0;
+  $("#captureKeyBtn").disabled = !cameraOn;
+  $("#scanScoreBtn").disabled = !cameraOn || !hasKey;
+  $("#scanAllBtn").disabled = !hasKey;
+  const el = $("#modeStatus");
+  if (!hasKey) {
+    el.textContent = "Step 1: capture the master answer key.";
+    el.className = "hint warn";
+  } else {
+    el.textContent = `Key ready (${state.answerKey.totalItems} items). Step 2: scan student sheets.`;
+    el.className = "hint ok";
+  }
+}
+
+/* ------------------- Export dropdown --------------------- */
+function initExportMenu() {
+  const btn = $("#exportBtn");
+  const menu = $("#exportOptions");
+  btn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    const open = !menu.hasAttribute("hidden");
+    menu.toggleAttribute("hidden", open);
+    btn.setAttribute("aria-expanded", String(!open));
+  });
+  document.addEventListener("click", (e) => {
+    if (!e.target.closest(".export-menu")) {
+      menu.setAttribute("hidden", "");
+      btn.setAttribute("aria-expanded", "false");
+    }
+  });
+  menu.addEventListener("click", (e) => {
+    const format = e.target.dataset.format;
+    if (!format) return;
+    menu.setAttribute("hidden", "");
+    btn.setAttribute("aria-expanded", "false");
+    exportData(format);
+  });
+}
+
+/* ----------------------- Wire-up ------------------------- */
+function init() {
+  $("#applySessionBtn").addEventListener("click", applySession);
+  $("#clearSessionBtn").addEventListener("click", resetSession);
+  $("#classInfo").addEventListener("change", applySession);
+  $("#testContext").addEventListener("change", applySession);
+
+  $("#importRosterBtn").addEventListener("click", () => $("#rosterFile").click());
+  $("#rosterFile").addEventListener("change", async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    try {
+      const students = await readRosterFile(file);
+      if (!students.length) throw new Error("No valid rows found.");
+      setRoster(students);
+      toast(`Roster loaded: ${students.length} student(s).`, "ok");
+    } catch (err) {
+      log(`Roster import failed: ${err.message}`, "err");
+      toast(err.message, "err");
+    } finally { e.target.value = ""; }
+  });
+  $("#downloadTemplateBtn").addEventListener("click", downloadRosterTemplate);
+  $("#clearRosterBtn").addEventListener("click", async () => {
+    const ok = await confirmModal("Clear roster?", "This removes all students and scores from memory.");
+    if (!ok) return;
+    state.students = [];
+    renderRoster();
+    log("Roster cleared.");
+  });
+
+  $("#captureKeyBtn").addEventListener("click", captureMasterAnswerKey);
+  $("#keyImportBtn").addEventListener("click", () => $("#keyFile").click());
+  $("#keyFile").addEventListener("change", async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    try {
+      await importAnswerKeyFile(file);
+      toast("Answer key imported.", "ok");
+    } catch (err) {
+      log(`Key import failed: ${err.message}`, "err");
+      toast(err.message, "err");
+    } finally { e.target.value = ""; }
+  });
+  $("#keyExportBtn").addEventListener("click", exportKeyFile);
+  $("#keyClearBtn").addEventListener("click", () => { clearAnswerKey(); toast("Answer key cleared."); });
+  $("#keyInitBtn").addEventListener("click", () => {
+    const total = parseInt($("#keyTotalItems").value, 10);
+    const choices = $("#keyChoices").value.split(",").map((s) => s.trim().toUpperCase()).filter(Boolean);
+    if (!total || total < 1) { toast("Enter a valid item count.", "err"); return; }
+    if (choices.length < 2) { toast("Enter at least 2 choices.", "err"); return; }
+    initAnswerKey(total, choices);
+  });
+  initAnswerKeyHandlers();
+
+  $("#startCameraBtn").addEventListener("click", startCamera);
+  $("#stopCameraBtn").addEventListener("click", stopCamera);
+  $("#switchCameraBtn").addEventListener("click", switchCamera);
+
+  $("#scanScoreBtn").addEventListener("click", scanAndScore);
+  $("#scanAllBtn").addEventListener("click", autoFillRemaining);
+
+  $("#reviewAccept").addEventListener("click", acceptReview);
+  $("#reviewReject").addEventListener("click", rejectReview);
+
+  initExportMenu();
+  $("#copyJsonBtn").addEventListener("click", copyJson);
+  $("#clearScoresBtn").addEventListener("click", async () => {
+    const ok = await confirmModal("Clear scores?", "Students stay, but all recorded scores are removed.");
+    if (!ok) return;
+    state.students.forEach((s) => { s.score = null; });
+    renderRoster();
+    log("Scores cleared.");
+  });
+
+  document.addEventListener("camera-changed", refreshCaptureButtons);
+  document.addEventListener("key-changed", refreshCaptureButtons);
+
+  const pill = $("#netPill");
+  const updateNet = () => {
+    if (navigator.onLine) { pill.textContent = "● Online"; pill.className = "pill"; }
+    else { pill.textContent = "● Offline-ready"; pill.className = "pill ok"; }
+  };
+  window.addEventListener("online", updateNet);
+  window.addEventListener("offline", updateNet);
+  updateNet();
+
+  renderSessionSummary();
+  renderRoster();
+  renderAnswerKeyStatus();
+  refreshCaptureButtons();
+  log("TESTCheckerCIES ready.");
+}
+
+document.addEventListener("DOMContentLoaded", init);
+</script>
+</body>
+</html>
