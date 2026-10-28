@@ -8,33 +8,22 @@
 <meta name="theme-color" content="#0f1115" />
 <title>TestCheckerCIES — explainexplore</title>
 
-<!-- App Icons (Using your uploaded logo) -->
-<link rel="apple-touch-icon" href="icon.png" />
-<link rel="icon" href="icon.png" />
+<!-- App Icons pointing to your uploaded GitHub image -->
+<link rel="apple-touch-icon" href="logo.png" />
+<link rel="icon" href="logo.png" />
 
 <style>
   :root {
-    --bg: #0f1115;
-    --panel: #171a21;
-    --panel-2: #1e222b;
-    --border: #2a2f3a;
-    --text: #e6e8ee;
-    --muted: #8b93a7;
-    --accent: #4f8cff;
-    --accent-2: #3ad29f;
-    --danger: #ff5d5d;
-    --warn: #ffb454;
-    --radius: 10px;
-    --shadow: 0 6px 24px rgba(0,0,0,0.35);
+    --bg: #0f1115; --panel: #171a21; --panel-2: #1e222b; --border: #2a2f3a;
+    --text: #e6e8ee; --muted: #8b93a7; --accent: #4f8cff; --accent-2: #3ad29f;
+    --danger: #ff5d5d; --warn: #ffb454; --radius: 10px; --shadow: 0 6px 24px rgba(0,0,0,0.35);
   }
   * { box-sizing: border-box; }
   html, body {
     margin: 0; padding: 0; height: 100%;
     background: var(--bg); color: var(--text);
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    font-size: 15px; line-height: 1.45;
-    -webkit-font-smoothing: antialiased;
-    -webkit-text-size-adjust: 100%;
+    font-size: 15px; line-height: 1.45; -webkit-font-smoothing: antialiased; -webkit-text-size-adjust: 100%;
   }
   .app { max-width: 1100px; margin: 0 auto; padding: 16px; padding-bottom: 96px; }
 
@@ -45,55 +34,35 @@
     border-radius: var(--radius); margin-bottom: 16px;
     box-shadow: var(--shadow); position: relative;
   }
-  header.topbar .header-logo {
-    max-width: 160px; height: auto; margin-bottom: 6px;
-  }
+  header.topbar .header-logo { max-width: 140px; height: auto; margin-bottom: 4px; border-radius: 8px; }
   header.topbar h1 {
     font-size: 22px; margin: 0; font-weight: 700; letter-spacing: 0.3px;
     background: linear-gradient(90deg, var(--accent), var(--accent-2));
-    -webkit-background-clip: text; background-clip: text;
-    -webkit-text-fill-color: transparent;
+    -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
   }
-  header.topbar .byline {
-    color: var(--muted); font-size: 12px; letter-spacing: 1px;
-    text-transform: uppercase; font-weight: 600;
-  }
-  header.topbar .sub {
-    color: var(--muted); font-size: 12px; margin-top: 4px;
-  }
-  header.topbar .pill {
-    position: absolute; top: 10px; right: 10px;
-  }
+  header.topbar .byline { color: var(--muted); font-size: 12px; letter-spacing: 1px; text-transform: uppercase; font-weight: 600; }
+  header.topbar .sub { color: var(--muted); font-size: 12px; margin-top: 4px; }
+  header.topbar .pill { position: absolute; top: 10px; right: 10px; }
+  
   .pill {
     display: inline-flex; align-items: center; gap: 6px;
-    padding: 4px 10px; border-radius: 999px;
-    background: var(--panel-2); border: 1px solid var(--border);
+    padding: 4px 10px; border-radius: 999px; background: var(--panel-2); border: 1px solid var(--border);
     font-size: 11px; color: var(--muted);
   }
   .pill.ok { color: var(--accent-2); border-color: #1e4a3b; }
   .pill.warn { color: var(--warn); border-color: #4a3a1e; }
 
   section.card {
-    background: var(--panel); border: 1px solid var(--border);
-    border-radius: var(--radius); padding: 16px;
-    margin-bottom: 16px; box-shadow: var(--shadow);
+    background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 16px; margin-bottom: 16px; box-shadow: var(--shadow);
   }
-  section.card h2 {
-    font-size: 13px; text-transform: uppercase; letter-spacing: 0.8px;
-    color: var(--muted); margin: 0 0 12px; font-weight: 600;
-  }
+  section.card h2 { font-size: 13px; text-transform: uppercase; letter-spacing: 0.8px; color: var(--muted); margin: 0 0 12px; font-weight: 600; }
   label.field { display: block; margin-bottom: 12px; }
-  label.field .label {
-    display: block; font-size: 12px; color: var(--muted);
-    margin-bottom: 6px; letter-spacing: 0.3px;
-  }
+  label.field .label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 6px; letter-spacing: 0.3px; }
   input[type="text"], select {
-    width: 100%; padding: 10px 12px;
-    background: var(--panel-2); border: 1px solid var(--border);
-    border-radius: 8px; color: var(--text); font-size: 16px;
-    font-family: inherit; outline: none;
-    -webkit-appearance: none; appearance: none;
-    transition: border-color 0.15s ease;
+    width: 100%; padding: 10px 12px; background: var(--panel-2); border: 1px solid var(--border);
+    border-radius: 8px; color: var(--text); font-size: 16px; font-family: inherit; outline: none;
+    -webkit-appearance: none; appearance: none; transition: border-color 0.15s ease;
   }
   input[type="text"]:focus, select:focus { border-color: var(--accent); }
   .hint { font-size: 12px; color: var(--muted); margin-top: 6px; }
@@ -104,10 +73,8 @@
   @media (max-width: 640px) { .row { grid-template-columns: 1fr; } }
 
   button {
-    font-family: inherit; font-size: 15px; padding: 11px 16px;
-    border-radius: 8px; border: 1px solid var(--border);
-    background: var(--panel-2); color: var(--text); cursor: pointer;
-    -webkit-tap-highlight-color: transparent;
+    font-family: inherit; font-size: 15px; padding: 11px 16px; border-radius: 8px; border: 1px solid var(--border);
+    background: var(--panel-2); color: var(--text); cursor: pointer; -webkit-tap-highlight-color: transparent;
     transition: background 0.15s ease, border-color 0.15s ease, transform 0.05s ease;
   }
   button:hover { background: #252b36; }
@@ -120,208 +87,103 @@
 
   .btn-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
 
+  .toggle-wrap {
+    display: flex; align-items: center; justify-content: space-between;
+    background: var(--panel-2); padding: 10px 14px; border-radius: 8px;
+    border: 1px solid var(--border); margin-bottom: 12px;
+  }
+  .toggle-label { font-size: 13px; font-weight: 600; }
+  .toggle-desc { font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .switch { position: relative; display: inline-block; width: 44px; height: 24px; flex-shrink: 0; }
+  .switch input { opacity: 0; width: 0; height: 0; }
+  .slider {
+    position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+    background-color: #333; transition: .3s; border-radius: 24px;
+  }
+  .slider:before {
+    position: absolute; content: ""; height: 18px; width: 18px;
+    left: 3px; bottom: 3px; background-color: white; transition: .3s; border-radius: 50%;
+  }
+  input:checked + .slider { background-color: var(--accent); }
+  input:checked + .slider:before { transform: translateX(20px); }
+
   .export-menu { position: relative; display: inline-block; }
   #exportOptions {
-    position: absolute; top: calc(100% + 4px); right: 0;
-    background: var(--panel-2); border: 1px solid var(--border);
-    border-radius: 8px; list-style: none; margin: 0; padding: 4px 0;
-    min-width: 220px; box-shadow: var(--shadow); z-index: 10;
+    position: absolute; top: calc(100% + 4px); right: 0; background: var(--panel-2); border: 1px solid var(--border);
+    border-radius: 8px; list-style: none; margin: 0; padding: 4px 0; min-width: 220px; box-shadow: var(--shadow); z-index: 10;
   }
   #exportOptions li { padding: 9px 14px; cursor: pointer; font-size: 14px; color: var(--text); }
   #exportOptions li:hover { background: #2a3140; }
 
-  .roster-wrap {
-    max-height: 360px; overflow: auto;
-    border: 1px solid var(--border); border-radius: 8px;
-    background: var(--panel-2); -webkit-overflow-scrolling: touch;
-  }
+  .roster-wrap { max-height: 360px; overflow: auto; border: 1px solid var(--border); border-radius: 8px; background: var(--panel-2); -webkit-overflow-scrolling: touch; }
   table.roster { width: 100%; border-collapse: collapse; font-size: 13px; }
-  table.roster th, table.roster td {
-    padding: 8px 10px; text-align: left;
-    border-bottom: 1px solid var(--border); white-space: nowrap;
-  }
+  table.roster th, table.roster td { padding: 8px 10px; text-align: left; border-bottom: 1px solid var(--border); white-space: nowrap; }
   table.roster th {
-    position: sticky; top: 0; background: #20252f; color: var(--muted);
-    font-weight: 600; font-size: 11px; text-transform: uppercase;
-    letter-spacing: 0.5px; z-index: 1;
+    position: sticky; top: 0; background: #20252f; color: var(--muted); font-weight: 600;
+    font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; z-index: 1;
   }
   table.roster tr:last-child td { border-bottom: none; }
-  table.roster td.score {
-    font-variant-numeric: tabular-nums; font-weight: 600; color: var(--accent-2);
-  }
+  table.roster td.score { font-variant-numeric: tabular-nums; font-weight: 600; color: var(--accent-2); }
   table.roster td.score.empty { color: var(--muted); font-weight: 400; }
-
   .empty-state { padding: 28px 16px; text-align: center; color: var(--muted); font-size: 13px; }
 
   .camera-wrap {
-    position: relative; width: 100%;
-    height: calc(100vh - 340px); min-height: 420px; max-height: 720px;
-    background: #000; border-radius: var(--radius);
-    overflow: hidden; display: flex;
-    align-items: center; justify-content: center;
+    position: relative; width: 100%; height: calc(100vh - 340px); min-height: 420px; max-height: 720px;
+    background: #000; border-radius: var(--radius); overflow: hidden; display: flex; align-items: center; justify-content: center;
   }
-  @media (max-width: 480px) {
-    .camera-wrap { height: calc(100vh - 320px); min-height: 360px; }
-  }
-  .camera-wrap video, .camera-wrap #freezeFrame {
-    width: 100%; height: 100%; object-fit: cover; display: block;
-  }
-  #freezeFrame {
-    position: absolute; inset: 0;
-    width: 100%; height: 100%; object-fit: cover;
-    z-index: 2;
-  }
-  .camera-overlay {
-    position: absolute; inset: 0; pointer-events: none;
-    display: flex; align-items: center; justify-content: center;
-    z-index: 1;
-  }
-  .camera-overlay .frame {
-    width: auto; height: 88%;
-    aspect-ratio: 4 / 5;
-    border: 2px dashed rgba(79, 140, 255, 0.7);
-    border-radius: 10px; position: relative;
-  }
-  .camera-overlay .frame::before,
-  .camera-overlay .frame::after,
-  .camera-overlay .frame .corner-bl,
-  .camera-overlay .frame .corner-br {
-    content: ""; position: absolute; width: 26px; height: 26px;
-    border: 3px solid var(--accent);
-  }
-  .camera-overlay .frame::before {
-    top: -3px; left: -3px; border-right: none; border-bottom: none;
-    border-top-left-radius: 10px;
-  }
-  .camera-overlay .frame::after {
-    top: -3px; right: -3px; border-left: none; border-bottom: none;
-    border-top-right-radius: 10px;
-  }
-  .camera-overlay .frame .corner-bl {
-    bottom: -3px; left: -3px; border-right: none; border-top: none;
-    border-bottom-left-radius: 10px;
-  }
-  .camera-overlay .frame .corner-br {
-    bottom: -3px; right: -3px; border-left: none; border-top: none;
-    border-bottom-right-radius: 10px;
-  }
-  .camera-hint {
-    position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%);
-    background: rgba(0,0,0,0.6); color: #fff; font-size: 12px;
-    padding: 4px 10px; border-radius: 999px; white-space: nowrap;
-    z-index: 1;
-  }
+  @media (max-width: 480px) { .camera-wrap { height: calc(100vh - 320px); min-height: 360px; } }
+  .camera-wrap video, .camera-wrap #freezeFrame { width: 100%; height: 100%; object-fit: cover; display: block; }
+  #freezeFrame { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 2; }
+  .camera-overlay { position: absolute; inset: 0; pointer-events: none; display: flex; align-items: center; justify-content: center; z-index: 1; }
+  .camera-overlay .frame { width: auto; height: 88%; aspect-ratio: 4 / 5; border: 2px dashed rgba(79, 140, 255, 0.7); border-radius: 10px; position: relative; }
+  .camera-overlay .frame::before, .camera-overlay .frame::after, .camera-overlay .frame .corner-bl, .camera-overlay .frame .corner-br { content: ""; position: absolute; width: 26px; height: 26px; border: 3px solid var(--accent); }
+  .camera-overlay .frame::before { top: -3px; left: -3px; border-right: none; border-bottom: none; border-top-left-radius: 10px; }
+  .camera-overlay .frame::after { top: -3px; right: -3px; border-left: none; border-bottom: none; border-top-right-radius: 10px; }
+  .camera-overlay .frame .corner-bl { bottom: -3px; left: -3px; border-right: none; border-top: none; border-bottom-left-radius: 10px; }
+  .camera-overlay .frame .corner-br { bottom: -3px; right: -3px; border-left: none; border-top: none; border-bottom-right-radius: 10px; }
+  .camera-hint { position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.6); color: #fff; font-size: 12px; padding: 4px 10px; border-radius: 999px; white-space: nowrap; z-index: 1; }
 
-  .result-overlay {
-    position: absolute; inset: 0;
-    background: rgba(0,0,0,0.55);
-    display: flex; align-items: center; justify-content: center;
-    padding: 16px; z-index: 5;
-  }
-  .result-card {
-    background: var(--panel); border: 1px solid var(--border);
-    border-radius: var(--radius); padding: 20px;
-    text-align: center; width: 100%; max-width: 340px;
-    box-shadow: var(--shadow);
-  }
+  .result-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.55); display: flex; align-items: center; justify-content: center; padding: 16px; z-index: 5; }
+  .result-card { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; text-align: center; width: 100%; max-width: 340px; box-shadow: var(--shadow); }
   .result-student { color: var(--muted); font-size: 13px; margin-bottom: 6px; }
-  .result-score {
-    font-size: 32px; font-weight: 700; color: var(--accent-2);
-    font-variant-numeric: tabular-nums;
-  }
+  .result-score { font-size: 32px; font-weight: 700; color: var(--accent-2); font-variant-numeric: tabular-nums; }
 
-  .log {
-    background: #0b0d11; border: 1px solid var(--border);
-    border-radius: 8px; padding: 10px 12px;
-    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-    font-size: 12px; color: #b8c0d0; max-height: 200px; overflow: auto;
-    white-space: pre-wrap; word-break: break-word;
-    -webkit-overflow-scrolling: touch;
-  }
+  .log { background: #0b0d11; border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 12px; color: #b8c0d0; max-height: 200px; overflow: auto; white-space: pre-wrap; word-break: break-word; -webkit-overflow-scrolling: touch; }
   .log .t { color: var(--muted); }
   .log .ok { color: var(--accent-2); }
   .log .err { color: var(--danger); }
   .log .warn { color: var(--warn); }
 
-  .toast {
-    position: fixed; left: 50%; bottom: 24px;
-    transform: translateX(-50%) translateY(20px);
-    background: var(--panel-2); border: 1px solid var(--border);
-    color: var(--text); padding: 10px 16px; border-radius: 8px;
-    box-shadow: var(--shadow); font-size: 13px;
-    opacity: 0; pointer-events: none;
-    transition: opacity 0.2s ease, transform 0.2s ease;
-    z-index: 100; max-width: 90vw;
-  }
+  .toast { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%) translateY(20px); background: var(--panel-2); border: 1px solid var(--border); color: var(--text); padding: 10px 16px; border-radius: 8px; box-shadow: var(--shadow); font-size: 13px; opacity: 0; pointer-events: none; transition: opacity 0.2s ease, transform 0.2s ease; z-index: 100; max-width: 90vw; }
   .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
   .toast.ok { border-color: #1e4a3b; }
   .toast.err { border-color: #5a2323; }
 
-  .modal-backdrop {
-    position: fixed; inset: 0; background: rgba(0,0,0,0.6);
-    display: none; align-items: center; justify-content: center;
-    z-index: 50; padding: 16px;
-  }
+  .modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: none; align-items: center; justify-content: center; z-index: 50; padding: 16px; }
   .modal-backdrop.show { display: flex; }
-  .modal {
-    background: var(--panel); border: 1px solid var(--border);
-    border-radius: var(--radius); box-shadow: var(--shadow);
-    width: 100%; max-width: 480px; padding: 18px;
-    max-height: 90vh; overflow: auto;
-  }
+  .modal { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); width: 100%; max-width: 480px; padding: 18px; max-height: 90vh; overflow: auto; }
   .modal h3 { margin: 0 0 8px; font-size: 16px; }
   .modal p { margin: 0 0 14px; color: var(--muted); font-size: 13px; white-space: pre-wrap; }
   .divider { height: 1px; background: var(--border); margin: 14px 0; }
 
-  footer.footer-note {
-    text-align: center; color: var(--muted); font-size: 12px;
-    margin-top: 24px; padding: 16px 8px;
-    border-top: 1px solid var(--border);
-    line-height: 1.7;
-  }
-  footer.footer-note .brand {
-    background: linear-gradient(90deg, var(--accent), var(--accent-2));
-    -webkit-background-clip: text; background-clip: text;
-    -webkit-text-fill-color: transparent;
-    font-weight: 600;
-  }
+  footer.footer-note { text-align: center; color: var(--muted); font-size: 12px; margin-top: 24px; padding: 16px 8px; border-top: 1px solid var(--border); line-height: 1.7; }
+  footer.footer-note .brand { background: linear-gradient(90deg, var(--accent), var(--accent-2)); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; font-weight: 600; }
   footer.footer-note .tag { color: var(--accent); font-weight: 600; }
 
-  .visually-hidden {
-    position: absolute; width: 1px; height: 1px;
-    padding: 0; margin: -1px; overflow: hidden;
-    clip: rect(0,0,0,0); white-space: nowrap; border: 0;
-  }
+  .visually-hidden { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
 
-  .key-grid {
-    max-height: 340px; overflow: auto;
-    border: 1px solid var(--border); border-radius: 8px;
-    background: var(--panel-2); padding: 8px;
-    -webkit-overflow-scrolling: touch;
-  }
-  .key-row {
-    display: flex; align-items: center; gap: 10px;
-    padding: 4px 6px; border-bottom: 1px solid var(--border);
-  }
+  .key-grid { max-height: 340px; overflow: auto; border: 1px solid var(--border); border-radius: 8px; background: var(--panel-2); padding: 8px; -webkit-overflow-scrolling: touch; }
+  .key-row { display: flex; align-items: center; gap: 10px; padding: 4px 6px; border-bottom: 1px solid var(--border); }
   .key-row:last-child { border-bottom: none; }
-  .key-num {
-    width: 32px; text-align: right; color: var(--muted);
-    font-variant-numeric: tabular-nums; font-size: 12px;
-  }
+  .key-num { width: 32px; text-align: right; color: var(--muted); font-variant-numeric: tabular-nums; font-size: 12px; }
   .key-bubbles { display: flex; gap: 6px; flex-wrap: wrap; }
   .key-bubble {
-    width: 38px; height: 38px; border-radius: 50%;
-    border: 1px solid var(--border); background: transparent;
-    color: var(--text); font-weight: 600; font-size: 14px;
-    cursor: pointer; padding: 0;
-    -webkit-tap-highlight-color: transparent;
+    width: 38px; height: 38px; border-radius: 50%; border: 1px solid var(--border); background: transparent;
+    color: var(--text); font-weight: 600; font-size: 14px; cursor: pointer; padding: 0; -webkit-tap-highlight-color: transparent;
     transition: background 0.12s ease, border-color 0.12s ease, transform 0.05s ease;
   }
   .key-bubble:hover { background: #2a3140; }
-  .key-bubble.active {
-    background: var(--accent); border-color: var(--accent);
-    color: #fff; transform: scale(1.05);
-  }
+  .key-bubble.active { background: var(--accent); border-color: var(--accent); color: #fff; transform: scale(1.05); }
 </style>
 </head>
 <body>
@@ -329,10 +191,8 @@
 
   <header class="topbar">
     <span id="netPill" class="pill ok">● Offline-ready</span>
-    
-    <!-- Header Logo -->
-    <img src="logo.jpg" class="header-logo" />
-    
+    <!-- The logo will load from the same folder as index.html -->
+    <img src="logo.png" alt="explainexplore Logo" class="header-logo" />
     <h1>TestCheckerCIES</h1>
     <div class="byline">by explainexplore</div>
     <div class="sub">Offline bubble sheet checker &middot; CSV / XLSX / Email</div>
@@ -400,6 +260,18 @@
 
   <section class="card">
     <h2>4 &middot; Capture</h2>
+    
+    <div class="toggle-wrap">
+      <div>
+        <div class="toggle-label">Binary ID Mode</div>
+        <div class="toggle-desc">Reads the 32/16/8/4/2/1 bubbles to match the student.</div>
+      </div>
+      <label class="switch">
+        <input type="checkbox" id="binaryModeToggle" />
+        <span class="slider"></span>
+      </label>
+    </div>
+
     <div class="camera-wrap" id="cameraWrap">
       <video id="video" playsinline webkit-playsinline autoplay muted></video>
       <img id="freezeFrame" alt="" />
@@ -410,7 +282,7 @@
           <span class="corner-bl"></span>
           <span class="corner-br"></span>
         </div>
-        <div class="camera-hint">Align the sheet inside the frame</div>
+        <div class="camera-hint" id="cameraHint">Align the sheet inside the frame</div>
       </div>
 
       <div id="cameraIdle" class="empty-state" style="color:#8b93a7; z-index:3; position:relative;">
@@ -463,9 +335,6 @@
       <button id="copyJsonBtn" class="ghost">Copy JSON</button>
       <button id="clearScoresBtn" class="ghost danger">Clear Scores</button>
     </div>
-    <div class="hint" style="margin-top:8px;">
-      <strong>Send to Email</strong> opens your Mail app with the scores attached. Update the recipient in the <code>EMAIL_CONFIG</code> block inside the script.
-    </div>
   </section>
 
   <section class="card">
@@ -498,11 +367,8 @@
    Developed by Neljohn and DeepSeek
    ========================================================= */
 
-/* ---------------------------------------------------------
-   EMAIL CONFIG — Set your target email address here.
-   --------------------------------------------------------- */
 const EMAIL_CONFIG = {
-  to: "neljohn@example.com",   // ← CHANGE THIS to your email
+  to: "neljohn@example.com", 
   subjectPrefix: "TestCheckerCIES Scores",
 };
 
@@ -511,17 +377,12 @@ const $ = (sel) => document.querySelector(sel);
 const state = {
   meta: { grade: "", section: "", subject: "", term: "", test: "" },
   students: [],
-  answerKey: {
-    testTitle: "",
-    totalItems: 0,
-    choices: ["A", "B", "C", "D"],
-    answers: {},
-    capturedAt: null,
-  },
+  answerKey: { testTitle: "", totalItems: 0, choices: ["A", "B", "C", "D"], answers: {}, capturedAt: null },
   cameraStream: null,
   facingMode: "environment",
   logLines: [],
   pendingReview: null,
+  binaryMode: false, 
 };
 
 /* ------------------------- Utils ------------------------- */
@@ -569,19 +430,11 @@ function confirmModal(title, body) {
 
 /* ------------------- Class identifier -------------------- */
 function buildIdentifier() {
-  const parts = [
-    state.meta.grade && `Grade ${state.meta.grade}`,
-    state.meta.section, state.meta.subject, state.meta.term, state.meta.test,
-  ].filter(Boolean);
+  const parts = [state.meta.grade && `Grade ${state.meta.grade}`, state.meta.section, state.meta.subject, state.meta.term, state.meta.test].filter(Boolean);
   return parts.join(" - ");
 }
 function buildFilenameStem() {
-  const parts = [
-    state.meta.grade && `Grade${state.meta.grade}`,
-    state.meta.section,
-    state.meta.subject && state.meta.subject.replace(/\s+/g, ""),
-    state.meta.term, state.meta.test,
-  ].filter(Boolean);
+  const parts = [state.meta.grade && `Grade${state.meta.grade}`, state.meta.section, state.meta.subject && state.meta.subject.replace(/\s+/g, ""), state.meta.term, state.meta.test].filter(Boolean);
   return (parts.join("-") || "TestCheckerCIES") + "_scores";
 }
 function parseClassInfo(raw) {
@@ -625,9 +478,7 @@ function renderSessionSummary() {
   const id = buildIdentifier();
   const el = $("#sessionSummary");
   if (!id) { el.textContent = "No session set."; return; }
-  const target = state.meta.term && state.meta.test
-    ? `Target column: ${state.meta.term}_${state.meta.test}`
-    : "Roster-only mode (no test selected)";
+  const target = state.meta.term && state.meta.test ? `Target column: ${state.meta.term}_${state.meta.test}` : "Roster-only mode (no test selected)";
   el.innerHTML = `Identifier: <strong>${escapeHtml(id)}</strong><br>${escapeHtml(target)}`;
 }
 function resetSession() {
@@ -644,13 +495,7 @@ function normalizeHeader(h) {
   return String(h || "").trim().toLowerCase().replace(/\s+/g, "");
 }
 function rowsFromJsonArray(rawRows) {
-  const map = {
-    no: "no", number: "no",
-    gender: "gender", sex: "gender",
-    lastname: "lastName", surname: "lastName",
-    firstname: "firstName", givenname: "firstName",
-    middlename: "middleName",
-  };
+  const map = { no: "no", number: "no", gender: "gender", sex: "gender", lastname: "lastName", surname: "lastName", firstname: "firstName", givenname: "firstName", middlename: "middleName" };
   return rawRows.map((r, idx) => {
     const out = { no: idx + 1, gender: "", lastName: "", firstName: "", middleName: "", score: null };
     for (const [k, v] of Object.entries(r)) {
@@ -719,9 +564,7 @@ function renderRoster() {
     return;
   }
   const rows = list.map((s) => {
-    const scoreCell = s.score == null
-      ? '<td class="score empty">—</td>'
-      : `<td class="score">${escapeHtml(s.score)}</td>`;
+    const scoreCell = s.score == null ? '<td class="score empty">—</td>' : `<td class="score">${escapeHtml(s.score)}</td>`;
     return `<tr>
       <td>${escapeHtml(s.no)}</td>
       <td>${escapeHtml(s.gender)}</td>
@@ -741,11 +584,7 @@ function renderRoster() {
 }
 function downloadRosterTemplate() {
   const header = "No,Gender,LastName,FirstName,MiddleName";
-  const sample = [
-    "1,MALE,Adlaon,Vince Kenneth,",
-    "2,MALE,Bermejo,JAN KARL,",
-    "3,FEMALE,Acosta,Amber Teffame,",
-  ].join("\r\n");
+  const sample = ["1,MALE,Adlaon,Vince Kenneth,", "2,MALE,Bermejo,JAN KARL,", "3,FEMALE,Acosta,Amber Teffame,"].join("\r\n");
   downloadBlob("\uFEFF" + header + "\r\n" + sample + "\r\n", "roster_template.csv", "text/csv;charset=utf-8");
   log("Roster template downloaded.");
 }
@@ -852,13 +691,7 @@ async function importAnswerKeyFile(file) {
   }
   if (!maxItem) throw new Error("No valid Item/Answer rows found.");
   const choices = [...new Set(Object.values(answers))].sort();
-  state.answerKey = {
-    testTitle: state.meta.test || "",
-    totalItems: maxItem,
-    choices,
-    answers,
-    capturedAt: new Date().toISOString(),
-  };
+  state.answerKey = { testTitle: state.meta.test || "", totalItems: maxItem, choices, answers, capturedAt: new Date().toISOString() };
   renderAnswerKeyGrid();
   renderAnswerKeyStatus();
   document.dispatchEvent(new Event("key-changed"));
@@ -914,15 +747,16 @@ function simulateStudentAnswers(key) {
   }
   return out;
 }
+function simulateBinaryID() {
+  return Math.floor(Math.random() * 63) + 1; 
+}
+
 async function captureMasterAnswerKey() {
-  if (!state.meta.term || !state.meta.test) {
-    toast("Set a test context (Term - Test) first.", "err");
-    return;
-  }
+  if (!state.meta.term || !state.meta.test) { toast("Set a test context (Term - Test) first.", "err"); return; }
   const frame = grabFrame();
   if (!frame) { toast("Camera not ready.", "err"); return; }
   log("Capturing master answer key…");
-  // ---- REAL OMR GOES HERE ----
+  
   const totalItems = parseInt($("#keyTotalItems").value, 10) || 20;
   const detected = simulateDetectedAnswers(totalItems);
   state.answerKey = {
@@ -954,6 +788,7 @@ function unfreeze() {
   const video = $("#video");
   video.play().catch(() => {});
 }
+
 async function scanAndScore() {
   if (!state.meta.term || !state.meta.test) { toast("Set a test context first.", "err"); return; }
   if (!state.students.length) { toast("Load a roster first.", "err"); return; }
@@ -964,21 +799,39 @@ async function scanAndScore() {
   if (!frame) { toast("Camera not ready.", "err"); return; }
 
   const dataUrl = frame.toDataURL("image/jpeg", 0.85);
-  freezeFrameShow(dataUrl);
-
+  
   log("Scanning student sheet…");
 
-  // ---- REAL OMR GOES HERE ----
+  let student = null;
+
+  if (state.binaryMode) {
+    const detectedId = simulateBinaryID(); 
+    log(`Read Binary ID: ${detectedId}`);
+    
+    student = state.students.find(s => s.no === detectedId);
+    
+    if (!student) {
+      toast(`ID #${detectedId} not found in roster!`, "err");
+      log(`Failed: Student #${detectedId} not in roster.`, "err");
+      return; 
+    }
+    if (student.score !== null) {
+      toast(`Student #${detectedId} already scored!`, "warn");
+      log(`Skipped: #${detectedId} already has a score.`, "warn");
+      return; 
+    }
+  } else {
+    const idx = state.students.findIndex((s) => s.score == null);
+    if (idx === -1) {
+      toast("All students already have scores.", "warn");
+      return;
+    }
+    student = state.students[idx];
+  }
+
+  freezeFrameShow(dataUrl);
   const detected = simulateStudentAnswers(state.answerKey);
   const result = scoreAgainstKey(detected);
-
-  const idx = state.students.findIndex((s) => s.score == null);
-  if (idx === -1) {
-    toast("All students already have scores.", "warn");
-    unfreeze();
-    return;
-  }
-  const student = state.students[idx];
 
   state.pendingReview = { student, detected, result };
 
@@ -993,7 +846,7 @@ function acceptPendingReview() {
   p.student.score = p.result.correct;
   renderRoster();
   log(`#${p.student.no} ${p.student.lastName} → ${p.result.correct}/${p.result.total} ✓`, "ok");
-  toast(`Great! #${p.student.no} saved. Next student.`, "ok");
+  toast(`Great! #${p.student.no} saved. Next.`, "ok");
   state.pendingReview = null;
   unfreeze();
 }
@@ -1023,16 +876,9 @@ function autoFillRemaining() {
 /* --------------------- Export ---------------------------- */
 function buildExportRows() {
   return state.students.map((s) => ({
-    Grade: state.meta.grade,
-    Section: state.meta.section,
-    Subject: state.meta.subject,
-    Term: state.meta.term,
-    TestTitle: state.meta.test,
-    No: s.no,
-    Gender: s.gender,
-    LastName: s.lastName,
-    FirstName: s.firstName,
-    MiddleName: s.middleName,
+    Grade: state.meta.grade, Section: state.meta.section, Subject: state.meta.subject,
+    Term: state.meta.term, TestTitle: state.meta.test,
+    No: s.no, Gender: s.gender, LastName: s.lastName, FirstName: s.firstName, MiddleName: s.middleName,
     Score: s.score == null ? "" : s.score,
   }));
 }
@@ -1043,33 +889,22 @@ function toCsv(rows) {
     const s = v == null ? "" : String(v);
     return /[",\n\r]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
   };
-  return "\uFEFF" + [
-    headers.join(","),
-    ...rows.map((r) => headers.map((h) => esc(r[h])).join(",")),
-  ].join("\r\n");
+  return "\uFEFF" + [headers.join(","), ...rows.map((r) => headers.map((h) => esc(r[h])).join(","))].join("\r\n");
 }
-async function downloadBlob(content, filename, mime, emailAction = false) {
-  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
-                (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
 
-  // If email action is requested, try Web Share API first (iOS)
+async function downloadBlob(content, filename, mime, emailAction = false) {
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+
   if (emailAction && isIOS && navigator.canShare && typeof File !== "undefined") {
     try {
       const file = new File([content], filename, { type: mime });
       if (navigator.canShare({ files: [file] })) {
-        await navigator.share({
-          files: [file],
-          title: EMAIL_CONFIG.subjectPrefix,
-          text: `Scores for ${buildIdentifier() || "Class"}`
-        });
+        await navigator.share({ files: [file], title: EMAIL_CONFIG.subjectPrefix, text: `Scores for ${buildIdentifier() || "Class"}` });
         return;
       }
-    } catch (err) {
-      if (err && err.name === "AbortError") return;
-    }
+    } catch (err) { if (err && err.name === "AbortError") return; }
   }
 
-  // Standard iOS generic share (for non-email actions or fallback)
   if (isIOS && navigator.canShare && typeof File !== "undefined") {
     try {
       const file = new File([content], filename, { type: mime });
@@ -1077,12 +912,9 @@ async function downloadBlob(content, filename, mime, emailAction = false) {
         await navigator.share({ files: [file], title: filename });
         return;
       }
-    } catch (err) {
-      if (err && err.name === "AbortError") return;
-    }
+    } catch (err) { if (err && err.name === "AbortError") return; }
   }
 
-  // Fallback: Blob download
   const blob = content instanceof Blob ? content : new Blob([content], { type: mime });
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
@@ -1110,9 +942,7 @@ async function exportData(format) {
       const wb = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(wb, ws, "Scores");
       const buf = XLSX.write(wb, { type: "array", bookType: "xlsx" });
-      await downloadBlob(new Blob([buf], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" }),
-        `${stem}.xlsx`,
-        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+      await downloadBlob(new Blob([buf], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" }), `${stem}.xlsx`, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
       log(`Exported XLSX: ${stem}.xlsx`, "ok");
       toast("Excel ready.", "ok");
     } catch (err) {
@@ -1122,9 +952,7 @@ async function exportData(format) {
     return;
   }
   if (format === "email") {
-    // We export as CSV for the email body/attachment
-    const csvContent = toCsv(rows);
-    await downloadBlob(csvContent, `${stem}.csv`, "text/csv;charset=utf-8", true);
+    await downloadBlob(toCsv(rows), `${stem}.csv`, "text/csv;charset=utf-8", true);
     log(`Email share triggered: ${stem}.csv`, "ok");
     toast("Share sheet opened.", "ok");
   }
@@ -1140,30 +968,20 @@ async function exportKeyFile() {
 }
 function copyJson() {
   const text = JSON.stringify(buildExportRows(), null, 2);
-  navigator.clipboard.writeText(text).then(
-    () => { toast("JSON copied.", "ok"); log("Copied JSON to clipboard."); },
-    () => { toast("Clipboard blocked.", "err"); }
-  );
+  navigator.clipboard.writeText(text).then(() => { toast("JSON copied.", "ok"); log("Copied JSON to clipboard."); }, () => { toast("Clipboard blocked.", "err"); });
 }
 
 /* --------------------- Camera ---------------------------- */
 async function startCamera() {
   try {
     stopCamera();
-    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-      throw new Error("Camera API not available. Use HTTPS and a modern browser.");
-    }
-    const constraints = {
-      video: { facingMode: state.facingMode, width: { ideal: 1280 }, height: { ideal: 960 } },
-      audio: false,
-    };
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) throw new Error("Camera API not available. Use HTTPS and a modern browser.");
+    const constraints = { video: { facingMode: state.facingMode, width: { ideal: 1280 }, height: { ideal: 960 } }, audio: false };
     const stream = await navigator.mediaDevices.getUserMedia(constraints);
     state.cameraStream = stream;
     const video = $("#video");
-    video.setAttribute("playsinline", "");
-    video.setAttribute("webkit-playsinline", "");
-    video.muted = true;
-    video.srcObject = stream;
+    video.setAttribute("playsinline", ""); video.setAttribute("webkit-playsinline", "");
+    video.muted = true; video.srcObject = stream;
     try { await video.play(); } catch (_) {}
     $("#cameraIdle").style.display = "none";
     $("#cameraOverlay").style.display = "flex";
@@ -1180,25 +998,14 @@ async function startCamera() {
   }
 }
 function stopCamera() {
-  if (state.cameraStream) {
-    state.cameraStream.getTracks().forEach((t) => t.stop());
-    state.cameraStream = null;
-  }
-  const video = $("#video");
-  video.srcObject = null;
-  $("#cameraOverlay").style.display = "none";
-  $("#freezeFrame").style.display = "none";
-  $("#resultOverlay").style.display = "none";
+  if (state.cameraStream) { state.cameraStream.getTracks().forEach((t) => t.stop()); state.cameraStream = null; }
+  const video = $("#video"); video.srcObject = null;
+  $("#cameraOverlay").style.display = "none"; $("#freezeFrame").style.display = "none"; $("#resultOverlay").style.display = "none";
   $("#cameraIdle").style.display = "flex";
-  $("#stopCameraBtn").disabled = true;
-  $("#switchCameraBtn").disabled = true;
-  $("#startCameraBtn").disabled = false;
+  $("#stopCameraBtn").disabled = true; $("#switchCameraBtn").disabled = true; $("#startCameraBtn").disabled = false;
   document.dispatchEvent(new Event("camera-changed"));
 }
-async function switchCamera() {
-  state.facingMode = state.facingMode === "environment" ? "user" : "environment";
-  await startCamera();
-}
+async function switchCamera() { state.facingMode = state.facingMode === "environment" ? "user" : "environment"; await startCamera(); }
 
 /* ------------------- Button state ------------------------ */
 function refreshCaptureButtons() {
@@ -1228,16 +1035,12 @@ function initExportMenu() {
     btn.setAttribute("aria-expanded", String(!open));
   });
   document.addEventListener("click", (e) => {
-    if (!e.target.closest(".export-menu")) {
-      menu.setAttribute("hidden", "");
-      btn.setAttribute("aria-expanded", "false");
-    }
+    if (!e.target.closest(".export-menu")) { menu.setAttribute("hidden", ""); btn.setAttribute("aria-expanded", "false"); }
   });
   menu.addEventListener("click", (e) => {
     const format = e.target.dataset.format;
     if (!format) return;
-    menu.setAttribute("hidden", "");
-    btn.setAttribute("aria-expanded", "false");
+    menu.setAttribute("hidden", ""); btn.setAttribute("aria-expanded", "false");
     exportData(format);
   });
 }
@@ -1251,38 +1054,32 @@ function init() {
 
   $("#importRosterBtn").addEventListener("click", () => $("#rosterFile").click());
   $("#rosterFile").addEventListener("change", async (e) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+    const file = e.target.files?.[0]; if (!file) return;
     try {
       const students = await readRosterFile(file);
       if (!students.length) throw new Error("No valid rows found.");
       setRoster(students);
       toast(`Roster loaded: ${students.length} student(s).`, "ok");
     } catch (err) {
-      log(`Roster import failed: ${err.message}`, "err");
-      toast(err.message, "err");
+      log(`Roster import failed: ${err.message}`, "err"); toast(err.message, "err");
     } finally { e.target.value = ""; }
   });
   $("#downloadTemplateBtn").addEventListener("click", downloadRosterTemplate);
   $("#clearRosterBtn").addEventListener("click", async () => {
     const ok = await confirmModal("Clear roster?", "This removes all students and scores from memory.");
     if (!ok) return;
-    state.students = [];
-    renderRoster();
-    log("Roster cleared.");
+    state.students = []; renderRoster(); log("Roster cleared.");
   });
 
   $("#captureKeyBtn").addEventListener("click", captureMasterAnswerKey);
   $("#keyImportBtn").addEventListener("click", () => $("#keyFile").click());
   $("#keyFile").addEventListener("change", async (e) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+    const file = e.target.files?.[0]; if (!file) return;
     try {
       await importAnswerKeyFile(file);
       toast("Answer key imported.", "ok");
     } catch (err) {
-      log(`Key import failed: ${err.message}`, "err");
-      toast(err.message, "err");
+      log(`Key import failed: ${err.message}`, "err"); toast(err.message, "err");
     } finally { e.target.value = ""; }
   });
   $("#keyExportBtn").addEventListener("click", exportKeyFile);
@@ -1300,6 +1097,17 @@ function init() {
   $("#stopCameraBtn").addEventListener("click", stopCamera);
   $("#switchCameraBtn").addEventListener("click", switchCamera);
 
+  $("#binaryModeToggle").addEventListener("change", (e) => {
+    state.binaryMode = e.target.checked;
+    if (state.binaryMode) {
+      $("#cameraHint").textContent = "Align ID bubbles and answers inside frame";
+      log("Switched to Binary ID Mode.", "ok");
+    } else {
+      $("#cameraHint").textContent = "Align the sheet inside the frame";
+      log("Switched to Sequential Mode.");
+    }
+  });
+
   $("#scanScoreBtn").addEventListener("click", scanAndScore);
   $("#scanAllBtn").addEventListener("click", autoFillRemaining);
 
@@ -1311,9 +1119,7 @@ function init() {
   $("#clearScoresBtn").addEventListener("click", async () => {
     const ok = await confirmModal("Clear scores?", "Students stay, but all recorded scores are removed.");
     if (!ok) return;
-    state.students.forEach((s) => { s.score = null; });
-    renderRoster();
-    log("Scores cleared.");
+    state.students.forEach((s) => { s.score = null; }); renderRoster(); log("Scores cleared.");
   });
 
   document.addEventListener("camera-changed", refreshCaptureButtons);
@@ -1328,10 +1134,7 @@ function init() {
   window.addEventListener("offline", updateNet);
   updateNet();
 
-  renderSessionSummary();
-  renderRoster();
-  renderAnswerKeyStatus();
-  refreshCaptureButtons();
+  renderSessionSummary(); renderRoster(); renderAnswerKeyStatus(); refreshCaptureButtons();
   log("TestCheckerCIES ready — explainexplore Project2.");
 }
 
