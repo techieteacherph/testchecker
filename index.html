@@ -6,7 +6,12 @@
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 <meta name="theme-color" content="#0f1115" />
-<title>TESTCheckerCIES — Offline Bubble Sheet Checker</title>
+<title>TestCheckerCIES — explainexplore</title>
+
+<!-- App Icons (Using your uploaded logo) -->
+<link rel="apple-touch-icon" href="icon.png" />
+<link rel="icon" href="icon.png" />
+
 <style>
   :root {
     --bg: #0f1115;
@@ -34,19 +39,36 @@
   .app { max-width: 1100px; margin: 0 auto; padding: 16px; padding-bottom: 96px; }
 
   header.topbar {
-    display: flex; align-items: center; justify-content: space-between;
-    gap: 12px; padding: 12px 14px;
+    display: flex; flex-direction: column; align-items: center;
+    text-align: center; gap: 6px; padding: 20px 14px;
     background: var(--panel); border: 1px solid var(--border);
     border-radius: var(--radius); margin-bottom: 16px;
-    box-shadow: var(--shadow);
+    box-shadow: var(--shadow); position: relative;
   }
-  header.topbar h1 { font-size: 16px; margin: 0; font-weight: 600; letter-spacing: 0.2px; }
-  header.topbar .sub { color: var(--muted); font-size: 12px; margin-top: 2px; }
+  header.topbar .header-logo {
+    max-width: 160px; height: auto; margin-bottom: 6px;
+  }
+  header.topbar h1 {
+    font-size: 22px; margin: 0; font-weight: 700; letter-spacing: 0.3px;
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  header.topbar .byline {
+    color: var(--muted); font-size: 12px; letter-spacing: 1px;
+    text-transform: uppercase; font-weight: 600;
+  }
+  header.topbar .sub {
+    color: var(--muted); font-size: 12px; margin-top: 4px;
+  }
+  header.topbar .pill {
+    position: absolute; top: 10px; right: 10px;
+  }
   .pill {
     display: inline-flex; align-items: center; gap: 6px;
     padding: 4px 10px; border-radius: 999px;
     background: var(--panel-2); border: 1px solid var(--border);
-    font-size: 12px; color: var(--muted);
+    font-size: 11px; color: var(--muted);
   }
   .pill.ok { color: var(--accent-2); border-color: #1e4a3b; }
   .pill.warn { color: var(--warn); border-color: #4a3a1e; }
@@ -103,7 +125,7 @@
     position: absolute; top: calc(100% + 4px); right: 0;
     background: var(--panel-2); border: 1px solid var(--border);
     border-radius: 8px; list-style: none; margin: 0; padding: 4px 0;
-    min-width: 180px; box-shadow: var(--shadow); z-index: 10;
+    min-width: 220px; box-shadow: var(--shadow); z-index: 10;
   }
   #exportOptions li { padding: 9px 14px; cursor: pointer; font-size: 14px; color: var(--text); }
   #exportOptions li:hover { background: #2a3140; }
@@ -131,22 +153,15 @@
 
   .empty-state { padding: 28px 16px; text-align: center; color: var(--muted); font-size: 13px; }
 
-  /* Camera: near-fullscreen, 4:5 portrait overlay */
   .camera-wrap {
-    position: relative;
-    width: 100%;
-    height: calc(100vh - 320px);
-    min-height: 420px;
-    max-height: 720px;
-    background: #000;
-    border-radius: var(--radius);
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    position: relative; width: 100%;
+    height: calc(100vh - 340px); min-height: 420px; max-height: 720px;
+    background: #000; border-radius: var(--radius);
+    overflow: hidden; display: flex;
+    align-items: center; justify-content: center;
   }
   @media (max-width: 480px) {
-    .camera-wrap { height: calc(100vh - 300px); min-height: 360px; }
+    .camera-wrap { height: calc(100vh - 320px); min-height: 360px; }
   }
   .camera-wrap video, .camera-wrap #freezeFrame {
     width: 100%; height: 100%; object-fit: cover; display: block;
@@ -162,12 +177,10 @@
     z-index: 1;
   }
   .camera-overlay .frame {
-    width: auto;
-    height: 88%;
+    width: auto; height: 88%;
     aspect-ratio: 4 / 5;
     border: 2px dashed rgba(79, 140, 255, 0.7);
-    border-radius: 10px;
-    position: relative;
+    border-radius: 10px; position: relative;
   }
   .camera-overlay .frame::before,
   .camera-overlay .frame::after,
@@ -199,7 +212,6 @@
     z-index: 1;
   }
 
-  /* Result overlay (after capture) */
   .result-overlay {
     position: absolute; inset: 0;
     background: rgba(0,0,0,0.55);
@@ -260,7 +272,21 @@
   .modal h3 { margin: 0 0 8px; font-size: 16px; }
   .modal p { margin: 0 0 14px; color: var(--muted); font-size: 13px; white-space: pre-wrap; }
   .divider { height: 1px; background: var(--border); margin: 14px 0; }
-  .footer-note { text-align: center; color: var(--muted); font-size: 12px; margin-top: 24px; }
+
+  footer.footer-note {
+    text-align: center; color: var(--muted); font-size: 12px;
+    margin-top: 24px; padding: 16px 8px;
+    border-top: 1px solid var(--border);
+    line-height: 1.7;
+  }
+  footer.footer-note .brand {
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: 600;
+  }
+  footer.footer-note .tag { color: var(--accent); font-weight: 600; }
+
   .visually-hidden {
     position: absolute; width: 1px; height: 1px;
     padding: 0; margin: -1px; overflow: hidden;
@@ -296,26 +322,20 @@
     background: var(--accent); border-color: var(--accent);
     color: #fff; transform: scale(1.05);
   }
-
-  .review-table {
-    width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 8px;
-  }
-  .review-table td {
-    padding: 3px 6px; border-bottom: 1px solid var(--border);
-    font-variant-numeric: tabular-nums;
-  }
-  .review-table td.ok { color: var(--accent-2); }
-  .review-table td.bad { color: var(--danger); }
 </style>
 </head>
 <body>
 <div class="app">
+
   <header class="topbar">
-    <div>
-      <h1>TESTCheckerCIES</h1>
-      <div class="sub">Offline bubble sheet checker &middot; CSV / XLSX</div>
-    </div>
     <span id="netPill" class="pill ok">● Offline-ready</span>
+    
+    <!-- Header Logo -->
+    <img src="logo.jpg" class="header-logo" />
+    
+    <h1>TestCheckerCIES</h1>
+    <div class="byline">by explainexplore</div>
+    <div class="sub">Offline bubble sheet checker &middot; CSV / XLSX / Email</div>
   </header>
 
   <section class="card">
@@ -390,7 +410,7 @@
           <span class="corner-bl"></span>
           <span class="corner-br"></span>
         </div>
-        <div class="camera-hint" id="cameraHint">Align the sheet inside the frame</div>
+        <div class="camera-hint">Align the sheet inside the frame</div>
       </div>
 
       <div id="cameraIdle" class="empty-state" style="color:#8b93a7; z-index:3; position:relative;">
@@ -428,13 +448,15 @@
   </section>
 
   <section class="card">
-    <h2>5 &middot; Export</h2>
+    <h2>5 &middot; Export &amp; Send</h2>
     <div class="btn-row">
       <div class="export-menu">
         <button id="exportBtn" class="primary" aria-haspopup="true" aria-expanded="false">Export ▾</button>
         <ul id="exportOptions" role="menu" hidden>
-          <li role="menuitem" data-format="csv">CSV (.csv)</li>
-          <li role="menuitem" data-format="xlsx">Excel (.xlsx)</li>
+          <li role="menuitem" data-format="csv">📄 CSV (.csv)</li>
+          <li role="menuitem" data-format="xlsx">📊 Excel (.xlsx)</li>
+          <li style="padding:0;"><hr style="border:0; border-top:1px solid var(--border); margin:4px 0;"></li>
+          <li role="menuitem" data-format="email">📧 Send to Email</li>
         </ul>
       </div>
       <button id="exportKeyBtn" class="ghost">Export Answer Key</button>
@@ -442,7 +464,7 @@
       <button id="clearScoresBtn" class="ghost danger">Clear Scores</button>
     </div>
     <div class="hint" style="margin-top:8px;">
-      On iPhone/iPad, exports open the native Share Sheet so you can save to Files or Mail.
+      <strong>Send to Email</strong> opens your Mail app with the scores attached. Update the recipient in the <code>EMAIL_CONFIG</code> block inside the script.
     </div>
   </section>
 
@@ -451,9 +473,10 @@
     <div id="log" class="log"></div>
   </section>
 
-  <div class="footer-note">
-    TESTCheckerCIES &middot; fully offline &middot; no data leaves this device
-  </div>
+  <footer class="footer-note">
+    Developed by <span class="brand">Neljohn</span> and <span class="brand">DeepSeek</span><br>
+    <span class="brand">explainexplore</span> Project2 &nbsp;<span class="tag">#TechieTeacher</span>
+  </footer>
 </div>
 
 <div class="modal-backdrop" id="modalBackdrop">
@@ -471,9 +494,17 @@
 
 <script>
 /* =========================================================
-   TESTCheckerCIES — single-file offline checker
-   iOS-safe edition, v2 (capture → freeze → review → auto-advance)
+   TestCheckerCIES — explainexplore Project2
+   Developed by Neljohn and DeepSeek
    ========================================================= */
+
+/* ---------------------------------------------------------
+   EMAIL CONFIG — Set your target email address here.
+   --------------------------------------------------------- */
+const EMAIL_CONFIG = {
+  to: "neljohn@example.com",   // ← CHANGE THIS to your email
+  subjectPrefix: "TestCheckerCIES Scores",
+};
 
 const $ = (sel) => document.querySelector(sel);
 
@@ -551,7 +582,7 @@ function buildFilenameStem() {
     state.meta.subject && state.meta.subject.replace(/\s+/g, ""),
     state.meta.term, state.meta.test,
   ].filter(Boolean);
-  return (parts.join("-") || "TESTCheckerCIES") + "_scores";
+  return (parts.join("-") || "TestCheckerCIES") + "_scores";
 }
 function parseClassInfo(raw) {
   const parts = raw.split("-").map((s) => s.trim()).filter(Boolean);
@@ -923,7 +954,6 @@ function unfreeze() {
   const video = $("#video");
   video.play().catch(() => {});
 }
-
 async function scanAndScore() {
   if (!state.meta.term || !state.meta.test) { toast("Set a test context first.", "err"); return; }
   if (!state.students.length) { toast("Load a roster first.", "err"); return; }
@@ -1018,10 +1048,28 @@ function toCsv(rows) {
     ...rows.map((r) => headers.map((h) => esc(r[h])).join(",")),
   ].join("\r\n");
 }
-async function downloadBlob(content, filename, mime) {
+async function downloadBlob(content, filename, mime, emailAction = false) {
   const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
                 (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
 
+  // If email action is requested, try Web Share API first (iOS)
+  if (emailAction && isIOS && navigator.canShare && typeof File !== "undefined") {
+    try {
+      const file = new File([content], filename, { type: mime });
+      if (navigator.canShare({ files: [file] })) {
+        await navigator.share({
+          files: [file],
+          title: EMAIL_CONFIG.subjectPrefix,
+          text: `Scores for ${buildIdentifier() || "Class"}`
+        });
+        return;
+      }
+    } catch (err) {
+      if (err && err.name === "AbortError") return;
+    }
+  }
+
+  // Standard iOS generic share (for non-email actions or fallback)
   if (isIOS && navigator.canShare && typeof File !== "undefined") {
     try {
       const file = new File([content], filename, { type: mime });
@@ -1034,6 +1082,7 @@ async function downloadBlob(content, filename, mime) {
     }
   }
 
+  // Fallback: Blob download
   const blob = content instanceof Blob ? content : new Blob([content], { type: mime });
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
@@ -1042,6 +1091,7 @@ async function downloadBlob(content, filename, mime) {
   a.click(); a.remove();
   setTimeout(() => URL.revokeObjectURL(url), 4000);
 }
+
 async function exportData(format) {
   if (!state.students.length) { toast("Nothing to export — roster is empty.", "err"); return; }
   const rows = buildExportRows();
@@ -1069,8 +1119,17 @@ async function exportData(format) {
       log(`Excel export failed: ${err.message}`, "err");
       toast("Excel export failed.", "err");
     }
+    return;
+  }
+  if (format === "email") {
+    // We export as CSV for the email body/attachment
+    const csvContent = toCsv(rows);
+    await downloadBlob(csvContent, `${stem}.csv`, "text/csv;charset=utf-8", true);
+    log(`Email share triggered: ${stem}.csv`, "ok");
+    toast("Share sheet opened.", "ok");
   }
 }
+
 async function exportKeyFile() {
   const rows = exportAnswerKeyRows();
   if (!rows.length) { toast("No key to export.", "err"); return; }
@@ -1273,7 +1332,7 @@ function init() {
   renderRoster();
   renderAnswerKeyStatus();
   refreshCaptureButtons();
-  log("TESTCheckerCIES ready (v2 — capture → review → next).");
+  log("TestCheckerCIES ready — explainexplore Project2.");
 }
 
 document.addEventListener("DOMContentLoaded", init);
