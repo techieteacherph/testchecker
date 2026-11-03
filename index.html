@@ -9,17 +9,14 @@
     <link rel="manifest" href="manifest.json">
     <link rel="icon" type="image/png" href="icon.png">
     <link rel="apple-touch-icon" href="icon.png">
-    <title>TestCheckerCIES | explainexplore</title>
+    <title>TestCheckerCIES | ExplainExplore</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         html, body { height: 100%; }
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background: #f0f2f5;
-            color: #1a1a2e;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
+            background: #f0f2f5; color: #1a1a2e; min-height: 100vh;
+            display: flex; flex-direction: column;
             padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
             -webkit-user-select: none; user-select: none;
         }
@@ -43,10 +40,7 @@
         .header-text p { font-size: 0.7rem; opacity: 0.9; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
         /* MAIN */
-        .main {
-            flex: 1; display: flex; flex-direction: column;
-            padding: 0.75rem 1rem; gap: 0.75rem; overflow-y: auto;
-        }
+        .main { flex: 1; display: flex; flex-direction: column; padding: 0.75rem 1rem; gap: 0.75rem; overflow-y: auto; }
 
         /* CARD */
         .card {
@@ -93,6 +87,8 @@
         .btn-success:not(:disabled):hover { background: #1b5e20; }
         .btn-danger { background: #c62828; color: white; }
         .btn-danger:not(:disabled):hover { background: #a01515; }
+        .btn-warning { background: #f0a500; color: white; }
+        .btn-warning:not(:disabled):hover { background: #c88a00; }
         .btn-outline { background: transparent; color: #2d6a9f; border: 2px solid #2d6a9f; }
         .btn-outline:not(:disabled):hover { background: #2d6a9f; color: white; }
         .btn-block { width: 100%; }
@@ -273,6 +269,56 @@
         .toast.error { background: #c62828; }
         .toast.info { background: #2d6a9f; }
 
+        /* CLASS INFO PANEL */
+        .class-info-panel {
+            background: #f8f9fa; border-radius: 12px;
+            padding: 1rem; display: flex; flex-direction: column; gap: 0.75rem;
+            border: 2px solid #e0e0e0;
+        }
+        .class-info-panel .class-info-title {
+            font-size: 0.85rem; font-weight: 700; color: #1e3a5f;
+            display: flex; align-items: center; gap: 0.4rem;
+        }
+        .class-info-panel .class-info-title .info-badge {
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 20px; height: 20px; background: #f0a500; color: white;
+            border-radius: 50%; font-size: 0.65rem; font-weight: 700; flex-shrink: 0;
+        }
+        .class-info-panel .class-info-details {
+            font-size: 0.8rem; color: #555; display: flex;
+            flex-direction: column; gap: 0.2rem;
+        }
+        .class-info-panel .class-info-details .info-row {
+            display: flex; justify-content: space-between;
+        }
+        .class-info-panel .class-info-details .info-row .info-label {
+            color: #888;
+        }
+        .class-info-panel .class-info-details .info-row .info-value {
+            font-weight: 600; color: #1a1a2e;
+        }
+        .class-info-panel .class-info-actions {
+            display: flex; gap: 0.5rem; flex-wrap: wrap;
+        }
+        .class-info-panel .class-info-actions .btn {
+            flex: 1; min-width: 100px; font-size: 0.8rem; min-height: 40px;
+        }
+
+        /* FOOTER */
+        .footer {
+            background: #1e3a5f; color: rgba(255,255,255,0.7);
+            font-size: 0.6rem; text-align: center;
+            padding: 0.5rem 1rem;
+            padding-bottom: calc(0.5rem + env(safe-area-inset-bottom));
+            flex-shrink: 0; line-height: 1.4;
+        }
+        .footer .footer-brand {
+            font-weight: 600; color: #f0c040;
+        }
+        .footer .footer-project {
+            font-size: 0.55rem; opacity: 0.7;
+        }
+
         /* RESPONSIVE */
         @media (min-width: 600px) {
             .main { max-width: 600px; margin: 0 auto; width: 100%; }
@@ -284,7 +330,6 @@
             .main { max-width: 700px; }
         }
 
-        /* REDUCED MOTION */
         @media (prefers-reduced-motion: reduce) {
             * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
         }
@@ -307,6 +352,43 @@
 
     <!-- MAIN -->
     <main class="main">
+
+        <!-- CLASS INFO PANEL — Upload / Resume / Exit & Reset -->
+        <div class="class-info-panel" id="classInfoPanel">
+            <div class="class-info-title">
+                <span class="info-badge">i</span>
+                Class Info
+            </div>
+            <div class="class-info-details" id="classInfoDetails">
+                <div class="info-row">
+                    <span class="info-label">Class:</span>
+                    <span class="info-value" id="classInfoClassName">Not loaded</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Students:</span>
+                    <span class="info-value" id="classInfoStudentCount">0</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Assessment:</span>
+                    <span class="info-value" id="classInfoAssessment">ST1</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Scanned:</span>
+                    <span class="info-value" id="classInfoScanned">0 / 0</span>
+                </div>
+            </div>
+            <div class="class-info-actions">
+                <button class="btn btn-primary btn-sm" id="btnUploadNew" onclick="uploadNewClass()">
+                    📂 Upload New
+                </button>
+                <button class="btn btn-warning btn-sm" id="btnResume" onclick="resumeClass()" disabled>
+                    ▶️ Resume
+                </button>
+                <button class="btn btn-danger btn-sm" id="btnExitReset" onclick="exitAndReset()">
+                    🚪 Exit & Reset
+                </button>
+            </div>
+        </div>
 
         <!-- Step 1: Select Assessment -->
         <div class="card">
@@ -419,8 +501,8 @@
         <div class="empty-state" id="emptyState">
             <span class="icon">📂</span>
             <span>No students loaded. Import from ClassRecord CIES first.</span>
-            <button class="btn btn-primary btn-block" style="max-width:300px;margin-top:0.5rem;" onclick="importStudents()">
-                📂 Import Students (CSV)
+            <button class="btn btn-primary btn-block" style="max-width:300px;margin-top:0.5rem;" onclick="uploadNewClass()">
+                📂 Upload New Class
             </button>
         </div>
 
@@ -441,6 +523,12 @@
             <span>Settings</span>
         </button>
     </nav>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="footer-brand">Developed by explainexplore TechieTeacher and Deepseek</div>
+        <div class="footer-project">Project 2 CIES 2026</div>
+    </footer>
 
     <!-- VERIFICATION MODAL -->
     <div class="modal-overlay" id="verificationModal">
@@ -464,9 +552,7 @@
                         <div class="summary-label">Incorrect</div>
                     </div>
                 </div>
-                <div class="verify-results-list" id="verifyResultsList">
-                    <!-- Populated dynamically -->
-                </div>
+                <div class="verify-results-list" id="verifyResultsList"></div>
             </div>
             <div class="modal-footer">
                 <button class="btn btn-outline" onclick="closeVerificationModal()">Cancel</button>
@@ -496,12 +582,9 @@
         // ============================================================
         let state = {
             currentAssessment: 'st1',
+            className: 'Not loaded',
             students: [],
-            scores: {
-                st1: {},
-                st2: {},
-                te: {}
-            },
+            scores: { st1: {}, st2: {}, te: {} },
             omr: {
                 imageDataUrl: null,
                 detectedMarks: [],
@@ -509,7 +592,9 @@
                 cameraStream: null,
                 pendingScan: null
             },
-            history: []
+            history: [],
+            lastSaved: null,
+            importedFileName: null
         };
 
         // ============================================================
@@ -539,16 +624,41 @@
             return state.students.find(s => s.id === id) || null;
         }
 
-        function getAssessmentLabel(key) {
-            return CONFIG.assessments[key]?.label || key;
-        }
-
         function setStatus(icon, text, type = 'pending') {
             const statusIcon = document.getElementById('statusIcon');
             const statusText = document.getElementById('statusText');
             statusIcon.textContent = icon;
             statusIcon.className = `status-icon ${type}`;
             statusText.textContent = text;
+        }
+
+        function updateClassInfo() {
+            document.getElementById('classInfoClassName').textContent = state.className || 'Not loaded';
+            document.getElementById('classInfoStudentCount').textContent = state.students.length;
+
+            const assessment = state.currentAssessment;
+            document.getElementById('classInfoAssessment').textContent =
+                CONFIG.assessments[assessment].name;
+
+            let scanned = 0;
+            const totalStudents = state.students.length;
+            if (totalStudents > 0) {
+                const studentScores = state.scores[assessment] || {};
+                for (const student of state.students) {
+                    let hasAll = true;
+                    for (let i = 1; i <= getTotalItems(); i++) {
+                        if (studentScores[`${student.id}_${i}`] === undefined) {
+                            hasAll = false;
+                            break;
+                        }
+                    }
+                    if (hasAll) scanned++;
+                }
+            }
+            document.getElementById('classInfoScanned').textContent = `${scanned} / ${totalStudents}`;
+
+            // Enable/disable Resume button
+            document.getElementById('btnResume').disabled = !(state.students.length > 0 && state.importedFileName);
         }
 
         function updateExportVisibility() {
@@ -580,6 +690,144 @@
         }
 
         // ============================================================
+        // CLASS INFO ACTIONS
+        // ============================================================
+
+        function uploadNewClass() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.csv,.xlsx,.xls';
+            input.onchange = function(e) {
+                const file = e.target.files[0];
+                if (!file) return;
+                handleClassFile(file);
+                e.target.value = '';
+            };
+            input.click();
+        }
+
+        function handleClassFile(file) {
+            state.importedFileName = file.name;
+            const ext = file.name.split('.').pop().toLowerCase();
+
+            if (ext === 'csv') {
+                parseCSV(file);
+            } else if (ext === 'xlsx' || ext === 'xls') {
+                // For demo, treat as CSV-like or show message
+                showToast('XLSX support requires SheetJS. Using CSV fallback.', 'warning');
+                parseCSV(file);
+            } else {
+                showToast('Unsupported file type. Use CSV or XLSX.', 'error');
+            }
+        }
+
+        function parseCSV(file) {
+            const reader = new FileReader();
+            reader.onload = function(ev) {
+                const text = ev.target.result;
+                const lines = text.split('\n').filter(l => l.trim());
+                if (lines.length < 2) {
+                    showToast('File is empty or invalid.', 'error');
+                    return;
+                }
+
+                // Detect header row (contains "Last Name" or "Student")
+                let headerIndex = 0;
+                for (let i = 0; i < Math.min(5, lines.length); i++) {
+                    if (lines[i].toLowerCase().includes('last name') ||
+                        lines[i].toLowerCase().includes('student')) {
+                        headerIndex = i;
+                        break;
+                    }
+                }
+
+                const students = [];
+                for (let i = headerIndex + 1; i < lines.length; i++) {
+                    const parts = lines[i].split(',').map(p => p.trim().replace(/^"|"$/g, ''));
+                    if (parts.length >= 3 && parts[1]) {
+                        students.push({
+                            id: `student_${i}`,
+                            studentNo: parts[0] || '',
+                            lastName: parts[1] || '',
+                            firstName: parts[2] || '',
+                            middleName: parts[3] || ''
+                        });
+                    }
+                }
+
+                if (students.length === 0) {
+                    showToast('No valid students found in file.', 'error');
+                    return;
+                }
+
+                state.students = students;
+                state.className = file.name.replace(/\.(csv|xlsx|xls)$/i, '');
+                state.scores = { st1: {}, st2: {}, te: {} };
+                state.history = [];
+
+                updateStudentSelect();
+                updateClassInfo();
+                updateExportVisibility();
+
+                showToast(`Imported ${students.length} students from "${file.name}".`, 'success');
+                setStatus('✅', `${students.length} students loaded. Ready to scan.`, 'success');
+            };
+            reader.readAsText(file);
+        }
+
+        function resumeClass() {
+            // Resume = reload from localStorage
+            try {
+                const saved = localStorage.getItem('testCheckerState');
+                if (saved) {
+                    const parsed = JSON.parse(saved);
+                    if (parsed.students && parsed.students.length > 0) {
+                        state.students = parsed.students;
+                        state.scores = parsed.scores || { st1: {}, st2: {}, te: {} };
+                        state.history = parsed.history || [];
+                        state.className = parsed.className || 'Resumed Class';
+                        state.importedFileName = parsed.importedFileName || 'resumed.csv';
+
+                        updateStudentSelect();
+                        updateClassInfo();
+                        updateExportVisibility();
+                        showToast(`Resumed class with ${state.students.length} students.`, 'success');
+                        setStatus('✅', 'Resumed previous session.', 'success');
+                        return;
+                    }
+                }
+                showToast('No saved session found.', 'warning');
+            } catch (e) {
+                showToast('Could not resume session.', 'error');
+            }
+        }
+
+        function exitAndReset() {
+            if (!confirm('Exit and reset all data? This cannot be undone.')) return;
+            state.students = [];
+            state.className = 'Not loaded';
+            state.scores = { st1: {}, st2: {}, te: {} };
+            state.history = [];
+            state.importedFileName = null;
+            state.lastSaved = null;
+            state.omr = {
+                imageDataUrl: null,
+                detectedMarks: [],
+                isProcessing: false,
+                cameraStream: null,
+                pendingScan: null
+            };
+            localStorage.removeItem('testCheckerState');
+            updateStudentSelect();
+            updateClassInfo();
+            updateExportVisibility();
+            clearImage();
+            clearScanResult();
+            showToast('Exited and reset all data.', 'info');
+            setStatus('⏳', 'Ready. Upload a new class to begin.', 'pending');
+        }
+
+        // ============================================================
         // ASSESSMENT & STUDENT SELECTION
         // ============================================================
 
@@ -588,9 +836,10 @@
             document.getElementById('headerSubtitle').textContent =
                 `OMR Scanner | ${CONFIG.assessments[state.currentAssessment].name}`;
             updateStudentSelect();
+            updateClassInfo();
+            updateExportVisibility();
             clearScanResult();
             setStatus('⏳', 'Assessment changed. Select a student and scan.', 'pending');
-            updateExportVisibility();
         }
 
         function updateStudentSelect() {
@@ -779,7 +1028,6 @@
             };
             state.omr.isProcessing = false;
 
-            // Show scan result
             const student = getStudentById(studentId);
             document.getElementById('resultStudentName').textContent =
                 `${student.lastName}, ${student.firstName}`;
@@ -857,66 +1105,20 @@
 
             showToast('Scan accepted and saved.', 'success');
             setStatus('✅', 'Scan accepted. Select next student to continue.', 'success');
+            updateClassInfo();
             updateExportVisibility();
 
-            // Clear student selection for next scan
             document.getElementById('studentSelect').value = '';
             document.getElementById('btnCapture').disabled = true;
             document.getElementById('btnStartCamera').disabled = true;
+            document.getElementById('btnRetake').disabled = true;
+            document.getElementById('btnClearImage').disabled = true;
         }
 
         function clearScanResult() {
             document.getElementById('scanResultCard').style.display = 'none';
             state.omr.pendingScan = null;
             state.omr.detectedMarks = [];
-        }
-
-        // ============================================================
-        // IMPORT STUDENTS (CSV)
-        // ============================================================
-
-        function importStudents() {
-            const input = document.createElement('input');
-            input.type = 'file';
-            input.accept = '.csv,.xlsx,.xls';
-            input.onchange = function(e) {
-                const file = e.target.files[0];
-                if (!file) return;
-                const reader = new FileReader();
-                reader.onload = function(ev) {
-                    const text = ev.target.result;
-                    const lines = text.split('\n').filter(l => l.trim());
-                    if (lines.length < 2) {
-                        showToast('CSV file is empty or invalid.', 'error');
-                        return;
-                    }
-                    // Assume header row: Student No., Last Name, First Name, Middle Name
-                    const students = [];
-                    for (let i = 1; i < lines.length; i++) {
-                        const parts = lines[i].split(',').map(p => p.trim().replace(/^"|"$/g, ''));
-                        if (parts.length >= 3) {
-                            students.push({
-                                id: `student_${i}`,
-                                studentNo: parts[0] || '',
-                                lastName: parts[1] || '',
-                                firstName: parts[2] || '',
-                                middleName: parts[3] || ''
-                            });
-                        }
-                    }
-                    if (students.length === 0) {
-                        showToast('No valid students found in CSV.', 'error');
-                        return;
-                    }
-                    state.students = students;
-                    state.scores = { st1: {}, st2: {}, te: {} };
-                    updateStudentSelect();
-                    updateExportVisibility();
-                    showToast(`Imported ${students.length} students from "${file.name}".`, 'success');
-                };
-                reader.readAsText(file);
-            };
-            input.click();
         }
 
         // ============================================================
@@ -933,7 +1135,6 @@
             const totalItems = getTotalItems();
             const config = CONFIG.assessments[assessment];
 
-            // Build CSV
             const header1 = ['Student No.', 'Last Name', 'First Name', 'Middle Name'];
             const header2 = ['', '', '', ''];
             for (let i = 1; i <= totalItems; i++) {
@@ -981,7 +1182,6 @@
             document.querySelectorAll('.bottom-nav .nav-item').forEach(el => el.classList.remove('active'));
             if (view === 'scan') {
                 document.getElementById('navScan').classList.add('active');
-                // Show scan view (all cards)
                 document.querySelectorAll('.card').forEach(el => {
                     if (el.id !== 'exportCard') el.style.display = '';
                 });
@@ -1018,9 +1218,9 @@
             document.getElementById('assessmentSelect').value = 'st1';
             state.currentAssessment = 'st1';
             updateStudentSelect();
-            setStatus('⏳', 'Import students first, then select assessment and student.', 'pending');
+            updateClassInfo();
+            setStatus('⏳', 'Upload a class file (CSV/XLSX) from ClassRecord CIES to begin.', 'pending');
 
-            // Auto-load from localStorage if available
             try {
                 const saved = localStorage.getItem('testCheckerState');
                 if (saved) {
@@ -1029,21 +1229,28 @@
                         state.students = parsed.students;
                         state.scores = parsed.scores || { st1: {}, st2: {}, te: {} };
                         state.history = parsed.history || [];
+                        state.className = parsed.className || 'Resumed Class';
+                        state.importedFileName = parsed.importedFileName || 'resumed.csv';
+                        state.lastSaved = parsed.lastSaved || null;
+
                         updateStudentSelect();
+                        updateClassInfo();
                         updateExportVisibility();
-                        showToast('Restored previous session.', 'info');
+                        showToast('Restored previous session. Tap Resume to continue.', 'info');
                     }
                 }
             } catch (e) { /* ignore */ }
 
-            // Auto-save every 30 seconds
             setInterval(() => {
                 if (state.students.length > 0) {
                     try {
                         localStorage.setItem('testCheckerState', JSON.stringify({
                             students: state.students,
                             scores: state.scores,
-                            history: state.history
+                            history: state.history,
+                            className: state.className,
+                            importedFileName: state.importedFileName,
+                            lastSaved: new Date().toISOString()
                         }));
                     } catch (e) { /* ignore */ }
                 }
@@ -1052,7 +1259,9 @@
 
         document.addEventListener('DOMContentLoaded', init);
 
-        // Expose functions
+        window.uploadNewClass = uploadNewClass;
+        window.resumeClass = resumeClass;
+        window.exitAndReset = exitAndReset;
         window.onAssessmentChange = onAssessmentChange;
         window.onStudentChange = onStudentChange;
         window.startCamera = startCamera;
@@ -1065,7 +1274,6 @@
         window.closeVerificationModal = closeVerificationModal;
         window.acceptScan = acceptScan;
         window.clearScanResult = clearScanResult;
-        window.importStudents = importStudents;
         window.exportToCIES = exportToCIES;
         window.switchNav = switchNav;
     </script>
