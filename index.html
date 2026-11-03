@@ -5,1140 +5,1381 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-<meta name="theme-color" content="#0f1115" />
-<title>TestCheckerCIES — explainexplore</title>
-
-<!-- App Icons pointing to your uploaded GitHub image -->
+<meta name="theme-color" content="#0f1117" />
+<title>TestCheckerCIES</title>
 <link rel="apple-touch-icon" href="icon.png" />
 <link rel="icon" href="icon.png" />
-
 <style>
-  :root {
-    --bg: #0f1115; --panel: #171a21; --panel-2: #1e222b; --border: #2a2f3a;
-    --text: #e6e8ee; --muted: #8b93a7; --accent: #4f8cff; --accent-2: #3ad29f;
-    --danger: #ff5d5d; --warn: #ffb454; --radius: 10px; --shadow: 0 6px 24px rgba(0,0,0,0.35);
+  :root{
+    --bg:#0f1117;--panel:#1a1d27;--panel-2:#232733;--border:#2e3342;
+    --text:#e8eaf0;--muted:#8b90a3;--accent:#4f8cff;--accent-2:#2d6ef0;
+    --ok:#22c55e;--warn:#f59e0b;--err:#ef4444;--radius:12px;
   }
-  * { box-sizing: border-box; }
-  html, body {
-    margin: 0; padding: 0; height: 100%;
-    background: var(--bg); color: var(--text);
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    font-size: 15px; line-height: 1.45; -webkit-font-smoothing: antialiased; -webkit-text-size-adjust: 100%;
-  }
-  .app { max-width: 1100px; margin: 0 auto; padding: 16px; padding-bottom: 96px; }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{font-family:system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--bg);
+       color:var(--text);min-height:100vh;padding:16px;
+       padding-bottom:calc(16px + env(safe-area-inset-bottom))}
+  .app{max-width:1180px;margin:0 auto;display:grid;gap:16px}
 
-  header.topbar {
-    display: flex; flex-direction: column; align-items: center;
-    text-align: center; gap: 6px; padding: 20px 14px;
-    background: var(--panel); border: 1px solid var(--border);
-    border-radius: var(--radius); margin-bottom: 16px;
-    box-shadow: var(--shadow); position: relative;
-  }
-  header.topbar .header-logo { max-width: 140px; height: auto; margin-bottom: 4px; border-radius: 8px; }
-  header.topbar h1 {
-    font-size: 22px; margin: 0; font-weight: 700; letter-spacing: 0.3px;
-    background: linear-gradient(90deg, var(--accent), var(--accent-2));
-    -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
-  }
-  header.topbar .byline { color: var(--muted); font-size: 12px; letter-spacing: 1px; text-transform: uppercase; font-weight: 600; }
-  header.topbar .sub { color: var(--muted); font-size: 12px; margin-top: 4px; }
-  header.topbar .pill { position: absolute; top: 10px; right: 10px; }
-  
-  .pill {
-    display: inline-flex; align-items: center; gap: 6px;
-    padding: 4px 10px; border-radius: 999px; background: var(--panel-2); border: 1px solid var(--border);
-    font-size: 11px; color: var(--muted);
-  }
-  .pill.ok { color: var(--accent-2); border-color: #1e4a3b; }
-  .pill.warn { color: var(--warn); border-color: #4a3a1e; }
+  /* Header */
+  header{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+  h1{font-size:1.25rem;font-weight:600;letter-spacing:-.02em}
+  h1 span{color:var(--muted);font-weight:400;font-size:.85rem;margin-left:8px}
+  .stats{display:flex;gap:8px;flex-wrap:wrap}
+  .stat{background:var(--panel);border:1px solid var(--border);padding:6px 12px;
+        border-radius:8px;font-size:.8rem}
+  .stat b{color:var(--accent);font-variant-numeric:tabular-nums}
 
-  section.card {
-    background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius);
-    padding: 16px; margin-bottom: 16px; box-shadow: var(--shadow);
-  }
-  section.card h2 { font-size: 13px; text-transform: uppercase; letter-spacing: 0.8px; color: var(--muted); margin: 0 0 12px; font-weight: 600; }
-  label.field { display: block; margin-bottom: 12px; }
-  label.field .label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 6px; letter-spacing: 0.3px; }
-  input[type="text"], select {
-    width: 100%; padding: 10px 12px; background: var(--panel-2); border: 1px solid var(--border);
-    border-radius: 8px; color: var(--text); font-size: 16px; font-family: inherit; outline: none;
-    -webkit-appearance: none; appearance: none; transition: border-color 0.15s ease;
-  }
-  input[type="text"]:focus, select:focus { border-color: var(--accent); }
-  .hint { font-size: 12px; color: var(--muted); margin-top: 6px; }
-  .hint.ok { color: var(--accent-2); }
-  .hint.warn { color: var(--warn); }
+  /* Step bar */
+  .step-bar{display:grid;grid-template-columns:repeat(6,1fr);gap:6px}
+  @media(max-width:900px){.step-bar{grid-template-columns:repeat(3,1fr)}}
+  .step-btn{background:var(--panel);border:1px solid var(--border);color:var(--muted);
+            padding:10px 12px;border-radius:10px;text-align:left;cursor:pointer;
+            font-family:inherit;transition:.15s;display:flex;flex-direction:column;gap:2px;position:relative}
+  .step-btn .s-num{font-size:.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase}
+  .step-btn .s-title{font-size:.82rem;font-weight:600;color:var(--text)}
+  .step-btn .s-badge{position:absolute;top:6px;right:8px;font-size:.62rem;
+                     background:var(--ok);color:#fff;padding:1px 6px;border-radius:99px;font-weight:700}
+  .step-btn:hover{background:var(--panel-2)}
+  .step-btn.active{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
+  .step-btn.done .s-num{color:var(--ok)}
+  .step-btn.locked{opacity:.5;cursor:not-allowed}
 
-  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-  @media (max-width: 640px) { .row { grid-template-columns: 1fr; } }
+  /* Card / general */
+  .card{background:var(--panel);border:1px solid var(--border);
+        border-radius:var(--radius);overflow:hidden}
+  .card-head{padding:12px 16px;border-bottom:1px solid var(--border);
+             display:flex;align-items:center;justify-content:space-between;
+             font-size:.8rem;font-weight:600;text-transform:uppercase;
+             letter-spacing:.06em;color:var(--muted)}
+  .card-body{padding:16px}
+  .panel{display:none}
+  .panel.active{display:block}
 
-  button {
-    font-family: inherit; font-size: 15px; padding: 11px 16px; border-radius: 8px; border: 1px solid var(--border);
-    background: var(--panel-2); color: var(--text); cursor: pointer; -webkit-tap-highlight-color: transparent;
-    transition: background 0.15s ease, border-color 0.15s ease, transform 0.05s ease;
-  }
-  button:hover { background: #252b36; }
-  button:active { transform: translateY(1px); }
-  button.primary { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 600; }
-  button.primary:hover { background: #3f7df0; }
-  button.ghost { background: transparent; }
-  button.danger { border-color: #5a2323; color: var(--danger); background: #241717; }
-  button:disabled { opacity: 0.5; cursor: not-allowed; }
+  .btn{background:var(--accent);color:#fff;border:none;padding:10px 18px;
+       border-radius:9px;font-weight:600;font-size:.85rem;cursor:pointer;
+       font-family:inherit;transition:background .15s}
+  .btn:hover{background:var(--accent-2)}
+  .btn.secondary{background:var(--panel-2);color:var(--text);border:1px solid var(--border)}
+  .btn.secondary:hover{background:var(--border)}
+  .btn.danger{background:rgba(239,68,68,.15);color:var(--err)}
+  .btn.danger:hover{background:rgba(239,68,68,.25)}
+  .btn.ok{background:rgba(34,197,94,.15);color:var(--ok)}
+  .btn:disabled{opacity:.4;cursor:not-allowed}
+  .btn-row{display:flex;gap:8px;flex-wrap:wrap}
+  .field{display:grid;gap:6px;margin-bottom:12px}
+  .field label{font-size:.75rem;color:var(--muted);text-transform:uppercase;
+               letter-spacing:.06em;font-weight:600}
+  .field input,.field select{background:var(--bg);border:1px solid var(--border);
+                             color:var(--text);padding:10px 12px;border-radius:9px;
+                             font-family:inherit;font-size:.9rem;width:100%}
+  .field input:focus,.field select:focus{outline:none;border-color:var(--accent)}
+  .file-btn{position:relative;overflow:hidden;display:inline-block}
+  .file-btn input{position:absolute;inset:0;opacity:0;cursor:pointer}
+  .hint-line{font-size:.78rem;color:var(--muted);margin-top:6px}
+  .summary-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;margin-top:12px}
+  .summary-tile{background:var(--panel-2);padding:12px;border-radius:10px;text-align:center}
+  .summary-tile .t-num{font-size:1.4rem;font-weight:700;color:var(--accent);font-variant-numeric:tabular-nums}
+  .summary-tile .t-lbl{font-size:.7rem;color:var(--muted);text-transform:uppercase;
+                       letter-spacing:.06em;margin-top:2px}
 
-  .btn-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  /* Step 1 - Session */
+  .session-pill{display:inline-flex;align-items:center;gap:8px;background:var(--panel-2);
+                padding:6px 12px;border-radius:99px;font-size:.8rem;color:var(--muted)}
+  .session-pill b{color:var(--text)}
 
-  .toggle-wrap {
-    display: flex; align-items: center; justify-content: space-between;
-    background: var(--panel-2); padding: 10px 14px; border-radius: 8px;
-    border: 1px solid var(--border); margin-bottom: 12px;
-  }
-  .toggle-label { font-size: 13px; font-weight: 600; }
-  .toggle-desc { font-size: 11px; color: var(--muted); margin-top: 2px; }
-  .switch { position: relative; display: inline-block; width: 44px; height: 24px; flex-shrink: 0; }
-  .switch input { opacity: 0; width: 0; height: 0; }
-  .slider {
-    position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
-    background-color: #333; transition: .3s; border-radius: 24px;
-  }
-  .slider:before {
-    position: absolute; content: ""; height: 18px; width: 18px;
-    left: 3px; bottom: 3px; background-color: white; transition: .3s; border-radius: 50%;
-  }
-  input:checked + .slider { background-color: var(--accent); }
-  input:checked + .slider:before { transform: translateX(20px); }
+  /* Step 2 - Roster */
+  .roster-list{max-height:440px;overflow-y:auto;border:1px solid var(--border);
+               border-radius:10px}
+  .roster-row{display:grid;grid-template-columns:36px 1fr auto;align-items:center;
+              gap:10px;padding:10px 14px;border-bottom:1px solid var(--border);
+              transition:background .12s;font-size:.85rem}
+  .roster-row:last-child{border-bottom:none}
+  .roster-row.clickable{cursor:pointer}
+  .roster-row.clickable:hover{background:var(--panel-2)}
+  .roster-row.selected{background:rgba(79,140,255,.14);
+                       box-shadow:inset 3px 0 0 var(--accent)}
+  .roster-row.done{opacity:.55}
+  .roster-row.flagged{background:rgba(239,68,68,.06)}
+  .seq-badge{width:26px;height:26px;border-radius:8px;background:var(--panel-2);
+             color:var(--muted);display:grid;place-items:center;font-size:.7rem;
+             font-weight:700;font-variant-numeric:tabular-nums}
+  .roster-row.selected .seq-badge{background:var(--accent);color:#fff}
+  .roster-row.done .seq-badge{background:rgba(34,197,94,.15);color:var(--ok)}
+  .roster-row.flagged .seq-badge{background:rgba(239,68,68,.15);color:var(--err)}
+  .stu-name{font-weight:500}
+  .stu-id{font-size:.72rem;color:var(--muted);font-variant-numeric:tabular-nums}
+  .status-pill{font-size:.68rem;font-weight:600;padding:3px 9px;border-radius:99px;
+               text-transform:uppercase;letter-spacing:.04em;white-space:nowrap}
+  .status-pill.pending{background:var(--panel-2);color:var(--muted)}
+  .status-pill.waiting{background:rgba(245,158,11,.15);color:var(--warn)}
+  .status-pill.scored{background:rgba(34,197,94,.15);color:var(--ok)}
+  .status-pill.flagged{background:rgba(239,68,68,.15);color:var(--err)}
+  .empty-state{padding:32px 16px;text-align:center;color:var(--muted);font-size:.85rem}
 
-  .export-menu { position: relative; display: inline-block; }
-  #exportOptions {
-    position: absolute; top: calc(100% + 4px); right: 0; background: var(--panel-2); border: 1px solid var(--border);
-    border-radius: 8px; list-style: none; margin: 0; padding: 4px 0; min-width: 220px; box-shadow: var(--shadow); z-index: 10;
-  }
-  #exportOptions li { padding: 9px 14px; cursor: pointer; font-size: 14px; color: var(--text); }
-  #exportOptions li:hover { background: #2a3140; }
+  /* Step 3 - Master key */
+  .key-strip{display:flex;gap:4px;flex-wrap:wrap;padding:12px;background:var(--bg);
+             border:1px solid var(--border);border-radius:10px;min-height:60px}
+  .key-bubble{width:28px;height:28px;border-radius:6px;display:grid;place-items:center;
+              font-size:.75rem;font-weight:700;font-variant-numeric:tabular-nums;
+              background:var(--panel-2);color:var(--muted)}
+  .key-bubble.on{background:var(--ok);color:#fff}
+  .key-bubble.off{background:rgba(239,68,68,.2);color:var(--err)}
+  .key-bubble .knum{position:absolute;font-size:.5rem}
 
-  .roster-wrap { max-height: 360px; overflow: auto; border: 1px solid var(--border); border-radius: 8px; background: var(--panel-2); -webkit-overflow-scrolling: touch; }
-  table.roster { width: 100%; border-collapse: collapse; font-size: 13px; }
-  table.roster th, table.roster td { padding: 8px 10px; text-align: left; border-bottom: 1px solid var(--border); white-space: nowrap; }
-  table.roster th {
-    position: sticky; top: 0; background: #20252f; color: var(--muted); font-weight: 600;
-    font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; z-index: 1;
-  }
-  table.roster tr:last-child td { border-bottom: none; }
-  table.roster td.score { font-variant-numeric: tabular-nums; font-weight: 600; color: var(--accent-2); }
-  table.roster td.score.empty { color: var(--muted); font-weight: 400; }
-  .empty-state { padding: 28px 16px; text-align: center; color: var(--muted); font-size: 13px; }
+  /* Step 4 - Capture */
+  .mode-bar{display:grid;grid-template-columns:repeat(3,1fr);background:var(--panel-2);
+            border:1px solid var(--border);border-radius:10px;padding:4px;gap:4px;
+            margin-bottom:10px}
+  .mode-btn{background:transparent;border:none;color:var(--muted);padding:10px 10px;
+            border-radius:8px;cursor:pointer;font-size:.8rem;text-align:left;
+            display:flex;flex-direction:column;gap:2px;font-family:inherit;
+            transition:background .15s}
+  .mode-btn .m-title{font-weight:600;color:var(--text);font-size:.82rem}
+  .mode-btn .m-desc{font-size:.68rem;color:var(--muted)}
+  .mode-btn:hover{background:var(--border)}
+  .mode-btn.active{background:var(--accent)}
+  .mode-btn.active .m-title,.mode-btn.active .m-desc{color:#fff}
+  .mode-btn.active .m-desc{opacity:.85}
 
-  .camera-wrap {
-    position: relative; width: 100%; height: calc(100vh - 340px); min-height: 420px; max-height: 720px;
-    background: #000; border-radius: var(--radius); overflow: hidden; display: flex; align-items: center; justify-content: center;
-  }
-  @media (max-width: 480px) { .camera-wrap { height: calc(100vh - 320px); min-height: 360px; } }
-  .camera-wrap video, .camera-wrap #freezeFrame { width: 100%; height: 100%; object-fit: cover; display: block; }
-  #freezeFrame { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 2; }
-  .camera-overlay { position: absolute; inset: 0; pointer-events: none; display: flex; align-items: center; justify-content: center; z-index: 1; }
-  .camera-overlay .frame { width: auto; height: 88%; aspect-ratio: 4 / 5; border: 2px dashed rgba(79, 140, 255, 0.7); border-radius: 10px; position: relative; }
-  .camera-overlay .frame::before, .camera-overlay .frame::after, .camera-overlay .frame .corner-bl, .camera-overlay .frame .corner-br { content: ""; position: absolute; width: 26px; height: 26px; border: 3px solid var(--accent); }
-  .camera-overlay .frame::before { top: -3px; left: -3px; border-right: none; border-bottom: none; border-top-left-radius: 10px; }
-  .camera-overlay .frame::after { top: -3px; right: -3px; border-left: none; border-bottom: none; border-top-right-radius: 10px; }
-  .camera-overlay .frame .corner-bl { bottom: -3px; left: -3px; border-right: none; border-top: none; border-bottom-left-radius: 10px; }
-  .camera-overlay .frame .corner-br { bottom: -3px; right: -3px; border-left: none; border-top: none; border-bottom-right-radius: 10px; }
-  .camera-hint { position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.6); color: #fff; font-size: 12px; padding: 4px 10px; border-radius: 999px; white-space: nowrap; z-index: 1; }
+  .scanner{position:relative;aspect-ratio:4/3;background:#000;
+           display:grid;place-items:center;overflow:hidden;border-radius:10px}
+  .scanner video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+  .scan-frame{position:absolute;inset:10%;border:2px dashed rgba(79,140,255,.5);
+              border-radius:10px;pointer-events:none;z-index:2;
+              animation:pulse 2.4s ease-in-out infinite}
+  @keyframes pulse{0%,100%{border-color:rgba(79,140,255,.25)}
+                   50%{border-color:rgba(79,140,255,.75)}}
+  .scan-frame::before{content:"";position:absolute;left:0;right:0;height:2px;top:0;
+    background:linear-gradient(90deg,transparent,var(--accent),transparent);
+    box-shadow:0 0 12px var(--accent);animation:sweep 2.2s linear infinite}
+  @keyframes sweep{0%{transform:translateY(0);opacity:0}
+                   15%,85%{opacity:1}
+                   100%{transform:translateY(180px);opacity:0}}
+  .cam-overlay{position:relative;z-index:3;text-align:center;color:#fff;
+               text-shadow:0 2px 8px rgba(0,0,0,.9);padding:16px;max-width:90%;
+               pointer-events:none}
+  .cam-overlay b{display:block;margin-bottom:4px;font-size:.95rem}
+  .pulse-dot{display:inline-block;width:8px;height:8px;border-radius:50%;
+             background:var(--ok);margin-right:6px;animation:blink 1.2s ease-in-out infinite}
+  @keyframes blink{50%{opacity:.25}}
+  .cam-off{position:absolute;inset:0;display:grid;place-items:center;z-index:4;
+           background:radial-gradient(circle at 50% 40%,#1c2030,#05070c);text-align:center;padding:24px}
+  .cam-off b{display:block;margin-bottom:8px}
+  .cam-off p{color:var(--muted);font-size:.8rem;margin-bottom:16px}
 
-  .result-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.55); display: flex; align-items: center; justify-content: center; padding: 16px; z-index: 5; }
-  .result-card { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; text-align: center; width: 100%; max-width: 340px; box-shadow: var(--shadow); }
-  .result-student { color: var(--muted); font-size: 13px; margin-bottom: 6px; }
-  .result-score { font-size: 32px; font-weight: 700; color: var(--accent-2); font-variant-numeric: tabular-nums; }
+  .capture-grid{display:grid;grid-template-columns:420px 1fr;gap:16px}
+  @media(max-width:900px){.capture-grid{grid-template-columns:1fr}}
+  .scanner-controls{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+  .scanner-controls .btn{flex:1;min-width:100px}
+  .next-target{padding:10px 0;font-size:.8rem;color:var(--muted);
+               display:flex;justify-content:space-between;align-items:center;
+               border-top:1px solid var(--border);margin-top:10px;padding-top:12px}
+  .next-target b{color:var(--text)}
+  .manual-prompt{padding:10px;margin-top:8px;text-align:center;color:var(--muted);
+                 font-size:.8rem;border-radius:8px}
+  .manual-prompt.active{color:var(--accent);background:rgba(79,140,255,.06)}
 
-  .log { background: #0b0d11; border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 12px; color: #b8c0d0; max-height: 200px; overflow: auto; white-space: pre-wrap; word-break: break-word; -webkit-overflow-scrolling: touch; }
-  .log .t { color: var(--muted); }
-  .log .ok { color: var(--accent-2); }
-  .log .err { color: var(--danger); }
-  .log .warn { color: var(--warn); }
+  /* Step 5 - Export */
+  .export-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  @media(max-width:900px){.export-grid{grid-template-columns:1fr}}
 
-  .toast { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%) translateY(20px); background: var(--panel-2); border: 1px solid var(--border); color: var(--text); padding: 10px 16px; border-radius: 8px; box-shadow: var(--shadow); font-size: 13px; opacity: 0; pointer-events: none; transition: opacity 0.2s ease, transform 0.2s ease; z-index: 100; max-width: 90vw; }
-  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-  .toast.ok { border-color: #1e4a3b; }
-  .toast.err { border-color: #5a2323; }
+  /* Step 6 - Log */
+  .log-list{max-height:400px;overflow-y:auto;background:var(--bg);
+            border:1px solid var(--border);border-radius:10px;padding:8px}
+  .log-row{display:flex;gap:10px;padding:6px 10px;font-size:.78rem;border-radius:6px}
+  .log-row:nth-child(odd){background:rgba(255,255,255,.02)}
+  .log-row .l-time{color:var(--muted);font-variant-numeric:tabular-nums;min-width:70px}
+  .log-row.warn{color:var(--warn)}
+  .log-row.err{color:var(--err)}
+  .log-row.ok{color:var(--text)}
 
-  .modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: none; align-items: center; justify-content: center; z-index: 50; padding: 16px; }
-  .modal-backdrop.show { display: flex; }
-  .modal { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); width: 100%; max-width: 480px; padding: 18px; max-height: 90vh; overflow: auto; }
-  .modal h3 { margin: 0 0 8px; font-size: 16px; }
-  .modal p { margin: 0 0 14px; color: var(--muted); font-size: 13px; white-space: pre-wrap; }
-  .divider { height: 1px; background: var(--border); margin: 14px 0; }
+  /* Review table (step 5) */
+  .review-table{width:100%;border-collapse:collapse;font-size:.82rem}
+  .review-table th{text-align:left;padding:8px 10px;border-bottom:1px solid var(--border);
+                   color:var(--muted);font-size:.7rem;text-transform:uppercase;
+                   letter-spacing:.06em;font-weight:600}
+  .review-table td{padding:8px 10px;border-bottom:1px solid var(--border)}
+  .review-table tr:last-child td{border-bottom:none}
+  .review-table tr.done td:first-child{color:var(--ok)}
+  .review-table tr.flagged td:first-child{color:var(--err)}
+  .review-table .score-cell{text-align:right;font-variant-numeric:tabular-nums;font-weight:600}
 
-  footer.footer-note { text-align: center; color: var(--muted); font-size: 12px; margin-top: 24px; padding: 16px 8px; border-top: 1px solid var(--border); line-height: 1.7; }
-  footer.footer-note .brand { background: linear-gradient(90deg, var(--accent), var(--accent-2)); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; font-weight: 600; }
-  footer.footer-note .tag { color: var(--accent); font-weight: 600; }
+  /* Keypad Modal */
+  .modal{position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:100;
+         display:none;place-items:center;padding:20px;backdrop-filter:blur(4px)}
+  .modal.open{display:grid}
+  .modal-box{background:var(--panel);border:1px solid var(--border);
+             border-radius:16px;padding:24px;max-width:360px;width:100%}
+  .modal-box h3{font-size:1rem;margin-bottom:4px}
+  .modal-box p{color:var(--muted);font-size:.8rem;margin-bottom:16px}
+  .id-display{background:var(--bg);border:1px solid var(--border);
+              border-radius:10px;padding:16px;text-align:center;
+              font-size:1.5rem;font-weight:700;letter-spacing:.15em;
+              font-variant-numeric:tabular-nums;margin-bottom:16px;min-height:60px}
+  .keypad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+  .key{background:var(--panel-2);border:none;color:var(--text);padding:16px;
+       border-radius:10px;font-size:1.1rem;font-weight:600;cursor:pointer;
+       font-family:inherit;transition:background .1s}
+  .key:hover{background:var(--border)}
+  .key.clear{color:var(--warn)}
+  .key.enter{background:var(--accent);color:#fff}
+  .key.enter:hover{background:var(--accent-2)}
 
-  .visually-hidden { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
-
-  .key-grid { max-height: 340px; overflow: auto; border: 1px solid var(--border); border-radius: 8px; background: var(--panel-2); padding: 8px; -webkit-overflow-scrolling: touch; }
-  .key-row { display: flex; align-items: center; gap: 10px; padding: 4px 6px; border-bottom: 1px solid var(--border); }
-  .key-row:last-child { border-bottom: none; }
-  .key-num { width: 32px; text-align: right; color: var(--muted); font-variant-numeric: tabular-nums; font-size: 12px; }
-  .key-bubbles { display: flex; gap: 6px; flex-wrap: wrap; }
-  .key-bubble {
-    width: 38px; height: 38px; border-radius: 50%; border: 1px solid var(--border); background: transparent;
-    color: var(--text); font-weight: 600; font-size: 14px; cursor: pointer; padding: 0; -webkit-tap-highlight-color: transparent;
-    transition: background 0.12s ease, border-color 0.12s ease, transform 0.05s ease;
-  }
-  .key-bubble:hover { background: #2a3140; }
-  .key-bubble.active { background: var(--accent); border-color: var(--accent); color: #fff; transform: scale(1.05); }
+  .footer-note{text-align:center;color:var(--muted);font-size:.72rem;padding:4px}
 </style>
 </head>
 <body>
 <div class="app">
 
-  <header class="topbar">
-    <span id="netPill" class="pill ok">● Offline-ready</span>
-    <!-- The logo will load from the same folder as index.html -->
-    <img src="logo.jpg" alt="explainexplore Logo" class="header-logo" />
-    <h1>TestCheckerCIES</h1>
-    <div class="byline">by explainexplore</div>
-    <div class="sub">Offline bubble sheet checker &middot; CSV / XLSX / Email</div>
+  <header>
+    <h1>TestCheckerCIES <span>Offline bubble sheet checker</span></h1>
+    <div class="stats">
+      <div class="stat">Scored <b id="stScored">0</b>/<b id="stTotal">0</b></div>
+      <div class="stat">Flagged <b id="stFlagged">0</b></div>
+      <div class="stat">Items <b id="stItems">—</b></div>
+    </div>
   </header>
 
-  <section class="card">
-    <h2>1 &middot; Session</h2>
-    <label class="field">
-      <span class="label">Class Info (Grade Level - Class Section)</span>
-      <input id="classInfo" type="text" placeholder="Grade 11 - ASSH4" autocomplete="off" autocapitalize="words" />
-    </label>
-    <label class="field">
-      <span class="label">Test Context (Subject - Term - Test)</span>
-      <input id="testContext" type="text" placeholder="General Mathematics - T1 - WW1" autocomplete="off" />
-      <div class="hint">Leave blank for roster-only mode. Fill in to enable key capture and scoring.</div>
-    </label>
-    <div class="btn-row">
-      <button id="applySessionBtn" class="primary">Apply Session</button>
-      <button id="clearSessionBtn" class="ghost">Reset</button>
-    </div>
-    <div id="sessionSummary" class="hint" style="margin-top:10px;"></div>
-  </section>
+  <!-- Step bar -->
+  <div class="step-bar" id="stepBar">
+    <button class="step-btn active" data-step="session">
+      <span class="s-num">Step 1</span>
+      <span class="s-title">Session</span>
+    </button>
+    <button class="step-btn" data-step="roster">
+      <span class="s-num">Step 2</span>
+      <span class="s-title">Roster</span>
+    </button>
+    <button class="step-btn" data-step="key">
+      <span class="s-num">Step 3</span>
+      <span class="s-title">Master Key</span>
+    </button>
+    <button class="step-btn" data-step="capture">
+      <span class="s-num">Step 4</span>
+      <span class="s-title">Capture</span>
+    </button>
+    <button class="step-btn" data-step="export">
+      <span class="s-num">Step 5</span>
+      <span class="s-title">Export &amp; Send</span>
+    </button>
+    <button class="step-btn" data-step="log">
+      <span class="s-num">Step 6</span>
+      <span class="s-title">Activity Log</span>
+    </button>
+  </div>
 
-  <section class="card">
-    <h2>2 &middot; Roster</h2>
-    <div class="btn-row" style="margin-bottom:12px;">
-      <button id="importRosterBtn">Import Roster (CSV / XLSX)</button>
-      <button id="downloadTemplateBtn" class="ghost">Download Roster Template</button>
-      <button id="clearRosterBtn" class="ghost danger">Clear Roster</button>
-      <input id="rosterFile" type="file" accept=".csv,.xlsx,.xls" class="visually-hidden" />
-    </div>
-    <div id="rosterWrap" class="roster-wrap">
-      <div class="empty-state">No roster loaded. Import a CSV/XLSX with columns: No, Gender, LastName, FirstName, MiddleName.</div>
-    </div>
-  </section>
-
-  <section class="card">
-    <h2>3 &middot; Master Answer Key</h2>
-    <div id="answerKeyStatus" class="hint" style="margin-bottom:10px;">No key defined.</div>
-    <div class="btn-row" style="margin-bottom:10px;">
-      <button id="captureKeyBtn" class="primary" disabled>📷 Capture Master Answer Key</button>
-      <button id="keyImportBtn">Import Key (CSV / XLSX)</button>
-      <button id="keyExportBtn" class="ghost">Download Key Template</button>
-      <button id="keyClearBtn" class="ghost danger">Clear Key</button>
-      <input id="keyFile" type="file" accept=".csv,.xlsx,.xls" class="visually-hidden" />
-    </div>
-    <div class="divider"></div>
-    <div class="row">
-      <label class="field">
-        <span class="label">Manual: Number of Items</span>
-        <input id="keyTotalItems" type="text" placeholder="20" inputmode="numeric" />
-      </label>
-      <label class="field">
-        <span class="label">Choices</span>
-        <input id="keyChoices" type="text" placeholder="A,B,C,D" value="A,B,C,D" />
-      </label>
-    </div>
-    <div class="btn-row" style="margin-bottom:12px;">
-      <button id="keyInitBtn">Set / Resize Key (Manual)</button>
-    </div>
-    <div id="answerKeyGrid" class="key-grid">
-      <div class="empty-state">Capture the master key from camera, import a key file, or set items manually.</div>
-    </div>
-  </section>
-
-  <section class="card">
-    <h2>4 &middot; Capture</h2>
-    
-    <div class="toggle-wrap">
-      <div>
-        <div class="toggle-label">Binary ID Mode</div>
-        <div class="toggle-desc">Reads the 32/16/8/4/2/1 bubbles to match the student.</div>
+  <!-- ============ STEP 1: SESSION ============ -->
+  <section class="panel active" data-panel="session">
+    <div class="card">
+      <div class="card-head">
+        <span>1 · Session</span>
+        <span class="session-pill" id="sessionPill">No session set</span>
       </div>
-      <label class="switch">
-        <input type="checkbox" id="binaryModeToggle" />
-        <span class="slider"></span>
-      </label>
-    </div>
-
-    <div class="camera-wrap" id="cameraWrap">
-      <video id="video" playsinline webkit-playsinline autoplay muted></video>
-      <img id="freezeFrame" alt="" />
-      <canvas id="snapshot" style="display:none;"></canvas>
-
-      <div class="camera-overlay" id="cameraOverlay" style="display:none;">
-        <div class="frame">
-          <span class="corner-bl"></span>
-          <span class="corner-br"></span>
+      <div class="card-body">
+        <div class="field">
+          <label for="sessionName">Session name</label>
+          <input id="sessionName" type="text" placeholder="e.g. Grade 8 – Math Q2 – Period 3" />
         </div>
-        <div class="camera-hint" id="cameraHint">Align the sheet inside the frame</div>
+        <div class="field">
+          <label for="sessionDate">Date</label>
+          <input id="sessionDate" type="date" />
+        </div>
+        <div class="field">
+          <label for="sessionNotes">Notes (optional)</label>
+          <input id="sessionNotes" type="text" placeholder="Any notes about this session…" />
+        </div>
+        <div class="btn-row" style="margin-top:8px">
+          <button class="btn" id="saveSessionBtn">Save Session</button>
+          <button class="btn secondary" id="clearSessionBtn">Clear</button>
+        </div>
       </div>
+    </div>
+  </section>
 
-      <div id="cameraIdle" class="empty-state" style="color:#8b93a7; z-index:3; position:relative;">
-        Camera off. Tap "Start Camera" to begin.
+  <!-- ============ STEP 2: ROSTER ============ -->
+  <section class="panel" data-panel="roster">
+    <div class="card">
+      <div class="card-head">
+        <span>2 · Roster</span>
+        <span id="rosterMeta" style="font-size:.7rem;color:var(--muted);text-transform:none;letter-spacing:0">No roster loaded</span>
       </div>
+      <div class="card-body">
+        <div class="btn-row" style="margin-bottom:12px">
+          <label class="btn secondary file-btn">
+            Import CSV / XLSX
+            <input type="file" id="rosterFile" accept=".csv,.txt,.xlsx,.xls" />
+          </label>
+          <button class="btn secondary" id="sampleRosterBtn">Load Sample Roster</button>
+          <button class="btn secondary" id="clearRosterBtn">Clear Roster</button>
+        </div>
+        <p class="hint-line">
+          Columns: <b>No, Gender, LastName, FirstName, MiddleName, [items…], total</b>.
+          A row with <b>KEY</b> in the No column is treated as the answer key (1=correct, 0=wrong).
+        </p>
+        <div class="roster-list" id="rosterList" style="margin-top:12px">
+          <div class="empty-state">No roster loaded. Import a CSV/XLSX to begin.</div>
+        </div>
+      </div>
+    </div>
+  </section>
 
-      <div id="resultOverlay" class="result-overlay" style="display:none;">
-        <div class="result-card">
-          <div id="resultStudent" class="result-student"></div>
-          <div id="resultScore" class="result-score"></div>
-          <div class="btn-row" style="justify-content:center; margin-top:14px;">
-            <button id="rescanBtn" class="ghost danger">✗ Re-scan</button>
-            <button id="acceptBtn" class="primary">✓ Accept &amp; Next</button>
+  <!-- ============ STEP 3: MASTER KEY ============ -->
+  <section class="panel" data-panel="key">
+    <div class="card">
+      <div class="card-head">
+        <span>3 · Master Answer Key</span>
+        <span id="keyMeta" style="font-size:.7rem;color:var(--muted);text-transform:none;letter-spacing:0">No key defined</span>
+      </div>
+      <div class="card-body">
+        <p class="hint-line" style="margin-bottom:12px">
+          Capture the master key from camera, import a key file, or set items manually.
+        </p>
+        <div class="btn-row" style="margin-bottom:12px">
+          <button class="btn" id="captureKeyBtn">Capture from Camera</button>
+          <label class="btn secondary file-btn">
+            Import Key File
+            <input type="file" id="keyFile" accept=".csv,.txt" />
+          </label>
+          <button class="btn secondary" id="clearKeyBtn">Clear Key</button>
+        </div>
+
+        <div class="field">
+          <label>Items (1 = correct, 0 = wrong) — tap a bubble to toggle</label>
+          <div class="key-strip" id="keyStrip">
+            <span class="hint-line">No key items yet — capture or import one, or click "Add Item" below.</span>
+          </div>
+        </div>
+
+        <div class="btn-row">
+          <button class="btn secondary" id="addItemBtn">+ Add Item</button>
+          <button class="btn secondary" id="trimItemBtn">− Remove Last</button>
+          <button class="btn" id="fillKeyFromRosterBtn" disabled>Use Roster Key Row</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ STEP 4: CAPTURE ============ -->
+  <section class="panel" data-panel="capture">
+    <div class="card">
+      <div class="card-head">
+        <span>4 · Capture</span>
+        <span id="camStatus" style="font-size:.7rem;color:var(--muted);text-transform:none;letter-spacing:0">offline</span>
+      </div>
+      <div class="card-body">
+
+        <!-- 3-mode segmented control -->
+        <div class="mode-bar" role="tablist" id="captureModeBar">
+          <button class="mode-btn active" data-mode="binary" role="tab">
+            <span class="m-title">1 · Binary ID</span>
+            <span class="m-desc">Default — reads ID bubbles to match</span>
+          </button>
+          <button class="mode-btn" data-mode="auto" role="tab">
+            <span class="m-title">2 · Auto-Sequence</span>
+            <span class="m-desc">Ordered stack — auto-advances</span>
+          </button>
+          <button class="mode-btn" data-mode="manual" role="tab">
+            <span class="m-title">3 · Manual Select</span>
+            <span class="m-desc">Rescue — tap a roster name, then scan</span>
+          </button>
+        </div>
+
+        <div class="capture-grid">
+          <div>
+            <div class="scanner">
+              <video id="video" autoplay playsinline muted></video>
+              <div class="scan-frame"></div>
+              <div class="cam-overlay" id="camOverlay">
+                <b><span class="pulse-dot"></span><span id="overlayTitle">Binary ID</span></b>
+                <span id="overlayHint">Ready to scan.</span>
+              </div>
+              <div class="cam-off" id="camOff">
+                <div>
+                  <b>Camera offline</b>
+                  <p>Tap "Start Camera" to begin.</p>
+                  <button class="btn" id="startCamBtn">Start Camera</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="scanner-controls">
+              <button class="btn" id="scanBtn" disabled>Capture Sheet</button>
+              <button class="btn secondary" id="idKeypadBtn">Enter ID</button>
+              <button class="btn danger" id="flagBtn">Flag &amp; Skip</button>
+            </div>
+
+            <div class="next-target">
+              <span>Next target</span>
+              <b id="nextTarget">—</b>
+            </div>
+            <div class="manual-prompt" id="manualPrompt">
+              Load a roster in Step 2, then tap a name to arm the scanner.
+            </div>
+          </div>
+
+          <div>
+            <div class="card-head" style="padding-left:0;border:none">
+              <span>Roster (tap in Mode 3)</span>
+              <span id="rosterModeLabel" style="font-size:.7rem;color:var(--muted);text-transform:none;letter-spacing:0">auto-assigned</span>
+            </div>
+            <div class="roster-list" id="captureRosterList" style="max-height:520px">
+              <div class="empty-state">No roster loaded yet.</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ STEP 5: EXPORT ============ -->
+  <section class="panel" data-panel="export">
+    <div class="card">
+      <div class="card-head">
+        <span>5 · Export &amp; Send</span>
+      </div>
+      <div class="card-body">
+        <div class="summary-grid" id="summaryGrid"></div>
+
+        <div class="export-grid" style="margin-top:16px">
+          <div>
+            <div class="btn-row" style="margin-bottom:12px">
+              <button class="btn" id="exportCsvBtn">Download Results CSV</button>
+              <button class="btn secondary" id="exportJsonBtn">Download JSON</button>
+              <button class="btn secondary" id="exportSummaryBtn">Download Summary CSV</button>
+            </div>
+            <p class="hint-line">
+              Results CSV mirrors the roster input, with each item's detected 0/1 and the total score filled in.
+            </p>
+          </div>
+          <div>
+            <div class="review-table-wrap" style="max-height:320px;overflow-y:auto;
+                       border:1px solid var(--border);border-radius:10px">
+              <table class="review-table">
+                <thead>
+                  <tr><th>Name</th><th>ID</th><th style="text-align:right">Score</th></tr>
+                </thead>
+                <tbody id="reviewBody">
+                  <tr><td colspan="3" style="text-align:center;color:var(--muted);padding:24px">
+                    No results yet.
+                  </td></tr>
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       </div>
     </div>
-
-    <div class="btn-row" style="margin-top:12px;">
-      <button id="startCameraBtn" class="primary">Start Camera</button>
-      <button id="stopCameraBtn" class="ghost" disabled>Stop Camera</button>
-      <button id="switchCameraBtn" class="ghost" disabled>Switch Camera</button>
-    </div>
-
-    <div class="divider"></div>
-
-    <div class="btn-row">
-      <button id="scanScoreBtn" class="primary" disabled>✓ Scan &amp; Score Student</button>
-      <button id="scanAllBtn" class="ghost" disabled>Auto-fill All Remaining (Demo)</button>
-    </div>
-
-    <div id="modeStatus" class="hint" style="margin-top:10px;">
-      Step 1: capture the master answer key. Step 2: scan student sheets.
-    </div>
   </section>
 
-  <section class="card">
-    <h2>5 &middot; Export &amp; Send</h2>
-    <div class="btn-row">
-      <div class="export-menu">
-        <button id="exportBtn" class="primary" aria-haspopup="true" aria-expanded="false">Export ▾</button>
-        <ul id="exportOptions" role="menu" hidden>
-          <li role="menuitem" data-format="csv">📄 CSV (.csv)</li>
-          <li role="menuitem" data-format="xlsx">📊 Excel (.xlsx)</li>
-          <li style="padding:0;"><hr style="border:0; border-top:1px solid var(--border); margin:4px 0;"></li>
-          <li role="menuitem" data-format="email">📧 Send to Email</li>
-        </ul>
+  <!-- ============ STEP 6: LOG ============ -->
+  <section class="panel" data-panel="log">
+    <div class="card">
+      <div class="card-head">
+        <span>6 · Activity Log</span>
+        <button class="btn secondary" id="clearLogBtn" style="padding:4px 10px;font-size:.7rem">Clear</button>
       </div>
-      <button id="exportKeyBtn" class="ghost">Export Answer Key</button>
-      <button id="copyJsonBtn" class="ghost">Copy JSON</button>
-      <button id="clearScoresBtn" class="ghost danger">Clear Scores</button>
+      <div class="card-body">
+        <div class="log-list" id="logList">
+          <div class="log-row ok">
+            <span class="l-time">--:--:--</span>
+            <span>TestCheckerCIES ready.</span>
+          </div>
+        </div>
+      </div>
     </div>
   </section>
 
-  <section class="card">
-    <h2>6 &middot; Activity Log</h2>
-    <div id="log" class="log"></div>
-  </section>
-
-  <footer class="footer-note">
-    Developed by <span class="brand">Neljohn</span> and <span class="brand">DeepSeek</span><br>
-    <span class="brand">explainexplore</span> Project2 &nbsp;<span class="tag">#TechieTeacher</span>
-  </footer>
+  <div class="footer-note">
+    All data stays in your browser (localStorage). Offline-first.
+  </div>
 </div>
 
-<div class="modal-backdrop" id="modalBackdrop">
-  <div class="modal">
-    <h3 id="modalTitle">Confirm</h3>
-    <p id="modalBody">Are you sure?</p>
-    <div class="btn-row" style="justify-content:flex-end;">
-      <button id="modalCancel" class="ghost">Cancel</button>
-      <button id="modalConfirm" class="primary">Confirm</button>
+<!-- ============ ID KEYPAD MODAL ============ -->
+<div class="modal" id="idModal">
+  <div class="modal-box">
+    <h3>Enter Student ID</h3>
+    <p>Type the ID (or last digits) shown on the paper.</p>
+    <div class="id-display" id="idDisplay">—</div>
+    <div class="keypad" id="keypad"></div>
+    <div class="btn-row" style="margin-top:16px">
+      <button class="btn secondary" id="idCancel" style="flex:1">Cancel</button>
+      <button class="btn" id="idSubmit" style="flex:1">Match</button>
     </div>
   </div>
 </div>
 
-<div id="toast" class="toast"></div>
-
 <script>
-/* =========================================================
-   TestCheckerCIES — explainexplore Project2
-   Developed by Neljohn and DeepSeek
-   ========================================================= */
+/* ============================================================
+   TESTCHECKERCIES — Full app
+   ============================================================ */
+(function(){
+  'use strict';
 
-const EMAIL_CONFIG = {
-  to: "neljohn@example.com", 
-  subjectPrefix: "TestCheckerCIES Scores",
-};
+  const STORAGE_KEY = 'testchecker-cies-v3';
 
-const $ = (sel) => document.querySelector(sel);
-
-const state = {
-  meta: { grade: "", section: "", subject: "", term: "", test: "" },
-  students: [],
-  answerKey: { testTitle: "", totalItems: 0, choices: ["A", "B", "C", "D"], answers: {}, capturedAt: null },
-  cameraStream: null,
-  facingMode: "environment",
-  logLines: [],
-  pendingReview: null,
-  binaryMode: false, 
-};
-
-/* ------------------------- Utils ------------------------- */
-function nowStamp() {
-  const d = new Date();
-  const pad = (n) => String(n).padStart(2, "0");
-  return `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
-}
-function log(msg, kind = "") {
-  const line = `<span class="t">[${nowStamp()}]</span> <span class="${kind}">${escapeHtml(msg)}</span>`;
-  state.logLines.push(line);
-  const el = $("#log");
-  el.innerHTML = state.logLines.slice(-200).join("\n");
-  el.scrollTop = el.scrollHeight;
-}
-function escapeHtml(s) {
-  return String(s).replace(/[&<>"']/g, (c) => ({
-    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;",
-  }[c]));
-}
-let toastTimer = null;
-function toast(msg, kind = "") {
-  const el = $("#toast");
-  el.textContent = msg;
-  el.className = "toast show " + kind;
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => { el.className = "toast " + kind; }, 2400);
-}
-function confirmModal(title, body) {
-  return new Promise((resolve) => {
-    $("#modalTitle").textContent = title;
-    $("#modalBody").textContent = body;
-    $("#modalBackdrop").classList.add("show");
-    const cleanup = () => {
-      $("#modalBackdrop").classList.remove("show");
-      $("#modalConfirm").removeEventListener("click", onYes);
-      $("#modalCancel").removeEventListener("click", onNo);
-    };
-    const onYes = () => { cleanup(); resolve(true); };
-    const onNo = () => { cleanup(); resolve(false); };
-    $("#modalConfirm").addEventListener("click", onYes);
-    $("#modalCancel").addEventListener("click", onNo);
-  });
-}
-
-/* ------------------- Class identifier -------------------- */
-function buildIdentifier() {
-  const parts = [state.meta.grade && `Grade ${state.meta.grade}`, state.meta.section, state.meta.subject, state.meta.term, state.meta.test].filter(Boolean);
-  return parts.join(" - ");
-}
-function buildFilenameStem() {
-  const parts = [state.meta.grade && `Grade${state.meta.grade}`, state.meta.section, state.meta.subject && state.meta.subject.replace(/\s+/g, ""), state.meta.term, state.meta.test].filter(Boolean);
-  return (parts.join("-") || "TestCheckerCIES") + "_scores";
-}
-function parseClassInfo(raw) {
-  const parts = raw.split("-").map((s) => s.trim()).filter(Boolean);
-  const out = { grade: "", section: "" };
-  if (!parts.length) return out;
-  let i = 0;
-  const gm = parts[0].match(/^grade\s*(\d+)$/i);
-  if (gm) { out.grade = gm[1]; i = 1; }
-  if (parts[i]) out.section = parts[i];
-  return out;
-}
-function parseTestContext(raw) {
-  const parts = raw.split("-").map((s) => s.trim()).filter(Boolean);
-  const out = { subject: "", term: "", test: "" };
-  if (!parts.length) return out;
-  if (parts.length >= 3) {
-    out.test = parts[parts.length - 1];
-    out.term = parts[parts.length - 2];
-    out.subject = parts.slice(0, parts.length - 2).join(" - ");
-  } else if (parts.length === 2) {
-    out.term = parts[0]; out.test = parts[1];
-  } else out.subject = parts[0];
-  return out;
-}
-
-/* --------------------- Session UI ------------------------ */
-function applySession() {
-  const c = parseClassInfo($("#classInfo").value.trim());
-  const t = parseTestContext($("#testContext").value.trim());
-  state.meta.grade = c.grade;
-  state.meta.section = c.section;
-  state.meta.subject = t.subject;
-  state.meta.term = t.term;
-  state.meta.test = t.test;
-  renderSessionSummary();
-  refreshCaptureButtons();
-  log(`Session applied: ${buildIdentifier() || "(empty)"}`, "ok");
-}
-function renderSessionSummary() {
-  const id = buildIdentifier();
-  const el = $("#sessionSummary");
-  if (!id) { el.textContent = "No session set."; return; }
-  const target = state.meta.term && state.meta.test ? `Target column: ${state.meta.term}_${state.meta.test}` : "Roster-only mode (no test selected)";
-  el.innerHTML = `Identifier: <strong>${escapeHtml(id)}</strong><br>${escapeHtml(target)}`;
-}
-function resetSession() {
-  $("#classInfo").value = "";
-  $("#testContext").value = "";
-  state.meta = { grade: "", section: "", subject: "", term: "", test: "" };
-  renderSessionSummary();
-  refreshCaptureButtons();
-  log("Session reset.");
-}
-
-/* ------------------- Roster import ----------------------- */
-function normalizeHeader(h) {
-  return String(h || "").trim().toLowerCase().replace(/\s+/g, "");
-}
-function rowsFromJsonArray(rawRows) {
-  const map = { no: "no", number: "no", gender: "gender", sex: "gender", lastname: "lastName", surname: "lastName", firstname: "firstName", givenname: "firstName", middlename: "middleName" };
-  return rawRows.map((r, idx) => {
-    const out = { no: idx + 1, gender: "", lastName: "", firstName: "", middleName: "", score: null };
-    for (const [k, v] of Object.entries(r)) {
-      const key = map[normalizeHeader(k)];
-      if (!key) continue;
-      if (key === "no") {
-        const n = parseInt(v, 10);
-        if (!isNaN(n)) out.no = n;
-      } else out[key] = v == null ? "" : String(v).trim();
-    }
-    return out;
-  }).filter((s) => s.lastName || s.firstName);
-}
-function parseCsv(text) {
-  text = text.replace(/^\uFEFF/, "");
-  const rows = [];
-  let cur = [], field = "", inQuotes = false;
-  for (let i = 0; i < text.length; i++) {
-    const c = text[i];
-    if (inQuotes) {
-      if (c === '"') {
-        if (text[i + 1] === '"') { field += '"'; i++; }
-        else inQuotes = false;
-      } else field += c;
-    } else {
-      if (c === '"') inQuotes = true;
-      else if (c === ",") { cur.push(field); field = ""; }
-      else if (c === "\n") { cur.push(field); rows.push(cur); cur = []; field = ""; }
-      else if (c === "\r") { /* skip */ }
-      else field += c;
-    }
-  }
-  if (field.length || cur.length) { cur.push(field); rows.push(cur); }
-  if (!rows.length) return [];
-  const header = rows[0];
-  const out = [];
-  for (let r = 1; r < rows.length; r++) {
-    const obj = {};
-    header.forEach((h, i) => { obj[h] = rows[r][i] ?? ""; });
-    out.push(obj);
-  }
-  return out;
-}
-async function readRosterFile(file) {
-  const name = file.name.toLowerCase();
-  if (name.endsWith(".csv")) return rowsFromJsonArray(parseCsv(await file.text()));
-  if (name.endsWith(".xlsx") || name.endsWith(".xls")) {
-    const XLSX = await loadSheetJS();
-    const buf = await file.arrayBuffer();
-    const wb = XLSX.read(buf, { type: "array" });
-    const ws = wb.Sheets[wb.SheetNames[0]];
-    return rowsFromJsonArray(XLSX.utils.sheet_to_json(ws, { defval: "" }));
-  }
-  throw new Error("Unsupported file type. Use .csv, .xlsx, or .xls.");
-}
-function setRoster(students) {
-  state.students = students;
-  renderRoster();
-  log(`Roster loaded: ${students.length} student(s).`, "ok");
-}
-function renderRoster() {
-  const wrap = $("#rosterWrap");
-  const list = state.students;
-  if (!list.length) {
-    wrap.innerHTML = '<div class="empty-state">No roster loaded. Import a CSV/XLSX with columns: No, Gender, LastName, FirstName, MiddleName.</div>';
-    return;
-  }
-  const rows = list.map((s) => {
-    const scoreCell = s.score == null ? '<td class="score empty">—</td>' : `<td class="score">${escapeHtml(s.score)}</td>`;
-    return `<tr>
-      <td>${escapeHtml(s.no)}</td>
-      <td>${escapeHtml(s.gender)}</td>
-      <td>${escapeHtml(s.lastName)}</td>
-      <td>${escapeHtml(s.firstName)}</td>
-      <td>${escapeHtml(s.middleName)}</td>
-      ${scoreCell}
-    </tr>`;
-  }).join("");
-  wrap.innerHTML = `
-    <table class="roster">
-      <thead><tr>
-        <th>No</th><th>Gender</th><th>Last Name</th><th>First Name</th><th>Middle Name</th><th>Score</th>
-      </tr></thead>
-      <tbody>${rows}</tbody>
-    </table>`;
-}
-function downloadRosterTemplate() {
-  const header = "No,Gender,LastName,FirstName,MiddleName";
-  const sample = ["1,MALE,Adlaon,Vince Kenneth,", "2,MALE,Bermejo,JAN KARL,", "3,FEMALE,Acosta,Amber Teffame,"].join("\r\n");
-  downloadBlob("\uFEFF" + header + "\r\n" + sample + "\r\n", "roster_template.csv", "text/csv;charset=utf-8");
-  log("Roster template downloaded.");
-}
-
-/* --------------------- SheetJS lazy ---------------------- */
-let sheetJsPromise = null;
-function loadSheetJS() {
-  if (window.XLSX) return Promise.resolve(window.XLSX);
-  if (sheetJsPromise) return sheetJsPromise;
-  sheetJsPromise = new Promise((resolve, reject) => {
-    const s = document.createElement("script");
-    s.src = "https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js";
-    s.onload = () => resolve(window.XLSX);
-    s.onerror = () => reject(new Error("Failed to load SheetJS from CDN."));
-    document.head.appendChild(s);
-    log("Loading SheetJS (Excel support)…");
-  });
-  return sheetJsPromise;
-}
-
-/* =========================================================
-   Answer Key Module
-   ========================================================= */
-function initAnswerKey(totalItems, choices = ["A", "B", "C", "D"]) {
-  state.answerKey.totalItems = totalItems;
-  state.answerKey.choices = choices;
-  const answers = {};
-  for (let i = 1; i <= totalItems; i++) answers[i] = state.answerKey.answers[i] || "";
-  state.answerKey.answers = answers;
-  renderAnswerKeyGrid();
-  renderAnswerKeyStatus();
-  document.dispatchEvent(new Event("key-changed"));
-  log(`Answer key initialized: ${totalItems} items, choices ${choices.join("/")}.`);
-}
-function renderAnswerKeyGrid() {
-  const wrap = $("#answerKeyGrid");
-  const { totalItems, choices, answers } = state.answerKey;
-  if (!totalItems) {
-    wrap.innerHTML = '<div class="empty-state">Capture the master key from camera, import a key file, or set items manually.</div>';
-    return;
-  }
-  const rows = [];
-  for (let i = 1; i <= totalItems; i++) {
-    const bubbles = choices.map((c) => {
-      const active = answers[i] === c ? " active" : "";
-      return `<button type="button" class="key-bubble${active}" data-item="${i}" data-choice="${c}">${c}</button>`;
-    }).join("");
-    rows.push(`<div class="key-row"><span class="key-num">${i}</span><div class="key-bubbles">${bubbles}</div></div>`);
-  }
-  wrap.innerHTML = rows.join("");
-}
-function initAnswerKeyHandlers() {
-  const wrap = $("#answerKeyGrid");
-  wrap.addEventListener("click", (e) => {
-    const btn = e.target.closest(".key-bubble");
-    if (!btn) return;
-    const item = parseInt(btn.dataset.item, 10);
-    const choice = btn.dataset.choice;
-    state.answerKey.answers[item] = (state.answerKey.answers[item] === choice) ? "" : choice;
-    renderAnswerKeyGrid();
-    renderAnswerKeyStatus();
-  });
-}
-function clearAnswerKey() {
-  const { totalItems } = state.answerKey;
-  for (let i = 1; i <= totalItems; i++) state.answerKey.answers[i] = "";
-  renderAnswerKeyGrid();
-  renderAnswerKeyStatus();
-  log("Answer key cleared.");
-}
-function renderAnswerKeyStatus() {
-  const el = $("#answerKeyStatus");
-  const { totalItems, answers } = state.answerKey;
-  if (!totalItems) { el.textContent = "No key defined."; el.className = "hint"; return; }
-  const filled = Object.values(answers).filter(Boolean).length;
-  const complete = filled === totalItems;
-  el.textContent = `${filled} / ${totalItems} items defined${complete ? " — ready to score." : ""}`;
-  el.className = "hint " + (complete ? "ok" : "warn");
-}
-async function importAnswerKeyFile(file) {
-  const name = file.name.toLowerCase();
-  let rows = [];
-  if (name.endsWith(".csv")) rows = parseCsv(await file.text());
-  else if (name.endsWith(".xlsx") || name.endsWith(".xls")) {
-    const XLSX = await loadSheetJS();
-    const buf = await file.arrayBuffer();
-    const wb = XLSX.read(buf, { type: "array" });
-    const ws = wb.Sheets[wb.SheetNames[0]];
-    rows = XLSX.utils.sheet_to_json(ws, { defval: "" });
-  } else throw new Error("Unsupported file type. Use .csv, .xlsx, or .xls.");
-
-  const answers = {};
-  let maxItem = 0;
-  for (const r of rows) {
-    const itemKey = Object.keys(r).find((k) => /item|no|number|#/i.test(k));
-    const ansKey  = Object.keys(r).find((k) => /answer|key|choice|letter/i.test(k));
-    if (!itemKey || !ansKey) continue;
-    const item = parseInt(r[itemKey], 10);
-    const answer = String(r[ansKey]).trim().toUpperCase();
-    if (!isNaN(item) && answer) {
-      answers[item] = answer;
-      if (item > maxItem) maxItem = item;
-    }
-  }
-  if (!maxItem) throw new Error("No valid Item/Answer rows found.");
-  const choices = [...new Set(Object.values(answers))].sort();
-  state.answerKey = { testTitle: state.meta.test || "", totalItems: maxItem, choices, answers, capturedAt: new Date().toISOString() };
-  renderAnswerKeyGrid();
-  renderAnswerKeyStatus();
-  document.dispatchEvent(new Event("key-changed"));
-  log(`Answer key imported: ${maxItem} items, choices ${choices.join("/")}.`, "ok");
-}
-function exportAnswerKeyRows() {
-  const { totalItems, answers } = state.answerKey;
-  const rows = [];
-  for (let i = 1; i <= totalItems; i++) rows.push({ Item: i, Answer: answers[i] || "" });
-  return rows;
-}
-function scoreAgainstKey(detectedAnswers) {
-  const { totalItems, answers } = state.answerKey;
-  let correct = 0;
-  const detail = [];
-  for (let i = 1; i <= totalItems; i++) {
-    const expected = answers[i];
-    const got = detectedAnswers[i] || "";
-    const isCorrect = !!(expected && got && expected === got);
-    if (isCorrect) correct++;
-    detail.push({ item: i, expected, got, correct: isCorrect });
-  }
-  return { correct, total: totalItems, detail };
-}
-
-/* =========================================================
-   Master Key Capture + Scan & Score
-   ========================================================= */
-function grabFrame() {
-  const video = $("#video");
-  if (!video || !video.videoWidth) return null;
-  const canvas = $("#snapshot");
-  canvas.width = video.videoWidth;
-  canvas.height = video.videoHeight;
-  const ctx = canvas.getContext("2d", { willReadFrequently: true });
-  ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-  return canvas;
-}
-function simulateDetectedAnswers(totalItems = 20) {
-  const choices = ["A", "B", "C", "D"];
-  const out = {};
-  for (let i = 1; i <= totalItems; i++) out[i] = choices[Math.floor(Math.random() * choices.length)];
-  return out;
-}
-function simulateStudentAnswers(key) {
-  const out = {};
-  const noiseRate = 0.25;
-  for (const [item, answer] of Object.entries(key.answers)) {
-    if (Math.random() < noiseRate) {
-      const others = key.choices.filter((c) => c !== answer);
-      out[item] = others[Math.floor(Math.random() * others.length)];
-    } else out[item] = answer;
-  }
-  return out;
-}
-function simulateBinaryID() {
-  return Math.floor(Math.random() * 63) + 1; 
-}
-
-async function captureMasterAnswerKey() {
-  if (!state.meta.term || !state.meta.test) { toast("Set a test context (Term - Test) first.", "err"); return; }
-  const frame = grabFrame();
-  if (!frame) { toast("Camera not ready.", "err"); return; }
-  log("Capturing master answer key…");
-  
-  const totalItems = parseInt($("#keyTotalItems").value, 10) || 20;
-  const detected = simulateDetectedAnswers(totalItems);
-  state.answerKey = {
-    testTitle: state.meta.test,
-    totalItems: Object.keys(detected).length,
-    choices: [...new Set(Object.values(detected))].sort(),
-    answers: detected,
-    capturedAt: new Date().toISOString(),
+  /* ============================================================
+     STATE
+     ============================================================ */
+  const state = {
+    step: 'session',
+    session: { name: '', date: '', notes: '' },
+    students: [],       // { id, gender, lastName, firstName, middleName, seq,
+                        //   status, score, items: [] }
+    answerKey: null,    // { items: [0/1] } or null
+    itemCount: 0,
+    mode: 'binary',     // 'binary' | 'auto' | 'manual'
+    autoCursor: 0,
+    selectedId: null,
+    autoReturnToSeq: true,
+    logs: [],
   };
-  renderAnswerKeyGrid();
-  renderAnswerKeyStatus();
-  document.dispatchEvent(new Event("key-changed"));
-  log(`Master key captured: ${state.answerKey.totalItems} items.`, "ok");
-  toast("Master answer key captured.", "ok");
-}
 
-function freezeFrameShow(dataUrl) {
-  const img = $("#freezeFrame");
-  img.src = dataUrl;
-  img.style.display = "block";
-  $("#cameraOverlay").style.display = "none";
-  const video = $("#video");
-  try { video.pause(); } catch (_) {}
-}
-function unfreeze() {
-  $("#freezeFrame").style.display = "none";
-  $("#resultOverlay").style.display = "none";
-  if (state.cameraStream) $("#cameraOverlay").style.display = "flex";
-  const video = $("#video");
-  video.play().catch(() => {});
-}
+  function load() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return;
+      const s = JSON.parse(raw);
+      if (!s) return;
+      Object.assign(state, {
+        session: s.session || state.session,
+        students: Array.isArray(s.students) ? s.students : [],
+        answerKey: s.answerKey || null,
+        itemCount: s.itemCount || 0,
+        mode: s.mode || 'binary',
+        autoCursor: s.autoCursor || 0,
+        autoReturnToSeq: s.autoReturnToSeq !== false,
+        logs: Array.isArray(s.logs) ? s.logs.slice(-200) : [],
+      });
+    } catch(e) { console.warn('load failed', e); }
+  }
+  function save() {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({
+        session: state.session,
+        students: state.students,
+        answerKey: state.answerKey,
+        itemCount: state.itemCount,
+        mode: state.mode,
+        autoCursor: state.autoCursor,
+        autoReturnToSeq: state.autoReturnToSeq,
+        logs: state.logs.slice(-200),
+      }));
+    } catch(e) {}
+  }
 
-async function scanAndScore() {
-  if (!state.meta.term || !state.meta.test) { toast("Set a test context first.", "err"); return; }
-  if (!state.students.length) { toast("Load a roster first.", "err"); return; }
-  if (!state.answerKey.totalItems) { toast("Capture the master answer key first.", "err"); return; }
-  if (!state.cameraStream) { toast("Start the camera first.", "err"); return; }
+  /* ============================================================
+     UTIL
+     ============================================================ */
+  const $  = (s) => document.querySelector(s);
+  const $$ = (s) => Array.from(document.querySelectorAll(s));
 
-  const frame = grabFrame();
-  if (!frame) { toast("Camera not ready.", "err"); return; }
+  function esc(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+      .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+  }
 
-  const dataUrl = frame.toDataURL("image/jpeg", 0.85);
-  
-  log("Scanning student sheet…");
+  function displayName(s) {
+    const parts = [s.lastName ? s.lastName + ',' : '', s.firstName, s.middleName].filter(Boolean);
+    const label = parts.join(' ').trim();
+    return label || `Student ${s.id}`;
+  }
 
-  let student = null;
+  function fullNamePlain(s) {
+    return [s.lastName, s.firstName, s.middleName].filter(Boolean).join(' ') || `Student ${s.id}`;
+  }
 
-  if (state.binaryMode) {
-    const detectedId = simulateBinaryID(); 
-    log(`Read Binary ID: ${detectedId}`);
-    
-    student = state.students.find(s => s.no === detectedId);
-    
-    if (!student) {
-      toast(`ID #${detectedId} not found in roster!`, "err");
-      log(`Failed: Student #${detectedId} not in roster.`, "err");
-      return; 
+  function ts() {
+    return new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  }
+
+  function log(msg, kind = 'ok') {
+    state.logs.push({ t: Date.now(), time: ts(), msg, kind });
+    if (state.logs.length > 200) state.logs.shift();
+    renderLog();
+    save();
+  }
+
+  function getStudent(id) {
+    return state.students.find(s => String(s.id) === String(id));
+  }
+
+  function randomUnscoredId() {
+    const pool = state.students.filter(s => s.status !== 'scored');
+    if (!pool.length) return null;
+    return pool[Math.floor(Math.random() * pool.length)].id;
+  }
+
+  /* ============================================================
+     CSV PARSING
+     ============================================================ */
+  function parseCSV(text) {
+    const rows = [];
+    let row = [], field = '', inQuotes = false;
+    for (let i = 0; i < text.length; i++) {
+      const c = text[i];
+      if (inQuotes) {
+        if (c === '"') {
+          if (text[i+1] === '"') { field += '"'; i++; }
+          else inQuotes = false;
+        } else field += c;
+      } else {
+        if (c === '"') inQuotes = true;
+        else if (c === ',') { row.push(field); field = ''; }
+        else if (c === '\n') { row.push(field); rows.push(row); row = []; field = ''; }
+        else if (c !== '\r') field += c;
+      }
     }
-    if (student.score !== null) {
-      toast(`Student #${detectedId} already scored!`, "warn");
-      log(`Skipped: #${detectedId} already has a score.`, "warn");
-      return; 
+    if (field.length || row.length) { row.push(field); rows.push(row); }
+    return rows.filter(r => r.some(f => String(f).trim() !== ''));
+  }
+
+  function headerIndex(headers, names) {
+    for (let i = 0; i < headers.length; i++) {
+      const h = String(headers[i]).trim().toLowerCase().replace(/\s+/g,'');
+      for (const n of names) if (h === n) return i;
     }
-  } else {
-    const idx = state.students.findIndex((s) => s.score == null);
-    if (idx === -1) {
-      toast("All students already have scores.", "warn");
+    return -1;
+  }
+
+  function importRosterCSV(text, sourceName) {
+    const rows = parseCSV(text);
+    if (rows.length < 2) {
+      alert('CSV needs a header row and at least one student.');
       return;
     }
-    student = state.students[idx];
-  }
+    const headers = rows[0];
+    const idxNo    = headerIndex(headers, ['no','no.','number','id','studentid']);
+    const idxGen   = headerIndex(headers, ['gender','sex']);
+    const idxLast  = headerIndex(headers, ['lastname','surname','familyname']);
+    const idxFirst = headerIndex(headers, ['firstname','givenname']);
+    const idxMid   = headerIndex(headers, ['middlename','middlename.','middle']);
+    const idxTotal = headerIndex(headers, ['total','totalscore','score']);
 
-  freezeFrameShow(dataUrl);
-  const detected = simulateStudentAnswers(state.answerKey);
-  const result = scoreAgainstKey(detected);
-
-  state.pendingReview = { student, detected, result };
-
-  $("#resultStudent").textContent = `#${student.no} ${student.lastName}, ${student.firstName}`;
-  $("#resultScore").textContent = `Score: ${result.correct} / ${result.total}`;
-  $("#resultOverlay").style.display = "flex";
-}
-
-function acceptPendingReview() {
-  const p = state.pendingReview;
-  if (!p) return;
-  p.student.score = p.result.correct;
-  renderRoster();
-  log(`#${p.student.no} ${p.student.lastName} → ${p.result.correct}/${p.result.total} ✓`, "ok");
-  toast(`Great! #${p.student.no} saved. Next.`, "ok");
-  state.pendingReview = null;
-  unfreeze();
-}
-
-function rejectPendingReview() {
-  log("Re-scan requested.");
-  state.pendingReview = null;
-  unfreeze();
-}
-
-function autoFillRemaining() {
-  if (!state.answerKey.totalItems) { toast("Capture key first.", "err"); return; }
-  let count = 0;
-  state.students.forEach((s) => {
-    if (s.score == null) {
-      const detected = simulateStudentAnswers(state.answerKey);
-      const result = scoreAgainstKey(detected);
-      s.score = result.correct;
-      count++;
+    if (idxNo === -1 || idxLast === -1 || idxFirst === -1) {
+      alert('CSV must include columns: No, LastName, FirstName (Gender/MiddleName optional).');
+      return;
     }
-  });
-  renderRoster();
-  log(`Auto-filled ${count} remaining student(s) (demo).`, "ok");
-  toast(`Auto-filled ${count} student(s).`, "ok");
-}
 
-/* --------------------- Export ---------------------------- */
-function buildExportRows() {
-  return state.students.map((s) => ({
-    Grade: state.meta.grade, Section: state.meta.section, Subject: state.meta.subject,
-    Term: state.meta.term, TestTitle: state.meta.test,
-    No: s.no, Gender: s.gender, LastName: s.lastName, FirstName: s.firstName, MiddleName: s.middleName,
-    Score: s.score == null ? "" : s.score,
-  }));
-}
-function toCsv(rows) {
-  if (!rows.length) return "";
-  const headers = Object.keys(rows[0]);
-  const esc = (v) => {
-    const s = v == null ? "" : String(v);
-    return /[",\n\r]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
-  };
-  return "\uFEFF" + [headers.join(","), ...rows.map((r) => headers.map((h) => esc(r[h])).join(","))].join("\r\n");
-}
+    const known = new Set([idxNo, idxGen, idxLast, idxFirst, idxMid, idxTotal].filter(x => x >= 0));
+    const itemIndices = [];
+    for (let i = 0; i < headers.length; i++) if (!known.has(i)) itemIndices.push(i);
 
-async function downloadBlob(content, filename, mime, emailAction = false) {
-  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+    const students = [];
+    let answerKeyItems = null;
 
-  if (emailAction && isIOS && navigator.canShare && typeof File !== "undefined") {
-    try {
-      const file = new File([content], filename, { type: mime });
-      if (navigator.canShare({ files: [file] })) {
-        await navigator.share({ files: [file], title: EMAIL_CONFIG.subjectPrefix, text: `Scores for ${buildIdentifier() || "Class"}` });
-        return;
-      }
-    } catch (err) { if (err && err.name === "AbortError") return; }
-  }
+    for (let r = 1; r < rows.length; r++) {
+      const row = rows[r];
+      const rawNo = String(row[idxNo] || '').trim();
+      const items = itemIndices.map(i => {
+        const v = String(row[i] || '').trim();
+        if (v === '1' || /^t(rue)?$/i.test(v) || /^y(es)?$/i.test(v)) return 1;
+        if (v === '0' || /^f(alse)?$/i.test(v) || /^n(o)?$/i.test(v) || v === '') return 0;
+        const n = Number(v);
+        return Number.isFinite(n) ? (n ? 1 : 0) : 0;
+      });
 
-  if (isIOS && navigator.canShare && typeof File !== "undefined") {
-    try {
-      const file = new File([content], filename, { type: mime });
-      if (navigator.canShare({ files: [file] })) {
-        await navigator.share({ files: [file], title: filename });
-        return;
-      }
-    } catch (err) { if (err && err.name === "AbortError") return; }
-  }
+      const isKey = rawNo === '' || /^key$/i.test(rawNo) || /^answer/i.test(rawNo);
+      if (isKey) { answerKeyItems = items; continue; }
 
-  const blob = content instanceof Blob ? content : new Blob([content], { type: mime });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url; a.download = filename;
-  document.body.appendChild(a);
-  a.click(); a.remove();
-  setTimeout(() => URL.revokeObjectURL(url), 4000);
-}
-
-async function exportData(format) {
-  if (!state.students.length) { toast("Nothing to export — roster is empty.", "err"); return; }
-  const rows = buildExportRows();
-  const stem = buildFilenameStem();
-
-  if (format === "csv") {
-    await downloadBlob(toCsv(rows), `${stem}.csv`, "text/csv;charset=utf-8");
-    log(`Exported CSV: ${stem}.csv`, "ok");
-    toast("CSV ready.", "ok");
-    return;
-  }
-  if (format === "xlsx") {
-    try {
-      const XLSX = await loadSheetJS();
-      const ws = XLSX.utils.json_to_sheet(rows);
-      const wb = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb, ws, "Scores");
-      const buf = XLSX.write(wb, { type: "array", bookType: "xlsx" });
-      await downloadBlob(new Blob([buf], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" }), `${stem}.xlsx`, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-      log(`Exported XLSX: ${stem}.xlsx`, "ok");
-      toast("Excel ready.", "ok");
-    } catch (err) {
-      log(`Excel export failed: ${err.message}`, "err");
-      toast("Excel export failed.", "err");
+      students.push({
+        id: rawNo,
+        gender: idxGen >= 0 ? String(row[idxGen] || '').trim() : '',
+        lastName:  String(row[idxLast]  || '').trim(),
+        firstName: String(row[idxFirst] || '').trim(),
+        middleName: idxMid >= 0 ? String(row[idxMid] || '').trim() : '',
+        seq: students.length + 1,
+        status: 'pending',
+        score: null,
+        items,
+      });
     }
-    return;
+
+    if (!students.length) { alert('No student rows found.'); return; }
+
+    state.students = students;
+    state.itemCount = itemIndices.length;
+    if (answerKeyItems) state.answerKey = { items: answerKeyItems };
+    state.autoCursor = 0;
+    state.selectedId = null;
+
+    log(`Imported roster: ${students.length} students · ${state.itemCount} items` +
+        (answerKeyItems ? ' · key included' : ''), 'ok');
+    renderAll();
+    save();
   }
-  if (format === "email") {
-    await downloadBlob(toCsv(rows), `${stem}.csv`, "text/csv;charset=utf-8", true);
-    log(`Email share triggered: ${stem}.csv`, "ok");
-    toast("Share sheet opened.", "ok");
+
+  /* ============================================================
+     SCORING
+     ============================================================ */
+  function getKeyItems() {
+    if (state.answerKey) return state.answerKey.items;
+    return [];
   }
-}
-
-async function exportKeyFile() {
-  const rows = exportAnswerKeyRows();
-  if (!rows.length) { toast("No key to export.", "err"); return; }
-  const header = "Item,Answer";
-  const body = rows.map((r) => `${r.Item},${r.Answer}`).join("\r\n");
-  await downloadBlob("\uFEFF" + header + "\r\n" + body + "\r\n", "answer_key.csv", "text/csv;charset=utf-8");
-  log("Answer key exported.");
-}
-function copyJson() {
-  const text = JSON.stringify(buildExportRows(), null, 2);
-  navigator.clipboard.writeText(text).then(() => { toast("JSON copied.", "ok"); log("Copied JSON to clipboard."); }, () => { toast("Clipboard blocked.", "err"); });
-}
-
-/* --------------------- Camera ---------------------------- */
-async function startCamera() {
-  try {
-    stopCamera();
-    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) throw new Error("Camera API not available. Use HTTPS and a modern browser.");
-    const constraints = { video: { facingMode: state.facingMode, width: { ideal: 1280 }, height: { ideal: 960 } }, audio: false };
-    const stream = await navigator.mediaDevices.getUserMedia(constraints);
-    state.cameraStream = stream;
-    const video = $("#video");
-    video.setAttribute("playsinline", ""); video.setAttribute("webkit-playsinline", "");
-    video.muted = true; video.srcObject = stream;
-    try { await video.play(); } catch (_) {}
-    $("#cameraIdle").style.display = "none";
-    $("#cameraOverlay").style.display = "flex";
-    $("#freezeFrame").style.display = "none";
-    $("#resultOverlay").style.display = "none";
-    $("#stopCameraBtn").disabled = false;
-    $("#switchCameraBtn").disabled = false;
-    $("#startCameraBtn").disabled = true;
-    document.dispatchEvent(new Event("camera-changed"));
-    log(`Camera started (${state.facingMode}).`, "ok");
-  } catch (err) {
-    log(`Camera error: ${err.message}`, "err");
-    toast("Camera unavailable. Check permissions & HTTPS.", "err");
+  function scoreAgainstKey(items) {
+    const key = getKeyItems();
+    if (!key.length) return 0;
+    let s = 0;
+    for (let i = 0; i < Math.min(items.length, key.length); i++) {
+      if (items[i] === key[i]) s++;
+    }
+    return s;
   }
-}
-function stopCamera() {
-  if (state.cameraStream) { state.cameraStream.getTracks().forEach((t) => t.stop()); state.cameraStream = null; }
-  const video = $("#video"); video.srcObject = null;
-  $("#cameraOverlay").style.display = "none"; $("#freezeFrame").style.display = "none"; $("#resultOverlay").style.display = "none";
-  $("#cameraIdle").style.display = "flex";
-  $("#stopCameraBtn").disabled = true; $("#switchCameraBtn").disabled = true; $("#startCameraBtn").disabled = false;
-  document.dispatchEvent(new Event("camera-changed"));
-}
-async function switchCamera() { state.facingMode = state.facingMode === "environment" ? "user" : "environment"; await startCamera(); }
-
-/* ------------------- Button state ------------------------ */
-function refreshCaptureButtons() {
-  const cameraOn = !!state.cameraStream;
-  const hasKey = state.answerKey.totalItems > 0;
-  $("#captureKeyBtn").disabled = !cameraOn;
-  $("#scanScoreBtn").disabled = !cameraOn || !hasKey;
-  $("#scanAllBtn").disabled = !hasKey;
-  const el = $("#modeStatus");
-  if (!hasKey) {
-    el.textContent = "Step 1: capture the master answer key.";
-    el.className = "hint warn";
-  } else {
-    el.textContent = `Key ready (${state.answerKey.totalItems} items). Step 2: scan student sheets.`;
-    el.className = "hint ok";
+  function simulateItems() {
+    const key = getKeyItems();
+    const n = state.itemCount || key.length || 40;
+    if (!key.length) return Array.from({length:n}, () => Math.random() < .75 ? 1 : 0);
+    const acc = 0.55 + Math.random() * 0.45;
+    return key.map(v => Math.random() < acc ? v : (v ? 0 : 1));
   }
-}
 
-/* ------------------- Export dropdown --------------------- */
-function initExportMenu() {
-  const btn = $("#exportBtn");
-  const menu = $("#exportOptions");
-  btn.addEventListener("click", (e) => {
-    e.stopPropagation();
-    const open = !menu.hasAttribute("hidden");
-    menu.toggleAttribute("hidden", open);
-    btn.setAttribute("aria-expanded", String(!open));
-  });
-  document.addEventListener("click", (e) => {
-    if (!e.target.closest(".export-menu")) { menu.setAttribute("hidden", ""); btn.setAttribute("aria-expanded", "false"); }
-  });
-  menu.addEventListener("click", (e) => {
-    const format = e.target.dataset.format;
-    if (!format) return;
-    menu.setAttribute("hidden", ""); btn.setAttribute("aria-expanded", "false");
-    exportData(format);
-  });
-}
+  function applyScore(stu, items, via) {
+    stu.items = items.slice();
+    stu.score = scoreAgainstKey(items);
+    stu.status = 'scored';
+    log(`${displayName(stu)} — scored via ${via} (${stu.score}/${state.itemCount})`, 'ok');
+    save();
+  }
 
-/* ----------------------- Wire-up ------------------------- */
-function init() {
-  $("#applySessionBtn").addEventListener("click", applySession);
-  $("#clearSessionBtn").addEventListener("click", resetSession);
-  $("#classInfo").addEventListener("change", applySession);
-  $("#testContext").addEventListener("change", applySession);
+  function advanceAutoCursor() {
+    while (state.autoCursor < state.students.length &&
+           state.students[state.autoCursor].status === 'scored') {
+      state.autoCursor++;
+    }
+    save();
+  }
 
-  $("#importRosterBtn").addEventListener("click", () => $("#rosterFile").click());
-  $("#rosterFile").addEventListener("change", async (e) => {
-    const file = e.target.files?.[0]; if (!file) return;
+  /* ============================================================
+     CAMERA
+     ============================================================ */
+  let cameraStream = null;
+  async function startCamera() {
     try {
-      const students = await readRosterFile(file);
-      if (!students.length) throw new Error("No valid rows found.");
-      setRoster(students);
-      toast(`Roster loaded: ${students.length} student(s).`, "ok");
+      cameraStream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: 'environment', width:{ideal:1280}, height:{ideal:960} },
+        audio: false,
+      });
+      $('#video').srcObject = cameraStream;
+      $('#camOff').style.display = 'none';
+      $('#camStatus').textContent = 'live';
+      $('#camStatus').style.color = 'var(--ok)';
+      $('#scanBtn').disabled = !state.students.length;
+      log('Camera started.', 'ok');
     } catch (err) {
-      log(`Roster import failed: ${err.message}`, "err"); toast(err.message, "err");
-    } finally { e.target.value = ""; }
+      $('#camStatus').textContent = 'denied';
+      $('#camStatus').style.color = 'var(--err)';
+      log('Camera failed: ' + err.message, 'err');
+      alert('Camera failed: ' + err.message + '\n\nYou can still use Enter ID.');
+    }
+  }
+  function stopCamera() {
+    if (cameraStream) {
+      cameraStream.getTracks().forEach(t => t.stop());
+      cameraStream = null;
+      $('#camStatus').textContent = 'offline';
+      $('#camStatus').style.color = 'var(--muted)';
+      $('#scanBtn').disabled = true;
+    }
+  }
+  $('#startCamBtn').addEventListener('click', startCamera);
+  window.addEventListener('beforeunload', stopCamera);
+
+  /* ============================================================
+     NAVIGATION
+     ============================================================ */
+  function goStep(step) {
+    state.step = step;
+    $$('.step-btn').forEach(b => b.classList.toggle('active', b.dataset.step === step));
+    $$('.panel').forEach(p => p.classList.toggle('active', p.dataset.panel === step));
+    if (step === 'export') renderExport();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+  $$('.step-btn').forEach(b => b.addEventListener('click', () => goStep(b.dataset.step)));
+
+  /* ============================================================
+     STEP 1: SESSION
+     ============================================================ */
+  function renderSession() {
+    const s = state.session;
+    $('#sessionName').value  = s.name  || '';
+    $('#sessionDate').value  = s.date  || '';
+    $('#sessionNotes').value = s.notes || '';
+    $('#sessionPill').innerHTML = s.name
+      ? `Session: <b>${esc(s.name)}</b>`
+      : 'No session set.';
+  }
+  $('#saveSessionBtn').addEventListener('click', () => {
+    state.session = {
+      name:  $('#sessionName').value.trim(),
+      date:  $('#sessionDate').value,
+      notes: $('#sessionNotes').value.trim(),
+    };
+    save();
+    renderSession();
+    log('Session saved: ' + (state.session.name || '(unnamed)'), 'ok');
   });
-  $("#downloadTemplateBtn").addEventListener("click", downloadRosterTemplate);
-  $("#clearRosterBtn").addEventListener("click", async () => {
-    const ok = await confirmModal("Clear roster?", "This removes all students and scores from memory.");
-    if (!ok) return;
-    state.students = []; renderRoster(); log("Roster cleared.");
+  $('#clearSessionBtn').addEventListener('click', () => {
+    if (!confirm('Clear session fields?')) return;
+    state.session = { name: '', date: '', notes: '' };
+    save();
+    renderSession();
+    log('Session cleared.', 'warn');
   });
 
-  $("#captureKeyBtn").addEventListener("click", captureMasterAnswerKey);
-  $("#keyImportBtn").addEventListener("click", () => $("#keyFile").click());
-  $("#keyFile").addEventListener("change", async (e) => {
-    const file = e.target.files?.[0]; if (!file) return;
-    try {
-      await importAnswerKeyFile(file);
-      toast("Answer key imported.", "ok");
-    } catch (err) {
-      log(`Key import failed: ${err.message}`, "err"); toast(err.message, "err");
-    } finally { e.target.value = ""; }
-  });
-  $("#keyExportBtn").addEventListener("click", exportKeyFile);
-  $("#keyClearBtn").addEventListener("click", () => { clearAnswerKey(); toast("Answer key cleared."); });
-  $("#keyInitBtn").addEventListener("click", () => {
-    const total = parseInt($("#keyTotalItems").value, 10);
-    const choices = $("#keyChoices").value.split(",").map((s) => s.trim().toUpperCase()).filter(Boolean);
-    if (!total || total < 1) { toast("Enter a valid item count.", "err"); return; }
-    if (choices.length < 2) { toast("Enter at least 2 choices.", "err"); return; }
-    initAnswerKey(total, choices);
-  });
-  initAnswerKeyHandlers();
-
-  $("#startCameraBtn").addEventListener("click", startCamera);
-  $("#stopCameraBtn").addEventListener("click", stopCamera);
-  $("#switchCameraBtn").addEventListener("click", switchCamera);
-
-  $("#binaryModeToggle").addEventListener("change", (e) => {
-    state.binaryMode = e.target.checked;
-    if (state.binaryMode) {
-      $("#cameraHint").textContent = "Align ID bubbles and answers inside frame";
-      log("Switched to Binary ID Mode.", "ok");
+  /* ============================================================
+     STEP 2: ROSTER
+     ============================================================ */
+  function renderRoster() {
+    const meta = $('#rosterMeta');
+    if (!state.students.length) {
+      meta.textContent = 'No roster loaded';
     } else {
-      $("#cameraHint").textContent = "Align the sheet inside the frame";
-      log("Switched to Sequential Mode.");
+      meta.textContent = `${state.students.length} students · ${state.itemCount} items`;
     }
+    renderRosterList($('#rosterList'));
+    renderRosterList($('#captureRosterList'));
+    $('#fillKeyFromRosterBtn').disabled = !state.students.length;
+  }
+
+  function renderRosterList(container) {
+    if (!container) return;
+    if (!state.students.length) {
+      container.innerHTML = '<div class="empty-state">No roster loaded. Import a CSV/XLSX to begin.</div>';
+      return;
+    }
+    const isManual = state.mode === 'manual';
+    container.innerHTML = state.students.map(stu => {
+      const cls = ['roster-row'];
+      if (isManual) cls.push('clickable');
+      if (state.selectedId === stu.id) cls.push('selected');
+      if (stu.status === 'scored') cls.push('done');
+      if (stu.status === 'flagged') cls.push('flagged');
+      const badge = stu.status === 'scored' ? '✓'
+                  : stu.status === 'flagged' ? '!'
+                  : stu.seq;
+      const pillClass = stu.status === 'scored' ? 'scored'
+                      : stu.status === 'flagged' ? 'flagged'
+                      : 'pending';
+      const pillLabel = stu.status === 'scored' ? `${stu.score}/${state.itemCount}`
+                      : stu.status === 'flagged' ? 'flagged'
+                      : 'pending';
+      return `
+        <div class="${cls.join(' ')}" data-student-id="${esc(stu.id)}">
+          <div class="seq-badge">${badge}</div>
+          <div>
+            <div class="stu-name">${esc(displayName(stu))}</div>
+            <div class="stu-id">ID ${esc(stu.id)}${stu.gender ? ' · ' + esc(stu.gender) : ''}</div>
+          </div>
+          <span class="status-pill ${pillClass}">${pillLabel}</span>
+        </div>`;
+    }).join('');
+
+    if (isManual) {
+      container.querySelectorAll('[data-student-id]').forEach(row => {
+        row.addEventListener('click', () => onRosterClick(row.dataset.studentId));
+      });
+    }
+  }
+
+  function onRosterClick(id) {
+    const stu = getStudent(id);
+    if (!stu) return;
+    if (stu.status === 'scored') {
+      log(`${displayName(stu)} already scored.`, 'warn');
+      return;
+    }
+    if (state.mode !== 'manual') setMode('manual');
+    state.selectedId = (state.selectedId === id) ? null : id;
+    renderCapture();
+    renderRoster();
+  }
+
+  /* ============================================================
+     STEP 3: MASTER KEY
+     ============================================================ */
+  function renderKey() {
+    const meta = $('#keyMeta');
+    const key = state.answerKey;
+    if (!key) {
+      meta.textContent = 'No key defined';
+    } else {
+      const correct = key.items.reduce((a,b)=>a+b,0);
+      meta.textContent = `${key.items.length} items · ${correct} correct`;
+    }
+    const strip = $('#keyStrip');
+    if (!key || !key.items.length) {
+      strip.innerHTML = '<span class="hint-line">No key items yet — capture or import one, or click "+ Add Item" below.</span>';
+      return;
+    }
+    strip.innerHTML = key.items.map((v, i) =>
+      `<div class="key-bubble ${v ? 'on' : 'off'}" title="Item ${i+1}: ${v}">${v}</div>`
+    ).join('');
+    strip.querySelectorAll('.key-bubble').forEach((el, i) => {
+      el.addEventListener('click', () => {
+        state.answerKey.items[i] = state.answerKey.items[i] ? 0 : 1;
+        renderKey();
+        save();
+      });
+    });
+  }
+
+  $('#captureKeyBtn').addEventListener('click', () => {
+    // Simulate capture; real OMR would use the camera here.
+    const n = state.itemCount || 40;
+    const items = Array.from({length:n}, () => Math.random() < 0.6 ? 1 : 0);
+    state.answerKey = { items };
+    if (!state.itemCount) state.itemCount = n;
+    log(`Captured master key: ${n} items.`, 'ok');
+    renderKey(); renderRoster(); save();
   });
 
-  $("#scanScoreBtn").addEventListener("click", scanAndScore);
-  $("#scanAllBtn").addEventListener("click", autoFillRemaining);
-
-  $("#acceptBtn").addEventListener("click", acceptPendingReview);
-  $("#rescanBtn").addEventListener("click", rejectPendingReview);
-
-  initExportMenu();
-  $("#copyJsonBtn").addEventListener("click", copyJson);
-  $("#clearScoresBtn").addEventListener("click", async () => {
-    const ok = await confirmModal("Clear scores?", "Students stay, but all recorded scores are removed.");
-    if (!ok) return;
-    state.students.forEach((s) => { s.score = null; }); renderRoster(); log("Scores cleared.");
+  $('#keyFile').addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        const rows = parseCSV(String(reader.result));
+        // Accept two shapes:
+        //   (a) one row of 0/1 values
+        //   (b) a full roster where first row is KEY
+        let items = null;
+        if (rows.length >= 2) {
+          const idxNo = headerIndex(rows[0], ['no','no.','id']);
+          if (idxNo >= 0) {
+            for (let r = 1; r < rows.length; r++) {
+              const rawNo = String(rows[r][idxNo] || '').trim();
+              if (/^key$/i.test(rawNo) || rawNo === '' || /^answer/i.test(rawNo)) {
+                items = rows[r].filter((_,i) => i !== idxNo).map(v => Number(v) ? 1 : 0);
+                break;
+              }
+            }
+          }
+        }
+        if (!items) {
+          // Fallback: treat as one row of 0/1 values
+          items = rows[0].map(v => Number(v) ? 1 : 0).filter(v => v === 0 || v === 1);
+        }
+        if (!items.length) { alert('Could not find key items in the file.'); return; }
+        state.answerKey = { items };
+        if (!state.itemCount) state.itemCount = items.length;
+        log(`Imported master key: ${items.length} items.`, 'ok');
+        renderKey(); renderRoster(); save();
+      } catch (err) { alert('Import failed: ' + err.message); }
+    };
+    reader.readAsText(file);
+    e.target.value = '';
   });
 
-  document.addEventListener("camera-changed", refreshCaptureButtons);
-  document.addEventListener("key-changed", refreshCaptureButtons);
+  $('#clearKeyBtn').addEventListener('click', () => {
+    if (!confirm('Clear the master key?')) return;
+    state.answerKey = null;
+    log('Master key cleared.', 'warn');
+    renderKey(); renderRoster(); save();
+  });
 
-  const pill = $("#netPill");
-  const updateNet = () => {
-    if (navigator.onLine) { pill.textContent = "● Online"; pill.className = "pill"; }
-    else { pill.textContent = "● Offline-ready"; pill.className = "pill ok"; }
-  };
-  window.addEventListener("online", updateNet);
-  window.addEventListener("offline", updateNet);
-  updateNet();
+  $('#addItemBtn').addEventListener('click', () => {
+    if (!state.answerKey) state.answerKey = { items: [] };
+    state.answerKey.items.push(1);
+    state.itemCount = state.answerKey.items.length;
+    renderKey(); renderRoster(); save();
+  });
 
-  renderSessionSummary(); renderRoster(); renderAnswerKeyStatus(); refreshCaptureButtons();
-  log("TestCheckerCIES ready — explainexplore Project2.");
-}
+  $('#trimItemBtn').addEventListener('click', () => {
+    if (!state.answerKey || !state.answerKey.items.length) return;
+    state.answerKey.items.pop();
+    state.itemCount = state.answerKey.items.length;
+    renderKey(); renderRoster(); save();
+  });
 
-document.addEventListener("DOMContentLoaded", init);
+  $('#fillKeyFromRosterBtn').addEventListener('click', () => {
+    // Look for a student row whose id is 'KEY' — if found, use its items as the key
+    const keyRow = state.students.find(s => /^key$/i.test(String(s.id)));
+    if (keyRow) {
+      state.answerKey = { items: keyRow.items.slice() };
+      log('Used roster KEY row as master key.', 'ok');
+      renderKey(); save();
+      return;
+    }
+    alert('No KEY row found in the roster. Import a roster where one row has No = KEY.');
+  });
+
+  /* ============================================================
+     STEP 4: CAPTURE
+     ============================================================ */
+  function setMode(mode) {
+    state.mode = mode;
+    if (mode !== 'manual') state.selectedId = null;
+    $$('#captureModeBar .mode-btn').forEach(b =>
+      b.classList.toggle('active', b.dataset.mode === mode));
+    renderCapture();
+    renderRoster();
+    save();
+  }
+
+  $$('#captureModeBar .mode-btn').forEach(b =>
+    b.addEventListener('click', () => setMode(b.dataset.mode)));
+
+  function renderCapture() {
+    const hasRoster = state.students.length > 0;
+    const hasKey = !!state.answerKey;
+    const isManual = state.mode === 'manual';
+    const rosterModeLabel = $('#rosterModeLabel');
+    if (rosterModeLabel) rosterModeLabel.textContent = isManual ? 'tap to select' : 'auto-assigned';
+
+    const prompt = $('#manualPrompt');
+    prompt.classList.toggle('active', isManual && !state.selectedId);
+    if (!hasRoster) {
+      prompt.textContent = 'Load a roster in Step 2, then tap a name to arm the scanner.';
+    } else if (!hasKey) {
+      prompt.textContent = 'Set the master answer key in Step 3 first.';
+    } else if (isManual && !state.selectedId) {
+      prompt.innerHTML = 'Tap a student in the roster to <b>arm</b> the scanner.';
+    } else if (isManual && state.selectedId) {
+      const s = getStudent(state.selectedId);
+      prompt.innerHTML = `Armed: <b>${esc(displayName(s))}</b> — scan now.`;
+    } else {
+      prompt.textContent = 'Scanner ready.';
+    }
+
+    let nextLabel = '—', hint = '', title = 'Ready';
+    if (!hasRoster)      { title = 'No roster'; hint = 'Import roster in Step 2.'; }
+    else if (!hasKey)    { title = 'No key';    hint = 'Set master key in Step 3.'; }
+    else if (state.mode === 'auto') {
+      const next = state.students[state.autoCursor];
+      nextLabel = next ? `#${state.autoCursor+1} ${displayName(next)}` : 'Sequence complete';
+      hint = next ? `Next: <b>${esc(displayName(next))}</b>` : 'All scored.';
+      title = 'Auto-Sequence';
+    } else if (state.mode === 'binary') {
+      nextLabel = 'Any paper (ID read)';
+      hint = 'Scan ID → match → score';
+      title = 'Binary ID';
+    } else {
+      if (state.selectedId) {
+        const s = getStudent(state.selectedId);
+        nextLabel = displayName(s);
+        hint = `Armed for <b>${esc(displayName(s))}</b>`;
+        title = 'Armed';
+      } else {
+        nextLabel = 'Pick a student';
+        hint = 'Tap a roster name';
+        title = 'Manual';
+      }
+    }
+    $('#overlayTitle').textContent = title;
+    $('#overlayHint').innerHTML = hint;
+    $('#nextTarget').textContent = nextLabel;
+
+    $('#scanBtn').disabled = !(hasRoster && hasKey && cameraStream);
+  }
+
+  function processScan({ detectedId = null, items = null } = {}) {
+    if (!state.students.length) { log('No roster loaded.', 'warn'); return; }
+    if (!state.answerKey)       { log('No master key set.', 'warn'); return; }
+    if (!items) items = simulateItems();
+
+    if (state.mode === 'manual') {
+      if (!state.selectedId) { log('No student selected.', 'warn'); return; }
+      const stu = getStudent(state.selectedId);
+      if (!stu) return;
+      applyScore(stu, items, 'Manual');
+      state.selectedId = null;
+      if (state.autoReturnToSeq) setMode('binary');
+      renderAll();
+      return;
+    }
+    if (state.mode === 'auto') {
+      const next = state.students[state.autoCursor];
+      if (!next) { log('Sequence complete.', 'warn'); return; }
+      applyScore(next, items, 'Auto-Seq');
+      advanceAutoCursor();
+      renderAll();
+      return;
+    }
+    // binary
+    const id = detectedId ?? (Math.random() < 0.2 ? null : randomUnscoredId());
+    if (!id) { log('ID read failed — use Manual or Keypad.', 'err'); return; }
+    const stu = getStudent(id);
+    if (!stu) { log(`ID ${id} not in roster.`, 'err'); return; }
+    if (stu.status === 'scored') { log(`${displayName(stu)} already scored.`, 'warn'); return; }
+    applyScore(stu, items, 'Binary ID');
+    renderAll();
+  }
+
+  $('#scanBtn').addEventListener('click', () => {
+    const idGuess = state.mode === 'binary'
+      ? (Math.random() < 0.85 ? randomUnscoredId() : null)
+      : null;
+    processScan({ detectedId: idGuess });
+  });
+
+  $('#flagBtn').addEventListener('click', () => {
+    let target = null;
+    if (state.mode === 'manual' && state.selectedId) target = getStudent(state.selectedId);
+    else if (state.mode === 'auto') target = state.students[state.autoCursor];
+    if (!target) { log('Nothing to flag.', 'warn'); return; }
+    target.status = 'flagged';
+    target.score = null;
+    target.items = null;
+    log(`${displayName(target)} flagged.`, 'warn');
+    if (state.mode === 'auto') advanceAutoCursor();
+    if (state.mode === 'manual') state.selectedId = null;
+    renderAll();
+  });
+
+  /* ============================================================
+     ID KEYPAD
+     ============================================================ */
+  let keypadBuffer = '';
+  const idModal = $('#idModal');
+
+  function openKeypad() { keypadBuffer = ''; updateIdDisplay(); idModal.classList.add('open'); }
+  function closeKeypad() { idModal.classList.remove('open'); }
+  function updateIdDisplay() { $('#idDisplay').textContent = keypadBuffer || '—'; }
+
+  function buildKeypad() {
+    const keys = ['1','2','3','4','5','6','7','8','9','⌫','0','✓'];
+    $('#keypad').innerHTML = keys.map(k => {
+      let cls = 'key';
+      if (k === '⌫') cls += ' clear';
+      if (k === '✓') cls += ' enter';
+      return `<button class="${cls}" data-key="${k}">${k}</button>`;
+    }).join('');
+    $('#keypad').querySelectorAll('.key').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const k = btn.dataset.key;
+        if (k === '⌫') keypadBuffer = keypadBuffer.slice(0, -1);
+        else if (k === '✓') { submitId(); return; }
+        else if (keypadBuffer.length < 12) keypadBuffer += k;
+        updateIdDisplay();
+      });
+    });
+  }
+
+  function submitId() {
+    if (!keypadBuffer) return;
+    const match = state.students.find(s =>
+      String(s.id) === keypadBuffer || String(s.id).endsWith(keypadBuffer)
+    );
+    if (!match) { log(`No match for "${keypadBuffer}".`, 'err'); closeKeypad(); return; }
+    if (match.status === 'scored') { log(`${displayName(match)} already scored.`, 'warn'); closeKeypad(); return; }
+    applyScore(match, simulateItems(), 'Keypad');
+    closeKeypad();
+    renderAll();
+  }
+
+  $('#idKeypadBtn').addEventListener('click', openKeypad);
+  $('#idCancel').addEventListener('click', closeKeypad);
+  $('#idSubmit').addEventListener('click', submitId);
+  document.addEventListener('keydown', (e) => {
+    if (!idModal.classList.contains('open')) return;
+    if (/^[0-9]$/.test(e.key) && keypadBuffer.length < 12) { keypadBuffer += e.key; updateIdDisplay(); }
+    else if (e.key === 'Backspace') { keypadBuffer = keypadBuffer.slice(0, -1); updateIdDisplay(); }
+    else if (e.key === 'Enter') submitId();
+    else if (e.key === 'Escape') closeKeypad();
+  });
+
+  /* ============================================================
+     STEP 5: EXPORT
+     ============================================================ */
+  function renderExport() {
+    const scored = state.students.filter(s => s.status === 'scored').length;
+    const flagged = state.students.filter(s => s.status === 'flagged').length;
+    const total = state.students.length;
+    const scores = state.students.filter(s => s.score != null).map(s => s.score);
+    const avg = scores.length ? (scores.reduce((a,b)=>a+b,0) / scores.length) : 0;
+
+    $('#summaryGrid').innerHTML = `
+      <div class="summary-tile"><div class="t-num">${scored}/${total}</div><div class="t-lbl">Scored</div></div>
+      <div class="summary-tile"><div class="t-num">${flagged}</div><div class="t-lbl">Flagged</div></div>
+      <div class="summary-tile"><div class="t-num">${state.itemCount || '—'}</div><div class="t-lbl">Items</div></div>
+      <div class="summary-tile"><div class="t-num">${avg.toFixed(1)}</div><div class="t-lbl">Class Avg</div></div>
+    `;
+
+    const tbody = $('#reviewBody');
+    if (!state.students.length) {
+      tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;color:var(--muted);padding:24px">No results yet.</td></tr>';
+      return;
+    }
+    tbody.innerHTML = state.students.map(s => {
+      const cls = s.status === 'scored' ? 'done' : s.status === 'flagged' ? 'flagged' : '';
+      const score = s.score != null ? `${s.score}/${state.itemCount}` : '—';
+      return `<tr class="${cls}">
+        <td>${esc(displayName(s))}</td>
+        <td>${esc(s.id)}</td>
+        <td class="score-cell">${score}</td>
+      </tr>`;
+    }).join('');
+  }
+
+  function csvEscape(v) {
+    const s = String(v == null ? '' : v);
+    return /[",\n]/.test(s) ? `"${s.replace(/"/g,'""')}"` : s;
+  }
+
+  $('#exportCsvBtn').addEventListener('click', () => {
+    if (!state.students.length) { alert('No roster loaded.'); return; }
+    const n = state.itemCount;
+    const itemHeaders = Array.from({length:n}, (_,i) => `Item${i+1}`);
+    const headers = ['No','Gender','LastName','FirstName','MiddleName', ...itemHeaders, 'total'];
+    const lines = [headers.join(',')];
+    if (state.answerKey) {
+      lines.push(['KEY','','','','', ...state.answerKey.items,
+                  state.answerKey.items.reduce((a,b)=>a+b,0)].map(csvEscape).join(','));
+    }
+    for (const s of state.students) {
+      const items = s.items || Array.from({length:n}, () => '');
+      const total = s.score == null ? '' : s.score;
+      const row = [s.id, s.gender||'', s.lastName||'', s.firstName||'', s.middleName||'',
+                   ...items, total];
+      lines.push(row.map(csvEscape).join(','));
+    }
+    downloadBlob(lines.join('\n'), `results-${new Date().toISOString().slice(0,10)}.csv`, 'text/csv');
+    log('Exported results CSV.', 'ok');
+  });
+
+  $('#exportJsonBtn').addEventListener('click', () => {
+    const out = {
+      session: state.session,
+      itemCount: state.itemCount,
+      answerKey: state.answerKey,
+      students: state.students.map(s => ({
+        id: s.id, name: fullNamePlain(s), gender: s.gender,
+        status: s.status, score: s.score, items: s.items,
+      })),
+    };
+    downloadBlob(JSON.stringify(out, null, 2),
+      `results-${new Date().toISOString().slice(0,10)}.json`, 'application/json');
+    log('Exported results JSON.', 'ok');
+  });
+
+  $('#exportSummaryBtn').addEventListener('click', () => {
+    const lines = ['No,Name,ID,Gender,Status,Score,Total'];
+    for (const s of state.students) {
+      lines.push([s.id, fullNamePlain(s), s.id, s.gender||'', s.status,
+                  s.score == null ? '' : s.score, state.itemCount].map(csvEscape).join(','));
+    }
+    downloadBlob(lines.join('\n'),
+      `summary-${new Date().toISOString().slice(0,10)}.csv`, 'text/csv');
+    log('Exported summary CSV.', 'ok');
+  });
+
+  function downloadBlob(content, filename, type) {
+    const blob = new Blob([content], { type });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+
+  /* ============================================================
+     STEP 6: LOG
+     ============================================================ */
+  function renderLog() {
+    const list = $('#logList');
+    if (!list) return;
+    list.innerHTML = state.logs.slice().reverse().map(l => `
+      <div class="log-row ${l.kind || 'ok'}">
+        <span class="l-time">${esc(l.time)}</span>
+        <span>${esc(l.msg)}</span>
+      </div>
+    `).join('') || '<div class="log-row ok"><span class="l-time">--:--:--</span><span>No activity yet.</span></div>';
+  }
+  $('#clearLogBtn').addEventListener('click', () => {
+    state.logs = [];
+    renderLog();
+    log('Activity log cleared.', 'warn');
+  });
+
+  /* ============================================================
+     ROSTER FILE INPUT + SAMPLE
+     ============================================================ */
+  const SAMPLE_CSV = `No,Gender,LastName,FirstName,MiddleName,Item1,Item2,Item3,Item4,Item5,total
+KEY,,,,,1,1,1,1,1,5
+1,M,Mehta,Aarav,K,1,1,0,1,1,4
+2,F,Cruz,Bianca,L,1,0,0,1,1,3
+3,M,Wei,Chen,H,1,1,1,0,0,3
+4,M,Ramos,Diego,S,0,1,0,1,1,3
+5,F,Petrova,Elena,V,1,1,1,1,0,4`;
+
+  $('#rosterFile').addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    if (/\.(xlsx|xls)$/i.test(file.name)) {
+      alert('XLSX import requires SheetJS. Please save your file as CSV and re-import.\n\n' +
+            '(Want me to add XLSX support? Ask and I will wire SheetJS via CDN.)');
+      e.target.value = '';
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => importRosterCSV(String(reader.result), file.name);
+    reader.readAsText(file);
+    e.target.value = '';
+  });
+
+  $('#sampleRosterBtn').addEventListener('click', () => {
+    importRosterCSV(SAMPLE_CSV, 'sample');
+  });
+
+  $('#clearRosterBtn').addEventListener('click', () => {
+    if (!confirm('Clear the entire roster?')) return;
+    state.students = [];
+    state.itemCount = 0;
+    state.autoCursor = 0;
+    state.selectedId = null;
+    log('Roster cleared.', 'warn');
+    renderAll(); save();
+  });
+
+  /* ============================================================
+     STATS / RENDER ALL
+     ============================================================ */
+  function renderStats() {
+    const scored  = state.students.filter(s => s.status === 'scored').length;
+    const flagged = state.students.filter(s => s.status === 'flagged').length;
+    $('#stScored').textContent = scored;
+    $('#stTotal').textContent  = state.students.length;
+    $('#stFlagged').textContent = flagged;
+    $('#stItems').textContent = state.itemCount || '—';
+  }
+
+  function renderAll() {
+    renderStats();
+    renderSession();
+    renderRoster();
+    renderKey();
+    renderCapture();
+    if (state.step === 'export') renderExport();
+    renderLog();
+  }
+
+  /* ============================================================
+     BOOT
+     ============================================================ */
+  function init() {
+    load();
+    buildKeypad();
+    $$('#captureModeBar .mode-btn').forEach(b =>
+      b.classList.toggle('active', b.dataset.mode === state.mode));
+    goStep(state.step || 'session');
+    renderAll();
+    if (!state.logs.length) log('TestCheckerCIES ready.', 'ok');
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+
+  // Expose for debugging
+  window.__testchecker = { state, save, renderAll, log };
+})();
 </script>
 </body>
 </html>
