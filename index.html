@@ -1,1257 +1,493 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no" />
-<meta name="apple-mobile-web-app-capable" content="yes" />
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-<meta name="theme-color" content="#0f1117" />
-<meta name="format-detection" content="telephone=no" />
-<title>TestCheckerCIES — explainexplore</title>
-<link rel="apple-touch-icon" href="icon.png" />
-<link rel="icon" href="icon.png" />
-<style>
-        /* ============================================================
-           GLOBAL STYLES
-           ============================================================ */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#1e3a5f">
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/png" href="icon.png">
+    <link rel="apple-touch-icon" href="icon.png">
+    <title>TestCheckerCIES | explainexplore</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        html, body { height: 100%; }
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             background: #f0f2f5;
             color: #1a1a2e;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
+            padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+            -webkit-user-select: none; user-select: none;
         }
 
-        /* ============================================================
-           HEADER
-           ============================================================ */
+        /* HEADER */
         .header {
             background: linear-gradient(135deg, #1e3a5f 0%, #2d6a9f 100%);
-            color: white;
-            padding: 1rem 2rem;
-            display: flex;
-            align-items: center;
-            gap: 1.5rem;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.15);
-            flex-wrap: wrap;
+            color: white; padding: 0.75rem 1rem;
+            display: flex; align-items: center; gap: 0.75rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.15); flex-shrink: 0;
         }
-
         .logo-container {
-            width: 80px;
-            height: 80px;
-            background: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-            flex-shrink: 0;
-            border: 3px solid #f0c040;
+            width: 48px; height: 48px; background: white; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            overflow: hidden; flex-shrink: 0; border: 2px solid #f0c040;
+        }
+        .logo-container img { width: 100%; height: 100%; object-fit: contain; padding: 3px; }
+        .logo-container .logo-placeholder { font-size: 1.2rem; font-weight: bold; color: #1e3a5f; }
+        .header-text { flex: 1; min-width: 0; }
+        .header-text h1 { font-size: 0.95rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .header-text p { font-size: 0.7rem; opacity: 0.9; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+        /* MAIN */
+        .main {
+            flex: 1; display: flex; flex-direction: column;
+            padding: 0.75rem 1rem; gap: 0.75rem; overflow-y: auto;
         }
 
-        .logo-container img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            padding: 5px;
-        }
-
-        .logo-container .logo-placeholder {
-            font-size: 2rem;
-            font-weight: bold;
-            color: #1e3a5f;
-        }
-
-        .header-text h1 {
-            font-size: 1.4rem;
-            font-weight: 700;
-            letter-spacing: 0.5px;
-        }
-
-        .header-text p {
-            font-size: 0.85rem;
-            opacity: 0.9;
-        }
-
-        .header-text .sub-info {
-            font-size: 0.75rem;
-            opacity: 0.75;
-            margin-top: 0.2rem;
-        }
-
-        /* ============================================================
-           IMPORT / SCAN ALERT BANNER
-           ============================================================ */
-        .scan-alert {
-            background: #e8f5e9;
-            border-left: 6px solid #2e7d32;
-            padding: 1rem 1.5rem;
-            margin: 1rem 2rem;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-            display: flex;
-            align-items: flex-start;
-            gap: 1rem;
-            flex-wrap: wrap;
-        }
-
-        .scan-alert .alert-icon {
-            font-size: 1.8rem;
-            flex-shrink: 0;
-        }
-
-        .scan-alert .alert-content {
-            flex: 1;
-            min-width: 250px;
-        }
-
-        .scan-alert .alert-content h3 {
-            font-size: 1rem;
-            color: #1b5e20;
-            margin-bottom: 0.3rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .scan-alert .alert-content p {
-            font-size: 0.85rem;
-            color: #2e4a2e;
-            line-height: 1.5;
-            margin-bottom: 0.3rem;
-        }
-
-        .scan-alert .alert-content .core-function {
-            background: #c8e6c9;
-            padding: 0.5rem 0.8rem;
-            border-radius: 6px;
-            margin-top: 0.4rem;
-            font-size: 0.82rem;
-            border: 1px dashed #2e7d32;
-        }
-
-        .scan-alert .alert-content .core-function strong {
-            color: #1b5e20;
-        }
-
-        .scan-alert .alert-content .core-function ol {
-            margin: 0.3rem 0 0 1.2rem;
-            padding: 0;
-            font-size: 0.82rem;
-            color: #2e4a2e;
-        }
-
-        .scan-alert .alert-content .core-function ol li {
-            margin-bottom: 0.15rem;
-        }
-
-        /* ============================================================
-           TOOLBAR
-           ============================================================ */
-        .toolbar {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.75rem;
-            padding: 0.75rem 2rem;
-            background: white;
-            border-bottom: 1px solid #e0e0e0;
-            align-items: center;
-        }
-
-        .toolbar .spacer {
-            flex: 1;
-        }
-
-        .btn {
-            padding: 0.5rem 1.2rem;
-            border: none;
-            border-radius: 6px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.4rem;
-            transition: all 0.2s ease;
-            font-family: inherit;
-        }
-
-        .btn:active {
-            transform: scale(0.97);
-        }
-
-        .btn-primary {
-            background: #2d6a9f;
-            color: white;
-        }
-        .btn-primary:hover {
-            background: #1e4f7a;
-        }
-
-        .btn-success {
-            background: #2e7d32;
-            color: white;
-        }
-        .btn-success:hover {
-            background: #1b5e20;
-        }
-
-        .btn-warning {
-            background: #f0a500;
-            color: white;
-        }
-        .btn-warning:hover {
-            background: #c88a00;
-        }
-
-        .btn-danger {
-            background: #c62828;
-            color: white;
-        }
-        .btn-danger:hover {
-            background: #a01515;
-        }
-
-        .btn-outline {
-            background: transparent;
-            color: #2d6a9f;
-            border: 2px solid #2d6a9f;
-        }
-        .btn-outline:hover {
-            background: #2d6a9f;
-            color: white;
-        }
-
-        .btn-sm {
-            padding: 0.3rem 0.8rem;
-            font-size: 0.75rem;
-        }
-
-        .btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        /* ============================================================
-           TABS
-           ============================================================ */
-        .tabs {
-            display: flex;
-            padding: 0 2rem;
-            background: white;
-            border-bottom: 2px solid #e0e0e0;
-            gap: 0.25rem;
-            flex-wrap: wrap;
-        }
-
-        .tab {
-            padding: 0.7rem 1.5rem;
-            font-size: 0.9rem;
-            font-weight: 600;
-            color: #666;
-            cursor: pointer;
-            border-bottom: 3px solid transparent;
-            transition: all 0.2s ease;
-            background: transparent;
-            border-top: none;
-            border-left: none;
-            border-right: none;
-            font-family: inherit;
-            position: relative;
-        }
-
-        .tab:hover {
-            color: #2d6a9f;
-            background: #f5f8fc;
-        }
-
-        .tab.active {
-            color: #2d6a9f;
-            border-bottom-color: #2d6a9f;
-        }
-
-        .tab .badge {
-            display: inline-block;
-            background: #e0e0e0;
-            color: #555;
-            font-size: 0.65rem;
-            padding: 0.1rem 0.4rem;
-            border-radius: 10px;
-            margin-left: 0.3rem;
-            font-weight: 700;
-        }
-
-        .tab.active .badge {
-            background: #2d6a9f;
-            color: white;
-        }
-
-        /* ============================================================
-           TABLE CONTAINER
-           ============================================================ */
-        .table-container {
-            flex: 1;
-            overflow: auto;
-            padding: 1rem 2rem 2rem;
-            position: relative;
-        }
-
-        .table-wrapper {
-            overflow: auto;
-            border-radius: 8px;
+        /* CARD */
+        .card {
+            background: white; border-radius: 12px;
             box-shadow: 0 2px 12px rgba(0,0,0,0.08);
-            background: white;
-            max-height: calc(100vh - 400px);
-            min-height: 200px;
+            padding: 1rem; display: flex; flex-direction: column; gap: 0.75rem;
+        }
+        .card-title {
+            font-size: 0.85rem; font-weight: 700; color: #1e3a5f;
+            display: flex; align-items: center; gap: 0.4rem; flex-shrink: 0;
+        }
+        .card-title .step-badge {
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 20px; height: 20px; background: #2d6a9f; color: white;
+            border-radius: 50%; font-size: 0.65rem; font-weight: 700; flex-shrink: 0;
         }
 
-        table {
-            border-collapse: collapse;
-            width: 100%;
-            font-size: 0.8rem;
-            white-space: nowrap;
+        /* FORM */
+        .form-select {
+            width: 100%; padding: 0.75rem 1rem; border: 2px solid #ccc;
+            border-radius: 10px; font-size: 1rem; font-family: inherit;
+            background: white; color: #1a1a2e;
+            -webkit-appearance: none; appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23666' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat; background-position: right 1rem center;
+            background-size: 12px; min-height: 48px;
         }
+        .form-select:focus { outline: none; border-color: #2d6a9f; box-shadow: 0 0 0 3px rgba(45,106,159,0.2); }
 
-        thead {
-            position: sticky;
-            top: 0;
-            z-index: 10;
+        /* BUTTONS */
+        .btn {
+            padding: 0.75rem 1.25rem; border: none; border-radius: 10px;
+            font-size: 0.95rem; font-weight: 600; cursor: pointer;
+            display: inline-flex; align-items: center; justify-content: center;
+            gap: 0.5rem; transition: all 0.2s ease; font-family: inherit;
+            min-height: 48px; min-width: 48px;
+            -webkit-user-select: none; user-select: none; touch-action: manipulation;
         }
+        .btn:active { transform: scale(0.97); }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; }
+        .btn-primary { background: #2d6a9f; color: white; }
+        .btn-primary:not(:disabled):hover { background: #1e4f7a; }
+        .btn-success { background: #2e7d32; color: white; }
+        .btn-success:not(:disabled):hover { background: #1b5e20; }
+        .btn-danger { background: #c62828; color: white; }
+        .btn-danger:not(:disabled):hover { background: #a01515; }
+        .btn-outline { background: transparent; color: #2d6a9f; border: 2px solid #2d6a9f; }
+        .btn-outline:not(:disabled):hover { background: #2d6a9f; color: white; }
+        .btn-block { width: 100%; }
+        .btn-row { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+        .btn-row .btn { flex: 1; min-width: 100px; }
 
-        thead th {
-            background: #1e3a5f;
-            color: white;
-            padding: 0.5rem 0.4rem;
-            text-align: center;
-            font-weight: 600;
-            font-size: 0.7rem;
-            border: 1px solid #2d5a8a;
-            position: sticky;
-            top: 0;
-            z-index: 10;
-        }
-
-        thead th.sub-header {
-            background: #2d6a9f;
-            font-size: 0.65rem;
-            font-weight: 500;
-            top: 32px;
-            z-index: 9;
-        }
-
-        thead th .level-tag {
-            display: block;
-            font-size: 0.6rem;
-            font-weight: 400;
-            opacity: 0.8;
-            margin-top: 1px;
-        }
-
-        tbody td {
-            padding: 0.35rem 0.4rem;
-            border: 1px solid #e0e0e0;
-            text-align: center;
-            font-size: 0.78rem;
-            background: white;
-        }
-
-        tbody tr:nth-child(even) td {
-            background: #f8f9fa;
-        }
-
-        tbody tr:hover td {
-            background: #eef3f9;
-        }
-
-        tbody td.student-info {
-            text-align: left;
-            font-weight: 500;
-            background: #f0f4f8;
-            position: sticky;
-            left: 0;
-            z-index: 5;
-            min-width: 140px;
-            max-width: 180px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-
-        tbody td.student-info.narrow {
-            min-width: 40px;
-            max-width: 50px;
-            text-align: center;
-        }
-
-        tbody td.score-cell {
-            cursor: pointer;
-            user-select: none;
-            transition: background 0.15s ease;
-            min-width: 28px;
-            max-width: 32px;
-            font-weight: 600;
-            font-size: 0.75rem;
-        }
-
-        tbody td.score-cell:hover {
-            background: #d4e4f7;
-        }
-
-        tbody td.score-cell[data-score="1"] {
-            background: #c8e6c9;
-            color: #1b5e20;
-        }
-
-        tbody td.score-cell[data-score="0"] {
-            background: #ffcdd2;
-            color: #b71c1c;
-        }
-
-        tbody td.score-cell[data-score=""] {
-            background: #fff9c4;
-            color: #f57f17;
-        }
-
-        tbody td.score-cell[data-score="1"]:hover {
-            background: #a5d6a7;
-        }
-
-        tbody td.score-cell[data-score="0"]:hover {
-            background: #ef9a9a;
-        }
-
-        tbody td.score-cell[data-score=""]:hover {
-            background: #fff176;
-        }
-
-        tbody td.total-cell {
-            background: #e8eaf6;
-            font-weight: 700;
-            font-size: 0.85rem;
-            color: #1a237e;
-            min-width: 45px;
-            position: sticky;
-            right: 0;
-            z-index: 5;
-            border-left: 2px solid #2d6a9f;
-        }
-
-        tbody td.total-cell[data-status="complete"] {
-            background: #c8e6c9;
-            color: #1b5e20;
-        }
-
-        tbody td.total-cell[data-status="incomplete"] {
-            background: #fff9c4;
-            color: #f57f17;
-        }
-
-        tbody td.check-cell {
-            background: #f5f5f5;
-            font-size: 0.85rem;
-            min-width: 30px;
-        }
-
-        tbody td.check-cell.pass {
-            color: #2e7d32;
-        }
-
-        tbody td.check-cell.fail {
-            color: #c62828;
-        }
-
-        tbody td.check-cell.pending {
-            color: #f57f17;
-        }
-
-        /* ============================================================
-           VERIFICATION PANEL
-           ============================================================ */
-        .verification-panel {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1.5rem;
-            padding: 0.75rem 2rem;
-            background: #f8f9fa;
-            border-top: 1px solid #e0e0e0;
-            border-bottom: 1px solid #e0e0e0;
-            font-size: 0.82rem;
-            align-items: center;
-        }
-
-        .verification-panel .verify-item {
-            display: flex;
-            align-items: center;
-            gap: 0.4rem;
-        }
-
-        .verification-panel .verify-item .check-icon {
-            font-size: 1rem;
-        }
-
-        .verification-panel .verify-item .check-icon.pass {
-            color: #2e7d32;
-        }
-
-        .verification-panel .verify-item .check-icon.fail {
-            color: #c62828;
-        }
-
-        .verification-panel .verify-item .check-icon.pending {
-            color: #f57f17;
-        }
-
-        .verification-panel .verify-item .verify-label {
-            color: #555;
-        }
-
-        .verification-panel .verify-item .verify-value {
-            font-weight: 700;
-            color: #1a1a2e;
-        }
-
-        .verification-panel .verify-item .verify-value.pass {
-            color: #2e7d32;
-        }
-
-        .verification-panel .verify-item .verify-value.fail {
-            color: #c62828;
-        }
-
-        .verification-panel .verify-item .verify-value.pending {
-            color: #f57f17;
-        }
-
-        .verification-panel .spacer {
-            flex: 1;
-        }
-
-        .verification-panel .verify-status {
-            padding: 0.2rem 0.8rem;
-            border-radius: 20px;
-            font-weight: 700;
-            font-size: 0.75rem;
-        }
-
-        .verification-panel .verify-status.ready {
-            background: #c8e6c9;
-            color: #1b5e20;
-        }
-
-        .verification-panel .verify-status.warning {
-            background: #fff9c4;
-            color: #f57f17;
-        }
-
-        .verification-panel .verify-status.error {
-            background: #ffcdd2;
-            color: #b71c1c;
-        }
-
-        /* ============================================================
-           FOOTER
-           ============================================================ */
-        .footer {
-            padding: 0.6rem 2rem;
-            background: #1e3a5f;
-            color: rgba(255,255,255,0.7);
-            font-size: 0.75rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-        }
-
-        .footer .footer-left {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .footer .footer-right {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .footer .status-dot {
-            display: inline-block;
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            margin-right: 0.3rem;
-        }
-
-        .footer .status-dot.ready {
-            background: #4caf50;
-        }
-
-        .footer .status-dot.warning {
-            background: #ff9800;
-        }
-
-        .footer .status-dot.error {
-            background: #f44336;
-        }
-
-        /* ============================================================
-           MODAL
-           ============================================================ */
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.5);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-            padding: 1rem;
-        }
-
-        .modal-overlay.active {
-            display: flex;
-        }
-
-        .modal {
-            background: white;
-            border-radius: 12px;
-            max-width: 700px;
-            width: 100%;
-            max-height: 85vh;
-            overflow-y: auto;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            animation: modalIn 0.25s ease;
-        }
-
-        @keyframes modalIn {
-            from {
-                opacity: 0;
-                transform: scale(0.95) translateY(10px);
-            }
-            to {
-                opacity: 1;
-                transform: scale(1) translateY(0);
-            }
-        }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1rem 1.5rem;
-            border-bottom: 1px solid #e0e0e0;
-        }
-
-        .modal-header h2 {
-            font-size: 1.1rem;
-            color: #1e3a5f;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .modal-header .modal-close {
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            cursor: pointer;
-            color: #999;
-            padding: 0 0.3rem;
-            transition: color 0.2s;
-        }
-
-        .modal-header .modal-close:hover {
-            color: #c62828;
-        }
-
-        .modal-body {
-            padding: 1.5rem;
-        }
-
-        .modal-footer {
-            padding: 1rem 1.5rem;
-            border-top: 1px solid #e0e0e0;
-            display: flex;
-            justify-content: flex-end;
-            gap: 0.75rem;
-        }
-
-        /* ============================================================
-           OMR SCAN MODAL
-           ============================================================ */
-        .omr-preview {
-            width: 100%;
-            max-height: 300px;
+        /* CAMERA */
+        .camera-preview {
+            width: 100%; aspect-ratio: 3 / 4; border-radius: 10px;
+            background: #1a1a2e; display: flex; align-items: center;
+            justify-content: center; overflow: hidden; position: relative;
             border: 2px dashed #ccc;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: #fafafa;
-            margin-bottom: 1rem;
-            overflow: hidden;
-            position: relative;
         }
-
-        .omr-preview img {
-            max-width: 100%;
-            max-height: 300px;
-            object-fit: contain;
+        .camera-preview video { width: 100%; height: 100%; object-fit: cover; }
+        .camera-preview img { width: 100%; height: 100%; object-fit: contain; }
+        .camera-preview .placeholder {
+            color: #888; font-size: 0.85rem; text-align: center; padding: 1rem;
+            display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
         }
-
-        .omr-preview .placeholder-text {
-            color: #999;
-            font-size: 0.9rem;
-            text-align: center;
-            padding: 2rem;
-        }
-
-        .omr-preview .omr-overlay {
-            position: absolute;
-            inset: 0;
-            pointer-events: none;
-        }
-
-        .omr-preview .omr-overlay .bubble-marker {
-            position: absolute;
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            border: 2px solid #2e7d32;
-            background: rgba(46, 125, 50, 0.3);
+        .camera-preview .placeholder .icon { font-size: 2.5rem; opacity: 0.6; }
+        .camera-preview .omr-overlay { position: absolute; inset: 0; pointer-events: none; }
+        .camera-preview .omr-overlay .bubble-marker {
+            position: absolute; width: 10px; height: 10px; border-radius: 50%;
+            border: 2px solid #2e7d32; background: rgba(46,125,50,0.3);
             transform: translate(-50%, -50%);
         }
-
-        .omr-preview .omr-overlay .bubble-marker.empty {
-            border-color: #c62828;
-            background: rgba(198, 40, 40, 0.15);
+        .camera-preview .omr-overlay .bubble-marker.empty {
+            border-color: #c62828; background: rgba(198,40,40,0.15);
         }
 
-        .omr-progress {
-            width: 100%;
-            height: 8px;
-            background: #e0e0e0;
-            border-radius: 4px;
-            overflow: hidden;
-            margin: 0.5rem 0;
+        /* PROGRESS */
+        .progress-container {
+            width: 100%; height: 8px; background: #e0e0e0;
+            border-radius: 4px; overflow: hidden; display: none;
+        }
+        .progress-container.active { display: block; }
+        .progress-bar {
+            height: 100%; background: linear-gradient(90deg, #2e7d32, #4caf50);
+            border-radius: 4px; width: 0%; transition: width 0.3s ease;
         }
 
-        .omr-progress .omr-progress-bar {
-            height: 100%;
-            background: linear-gradient(90deg, #2e7d32, #4caf50);
-            border-radius: 4px;
-            width: 0%;
-            transition: width 0.3s ease;
+        /* STATUS */
+        .status {
+            font-size: 0.85rem; color: #555; display: flex;
+            align-items: center; gap: 0.4rem; padding: 0.5rem 0.75rem;
+            background: #f8f9fa; border-radius: 8px; min-height: 40px;
         }
+        .status .status-icon { font-size: 1.1rem; flex-shrink: 0; }
+        .status .status-icon.success { color: #2e7d32; }
+        .status .status-icon.error { color: #c62828; }
+        .status .status-icon.pending { color: #f57f17; }
 
-        .omr-status {
-            font-size: 0.85rem;
-            color: #555;
-            margin: 0.5rem 0;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
+        /* MODAL */
+        .modal-overlay {
+            display: none; position: fixed; inset: 0;
+            background: rgba(0,0,0,0.5); z-index: 1000;
+            align-items: flex-end; justify-content: center; padding: 0;
         }
-
-        .omr-status .status-icon {
-            font-size: 1.1rem;
+        .modal-overlay.active { display: flex; }
+        .modal {
+            background: white; border-radius: 20px 20px 0 0;
+            width: 100%; max-width: 600px; max-height: 85vh;
+            display: flex; flex-direction: column;
+            box-shadow: 0 -10px 40px rgba(0,0,0,0.2);
+            animation: modalIn 0.3s ease;
         }
-
-        .omr-status .status-icon.success {
-            color: #2e7d32;
+        @keyframes modalIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-
-        .omr-status .status-icon.error {
-            color: #c62828;
+        .modal-header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 1rem 1.25rem; border-bottom: 1px solid #e0e0e0; flex-shrink: 0;
         }
-
-        .omr-status .status-icon.pending {
-            color: #f57f17;
+        .modal-header h2 { font-size: 1.05rem; color: #1e3a5f; display: flex; align-items: center; gap: 0.5rem; }
+        .modal-header .modal-close {
+            background: none; border: none; font-size: 1.5rem;
+            cursor: pointer; color: #999; padding: 0.5rem; line-height: 1;
+            min-width: 44px; min-height: 44px; display: flex;
+            align-items: center; justify-content: center; border-radius: 8px;
         }
-
-        .omr-results {
-            margin-top: 0.5rem;
-            font-size: 0.82rem;
-            color: #333;
-            max-height: 150px;
-            overflow-y: auto;
-            border: 1px solid #e0e0e0;
-            border-radius: 6px;
-            padding: 0.5rem;
-            background: #fafafa;
+        .modal-header .modal-close:hover { color: #c62828; background: #f5f5f5; }
+        .modal-body { padding: 1rem 1.25rem; overflow-y: auto; flex: 1; }
+        .modal-footer {
+            padding: 0.75rem 1.25rem; border-top: 1px solid #e0e0e0;
+            display: flex; gap: 0.75rem; flex-shrink: 0;
         }
+        .modal-footer .btn { flex: 1; }
 
-        .omr-results .result-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 0.15rem 0;
-            border-bottom: 1px solid #f0f0f0;
+        /* VERIFICATION */
+        .verify-summary { display: flex; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 0.75rem; }
+        .verify-summary .summary-item {
+            flex: 1; min-width: 80px; background: #f0f4f8;
+            border-radius: 8px; padding: 0.5rem 0.75rem; text-align: center;
         }
-
-        .omr-results .result-row:last-child {
-            border-bottom: none;
+        .verify-summary .summary-item .summary-value {
+            font-size: 1.3rem; font-weight: 700; color: #1e3a5f; line-height: 1.2;
         }
-
-        .omr-results .result-row .item-num {
-            font-weight: 600;
-            color: #1e3a5f;
+        .verify-summary .summary-item .summary-value.correct { color: #2e7d32; }
+        .verify-summary .summary-item .summary-value.incorrect { color: #c62828; }
+        .verify-summary .summary-item .summary-label {
+            font-size: 0.7rem; color: #666; text-transform: uppercase; letter-spacing: 0.5px;
         }
-
-        .omr-results .result-row .item-result {
-            font-weight: 700;
+        .verify-results-list {
+            display: flex; flex-direction: column; gap: 0.25rem;
+            max-height: 300px; overflow-y: auto; border: 1px solid #e0e0e0;
+            border-radius: 8px; padding: 0.5rem; background: #fafafa;
         }
-
-        .omr-results .result-row .item-result.correct {
-            color: #2e7d32;
+        .verify-results-list .result-row {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0.3rem 0.5rem; border-radius: 6px; font-size: 0.85rem;
         }
+        .verify-results-list .result-row:nth-child(even) { background: #f0f0f0; }
+        .verify-results-list .result-row .item-num { font-weight: 600; color: #1e3a5f; }
+        .verify-results-list .result-row .item-result { font-weight: 700; font-size: 0.9rem; }
+        .verify-results-list .result-row .item-result.correct { color: #2e7d32; }
+        .verify-results-list .result-row .item-result.incorrect { color: #c62828; }
 
-        .omr-results .result-row .item-result.incorrect {
-            color: #c62828;
+        /* SCAN RESULT CARD */
+        .scan-result-card {
+            background: #e8f5e9; border: 2px solid #2e7d32;
+            border-radius: 10px; padding: 0.75rem;
+            display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;
         }
+        .scan-result-card .result-icon { font-size: 1.8rem; flex-shrink: 0; }
+        .scan-result-card .result-content { flex: 1; min-width: 120px; }
+        .scan-result-card .result-content .result-name { font-weight: 700; font-size: 0.9rem; color: #1b5e20; }
+        .scan-result-card .result-content .result-score { font-size: 0.8rem; color: #2e4a2e; }
+        .scan-result-card .result-content .result-score strong { font-size: 1rem; color: #1b5e20; }
 
-        /* ============================================================
-           TOAST NOTIFICATION
-           ============================================================ */
+        /* EMPTY STATE */
+        .empty-state {
+            text-align: center; padding: 2rem 1rem; color: #999;
+            font-size: 0.85rem; display: flex; flex-direction: column;
+            align-items: center; gap: 0.5rem;
+        }
+        .empty-state .icon { font-size: 2.5rem; opacity: 0.5; }
+
+        /* BOTTOM NAV */
+        .bottom-nav {
+            display: flex; background: white; border-top: 1px solid #e0e0e0;
+            padding: 0.25rem 0.5rem;
+            padding-bottom: calc(0.25rem + env(safe-area-inset-bottom));
+            flex-shrink: 0; gap: 0.25rem;
+        }
+        .bottom-nav .nav-item {
+            flex: 1; display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            padding: 0.4rem 0.25rem; border: none; background: transparent;
+            color: #999; font-size: 0.6rem; font-weight: 600;
+            font-family: inherit; cursor: pointer; border-radius: 8px;
+            transition: all 0.2s ease; min-height: 48px; gap: 0.15rem;
+        }
+        .bottom-nav .nav-item .nav-icon { font-size: 1.2rem; line-height: 1; }
+        .bottom-nav .nav-item.active { color: #2d6a9f; background: #eef3f9; }
+        .bottom-nav .nav-item:active { transform: scale(0.95); }
+
+        /* TOAST */
         .toast-container {
-            position: fixed;
-            bottom: 1.5rem;
-            right: 1.5rem;
-            z-index: 2000;
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
+            position: fixed; bottom: 80px; left: 1rem; right: 1rem;
+            z-index: 2000; display: flex; flex-direction: column;
+            gap: 0.5rem; pointer-events: none;
         }
-
         .toast {
-            padding: 0.75rem 1.25rem;
-            border-radius: 8px;
-            color: white;
-            font-size: 0.85rem;
-            font-weight: 500;
+            padding: 0.75rem 1rem; border-radius: 10px; color: white;
+            font-size: 0.85rem; font-weight: 500;
             box-shadow: 0 4px 16px rgba(0,0,0,0.2);
-            animation: toastIn 0.3s ease;
-            max-width: 400px;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
+            animation: toastIn 0.3s ease; display: flex;
+            align-items: center; gap: 0.5rem; pointer-events: auto;
+            max-width: 100%;
         }
-
         @keyframes toastIn {
-            from {
-                opacity: 0;
-                transform: translateX(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .toast.success { background: #2e7d32; }
+        .toast.warning { background: #f0a500; }
+        .toast.error { background: #c62828; }
+        .toast.info { background: #2d6a9f; }
+
+        /* RESPONSIVE */
+        @media (min-width: 600px) {
+            .main { max-width: 600px; margin: 0 auto; width: 100%; }
+            .camera-preview { aspect-ratio: 4 / 3; }
+            .modal { border-radius: 20px; margin: 1rem; max-height: 80vh; }
+            .modal-overlay { align-items: center; }
+        }
+        @media (min-width: 900px) {
+            .main { max-width: 700px; }
         }
 
-        .toast.success {
-            background: #2e7d32;
-        }
-        .toast.warning {
-            background: #f0a500;
-        }
-        .toast.error {
-            background: #c62828;
-        }
-        .toast.info {
-            background: #2d6a9f;
-        }
-
-        /* ============================================================
-           RESPONSIVE
-           ============================================================ */
-        @media (max-width: 768px) {
-            .header {
-                padding: 0.75rem 1rem;
-            }
-            .header-text h1 {
-                font-size: 1rem;
-            }
-            .scan-alert {
-                margin: 0.75rem 1rem;
-                padding: 0.75rem 1rem;
-            }
-            .toolbar {
-                padding: 0.5rem 1rem;
-            }
-            .tabs {
-                padding: 0 1rem;
-            }
-            .table-container {
-                padding: 0.75rem 1rem 1.5rem;
-            }
-            .verification-panel {
-                padding: 0.5rem 1rem;
-                gap: 0.75rem;
-                font-size: 0.75rem;
-            }
-            .footer {
-                padding: 0.5rem 1rem;
-                font-size: 0.7rem;
-            }
-            .btn {
-                font-size: 0.75rem;
-                padding: 0.4rem 0.8rem;
-            }
-        }
-
-        /* ============================================================
-           SCROLLBAR
-           ============================================================ */
-        .table-wrapper::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-        .table-wrapper::-webkit-scrollbar-track {
-            background: #f1f1f1;
-            border-radius: 4px;
-        }
-        .table-wrapper::-webkit-scrollbar-thumb {
-            background: #b0bec5;
-            border-radius: 4px;
-        }
-        .table-wrapper::-webkit-scrollbar-thumb:hover {
-            background: #78909c;
+        /* REDUCED MOTION */
+        @media (prefers-reduced-motion: reduce) {
+            * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
         }
     </style>
 </head>
 <body>
 
-    <!-- ============================================================
-         HEADER
-         ============================================================ -->
+    <!-- HEADER -->
     <header class="header">
         <div class="logo-container" id="logoContainer">
-            <span class="logo-placeholder" id="logoPlaceholder">CIES</span>
-            <img id="logoImage" src="logo.jpg" href="logo.jpg" alt="Logo" style="display:none;">
+            <img src="logo.jpg" alt="Logo" id="logoImage"
+                 onerror="this.style.display='none'; document.getElementById('logoPlaceholder').style.display='block';">
+            <span class="logo-placeholder" id="logoPlaceholder" style="display:none;">GM</span>
         </div>
         <div class="header-text">
-            <h1>testCHECKER (ClassRecordCIES) </h1>
-            <p>- explainexplore - #techieteacher | </p>
-            <div class="sub-info">a quick bubble sheet checker CIES adaptability</div>
+            <h1>Test Checker</h1>
+            <p id="headerSubtitle">OMR Scanner | ST1</p>
         </div>
     </header>
 
-    <!-- ============================================================
-         SCAN ALERT BANNER
-         ============================================================ -->
-    <div class="scan-alert">
-        <div class="alert-icon">📷</div>
-        <div class="alert-content">
-            <h3>TEST CHECKER — OMR SCAN INSTRUCTION</h3>
-            <p><strong>Step 1:</strong> Import the itemized template from <strong>ClassRecord CIES</strong>. Row 2 of the template retains the <strong>cognitive tags</strong> (Un, Re, Ap, An, Ev, Cr). <strong>Item numbering is the primary key</strong> for scanning.</p>
-            <p><strong>Step 2:</strong> Select the assessment to check — <strong>ST1, ST2, or TE</strong> — one at a time.</p>
-            <div class="core-function">
-                <strong>📷 OMR CORE FUNCTION (3 Steps):</strong>
-                <ol>
-                    <li><strong>SCAN/CAPTURE</strong> — Detect marked bubbles from student answer sheet</li>
-                    <li><strong>MAP</strong> — Map detected bubbles to item numbers (1, 2, 3, ... n)</li>
-                    <li><strong>ENCODE</strong> — Auto-fill 0's and 1's based on answer key comparison</li>
-                </ol>
-                <p style="margin-top:0.3rem;font-size:0.78rem;color:#1b5e20;"><strong>✅ No print functions</strong> — use ClassRecord CIES for printing and reporting.</p>
+    <!-- MAIN -->
+    <main class="main">
+
+        <!-- Step 1: Select Assessment -->
+        <div class="card">
+            <div class="card-title">
+                <span class="step-badge">1</span>
+                Select Assessment
+            </div>
+            <select class="form-select" id="assessmentSelect" onchange="onAssessmentChange()">
+                <option value="st1">Summative Test 1 (ST1) — 30 items</option>
+                <option value="st2">Summative Test 2 (ST2) — 30 items</option>
+                <option value="te">Term Exam (TE) — 60 items</option>
+            </select>
+        </div>
+
+        <!-- Step 2: Select Student -->
+        <div class="card">
+            <div class="card-title">
+                <span class="step-badge">2</span>
+                Select Student
+            </div>
+            <select class="form-select" id="studentSelect" onchange="onStudentChange()">
+                <option value="">— Select student —</option>
+            </select>
+        </div>
+
+        <!-- Step 3: Scan Answer Sheet -->
+        <div class="card">
+            <div class="card-title">
+                <span class="step-badge">3</span>
+                Scan Answer Sheet
+            </div>
+            <div class="camera-preview" id="cameraPreview">
+                <div class="placeholder" id="cameraPlaceholder">
+                    <span class="icon">📷</span>
+                    <span>Camera preview will appear here</span>
+                </div>
+                <video id="cameraVideo" autoplay playsinline style="display:none;"></video>
+                <img id="capturedImage" style="display:none;" alt="Captured answer sheet">
+                <div class="omr-overlay" id="omrOverlay"></div>
+            </div>
+            <div class="btn-row">
+                <button class="btn btn-primary" id="btnStartCamera" onclick="startCamera()">
+                    📸 Start Camera
+                </button>
+                <button class="btn btn-success" id="btnCapture" onclick="captureImage()" disabled>
+                    📷 Capture
+                </button>
+                <button class="btn btn-outline" id="btnUpload" onclick="document.getElementById('fileInput').click()">
+                    📁 Upload
+                </button>
+                <input type="file" id="fileInput" accept="image/*" style="display:none;" onchange="handleFileUpload(event)">
+            </div>
+            <div class="btn-row">
+                <button class="btn btn-outline" id="btnRetake" onclick="retakeImage()" disabled>
+                    🔄 Retake
+                </button>
+                <button class="btn btn-danger" id="btnClearImage" onclick="clearImage()" disabled>
+                    🗑️ Clear
+                </button>
+            </div>
+            <div class="progress-container" id="progressContainer">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+            <div class="status" id="statusBar">
+                <span class="status-icon" id="statusIcon">⏳</span>
+                <span id="statusText">Select assessment and student to begin.</span>
             </div>
         </div>
-    </div>
 
-    <!-- ============================================================
-         TOOLBAR
-         ============================================================ -->
-    <div class="toolbar">
-        <button class="btn btn-primary" id="btnImport" onclick="document.getElementById('fileInput').click()">
-            📂 Import CIES Template
-        </button>
-        <input type="file" id="fileInput" accept=".xlsx,.xls,.csv" style="display:none;" onchange="handleFileImport(event)">
-        <button class="btn btn-success" id="btnScanOMR" onclick="openOMRModal()">
-            📷 SCAN / CAPTURE OMR
-        </button>
-        <button class="btn btn-warning" id="btnFillScores" onclick="fillAllScores()">
-            ✏️ Quick Encode (Fill 0s)
-        </button>
-        <button class="btn btn-outline" id="btnVerify" onclick="verifyAll()">
-            ✅ Verify All
-        </button>
-        <div class="spacer"></div>
-        <button class="btn btn-sm btn-outline" id="btnSettings" onclick="openSettings()">
-            ⚙️ Settings
-        </button>
-        <button class="btn btn-sm btn-danger" id="btnReset" onclick="resetAll()">
-            🔄 Reset
-        </button>
-    </div>
-
-    <!-- ============================================================
-         TABS
-         ============================================================ -->
-    <div class="tabs" id="tabs">
-        <button class="tab active" data-sheet="st1" onclick="switchSheet('st1')">
-            ST1 <span class="badge" id="badgeSt1">0/30</span>
-        </button>
-        <button class="tab" data-sheet="st2" onclick="switchSheet('st2')">
-            ST2 <span class="badge" id="badgeSt2">0/30</span>
-        </button>
-        <button class="tab" data-sheet="te" onclick="switchSheet('te')">
-            TE <span class="badge" id="badgeTe">0/60</span>
-        </button>
-    </div>
-
-    <!-- ============================================================
-         VERIFICATION PANEL
-         ============================================================ -->
-    <div class="verification-panel" id="verificationPanel">
-        <div class="verify-item">
-            <span class="check-icon" id="iconStudents">⏳</span>
-            <span class="verify-label">Students:</span>
-            <span class="verify-value" id="verifyStudents">0 / 0</span>
-        </div>
-        <div class="verify-item">
-            <span class="check-icon" id="iconItems">⏳</span>
-            <span class="verify-label">Items Encoded:</span>
-            <span class="verify-value" id="verifyItems">0 / 0</span>
-        </div>
-        <div class="verify-item">
-            <span class="check-icon" id="iconValid">⏳</span>
-            <span class="verify-label">Valid Values:</span>
-            <span class="verify-value" id="verifyValid">0 / 0</span>
-        </div>
-        <div class="verify-item">
-            <span class="check-icon" id="iconTotals">⏳</span>
-            <span class="verify-label">Total Scores:</span>
-            <span class="verify-value" id="verifyTotals">0 / 0</span>
-        </div>
-        <div class="spacer"></div>
-        <span class="verify-status warning" id="verifyStatus">⏳ Waiting for data</span>
-    </div>
-
-    <!-- ============================================================
-         TABLE CONTAINER
-         ============================================================ -->
-    <div class="table-container" id="tableContainer">
-        <div class="table-wrapper">
-            <table id="mainTable">
-                <thead id="tableHead"></thead>
-                <tbody id="tableBody"></tbody>
-            </table>
-        </div>
-    </div>
-
-    <!-- ============================================================
-         FOOTER
-         ============================================================ -->
-    <footer class="footer">
-        <div class="footer-left">
-            <span><span class="status-dot ready" id="footerDot"></span> <span id="footerStatus">Ready</span></span>
-            <span>|</span>
-            <span>Current: <strong id="footerCurrentSheet">ST1</strong></span>
-            <span>|</span>
-            <span>Students: <strong id="footerStudentCount">0</strong></span>
-        </div>
-        <div class="footer-right">
-            <span>Last saved: <strong id="footerLastSaved">Never</strong></span>
-            <span>|</span>
-            <span>v3.0 (OMR)</span>
-        </div>
-    </footer>
-
-    <!-- ============================================================
-         SETTINGS MODAL
-         ============================================================ -->
-    <div class="modal-overlay" id="settingsModal">
-        <div class="modal">
-            <div class="modal-header">
-                <h2>⚙️ Settings</h2>
-                <button class="modal-close" onclick="closeSettings()">&times;</button>
+        <!-- Scan Result -->
+        <div class="card" id="scanResultCard" style="display:none;">
+            <div class="card-title">
+                <span class="step-badge">✓</span>
+                Scan Result
             </div>
-            <div class="modal-body">
-                <div style="margin-bottom:1.5rem;">
-                    <label style="display:block;font-weight:600;margin-bottom:0.5rem;color:#1e3a5f;">Logo</label>
-                    <div style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap;">
-                        <div style="width:80px;height:80px;border:2px dashed #ccc;border-radius:50%;display:flex;align-items:center;justify-content:center;overflow:hidden;background:#fafafa;">
-                            <img id="settingsLogoPreview" src="" alt="Logo preview" style="width:100%;height:100%;object-fit:contain;padding:5px;display:none;">
-                            <span id="settingsLogoPlaceholder" style="font-size:1.5rem;font-weight:700;color:#999;">GM</span>
-                        </div>
-                        <div>
-                            <input type="file" id="logoUpload" accept="image/*" style="display:none;" onchange="handleLogoUpload(event)">
-                            <button class="btn btn-sm btn-primary" onclick="document.getElementById('logoUpload').click()">Upload Logo</button>
-                            <button class="btn btn-sm btn-outline" onclick="removeLogo()">Remove</button>
-                        </div>
+            <div class="scan-result-card">
+                <div class="result-icon">📊</div>
+                <div class="result-content">
+                    <div class="result-name" id="resultStudentName">—</div>
+                    <div class="result-score">
+                        Score: <strong id="resultScore">0</strong> / <span id="resultTotal">0</span>
                     </div>
                 </div>
-                <div style="margin-bottom:1.5rem;">
-                    <label style="display:block;font-weight:600;margin-bottom:0.5rem;color:#1e3a5f;">Test Title</label>
-                    <input type="text" id="settingsTestTitle" value="Summative Test 1 (ST1)" style="width:100%;padding:0.5rem;border:1px solid #ccc;border-radius:6px;font-family:inherit;font-size:0.85rem;">
-                </div>
-                <div style="margin-bottom:1.5rem;">
-                    <label style="display:block;font-weight:600;margin-bottom:0.5rem;color:#1e3a5f;">School Year</label>
-                    <input type="text" id="settingsSchoolYear" value="2026-2027" style="width:100%;padding:0.5rem;border:1px solid #ccc;border-radius:6px;font-family:inherit;font-size:0.85rem;">
-                </div>
-                <div style="margin-bottom:1.5rem;">
-                    <label style="display:block;font-weight:600;margin-bottom:0.5rem;color:#1e3a5f;">Scoring Mode</label>
-                    <select id="settingsScoringMode" style="width:100%;padding:0.5rem;border:1px solid #ccc;border-radius:6px;font-family:inherit;font-size:0.85rem;">
-                        <option value="1-0">1 = Correct, 0 = Incorrect</option>
-                        <option value="1-0-empty">1 = Correct, 0 = Incorrect, Empty = Not Checked</option>
-                    </select>
-                </div>
-                <div style="margin-bottom:0.5rem;">
-                    <label style="display:block;font-weight:600;margin-bottom:0.5rem;color:#1e3a5f;">Display Options</label>
-                    <label style="display:flex;align-items:center;gap:0.5rem;font-size:0.85rem;margin-bottom:0.3rem;cursor:pointer;">
-                        <input type="checkbox" id="settingsShowLevelTotals" checked> Show cognitive level subtotals in columns
-                    </label>
-                    <label style="display:flex;align-items:center;gap:0.5rem;font-size:0.85rem;cursor:pointer;">
-                        <input type="checkbox" id="settingsShowPercentage" checked> Show percentage in total column tooltip
-                    </label>
-                </div>
             </div>
-            <div class="modal-footer">
-                <button class="btn btn-outline" onclick="closeSettings()">Cancel</button>
-                <button class="btn btn-primary" onclick="saveSettings()">Save Settings</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- ============================================================
-         OMR SCAN MODAL
-         ============================================================ -->
-    <div class="modal-overlay" id="omrModal">
-        <div class="modal" style="max-width:800px;">
-            <div class="modal-header">
-                <h2>📷 OMR Scan / Capture</h2>
-                <button class="modal-close" onclick="closeOMRModal()">&times;</button>
-            </div>
-            <div class="modal-body">
-                <!-- Step 1: Select Student -->
-                <div style="margin-bottom:1rem;">
-                    <label style="display:block;font-weight:600;margin-bottom:0.3rem;color:#1e3a5f;">Step 1: Select Student</label>
-                    <select id="omrStudentSelect" style="width:100%;padding:0.5rem;border:1px solid #ccc;border-radius:6px;font-family:inherit;font-size:0.85rem;">
-                        <option value="">— Select student —</option>
-                    </select>
-                </div>
-
-                <!-- Step 2: Upload/Capture Answer Sheet -->
-                <div style="margin-bottom:1rem;">
-                    <label style="display:block;font-weight:600;margin-bottom:0.3rem;color:#1e3a5f;">Step 2: Capture / Upload Answer Sheet</label>
-                    <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
-                        <input type="file" id="omrImageInput" accept="image/*" style="display:none;" onchange="handleOMRImage(event)">
-                        <button class="btn btn-sm btn-primary" onclick="document.getElementById('omrImageInput').click()">
-                            📁 Upload Image
-                        </button>
-                        <button class="btn btn-sm btn-success" onclick="startCamera()">
-                            📸 Use Camera
-                        </button>
-                        <button class="btn btn-sm btn-outline" onclick="clearOMRImage()">
-                            🗑️ Clear
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Camera preview -->
-                <div id="cameraContainer" style="display:none;margin-bottom:1rem;">
-                    <video id="cameraPreview" autoplay playsinline style="width:100%;max-height:200px;border-radius:8px;background:#000;"></video>
-                    <div style="display:flex;gap:0.5rem;margin-top:0.5rem;">
-                        <button class="btn btn-sm btn-success" onclick="captureCamera()">📸 Capture</button>
-                        <button class="btn btn-sm btn-danger" onclick="stopCamera()">⏹️ Stop</button>
-                    </div>
-                </div>
-
-                <!-- Image preview -->
-                <div class="omr-preview" id="omrPreview">
-                    <div class="placeholder-text" id="omrPlaceholder">
-                        <div style="font-size:2rem;margin-bottom:0.5rem;">📄</div>
-                        No image loaded. Upload or capture an answer sheet.
-                    </div>
-                    <img id="omrImage" src="" alt="Answer sheet" style="display:none;">
-                    <div class="omr-overlay" id="omrOverlay"></div>
-                </div>
-
-                <!-- Progress -->
-                <div class="omr-progress" id="omrProgressContainer" style="display:none;">
-                    <div class="omr-progress-bar" id="omrProgressBar"></div>
-                </div>
-
-                <!-- Status -->
-                <div class="omr-status" id="omrStatus" style="display:none;">
-                    <span class="status-icon" id="omrStatusIcon">⏳</span>
-                    <span id="omrStatusText">Processing...</span>
-                </div>
-
-                <!-- Results -->
-                <div class="omr-results" id="omrResults" style="display:none;">
-                    <div style="font-weight:600;margin-bottom:0.3rem;color:#1e3a5f;">Detected Marks:</div>
-                    <div id="omrResultsList"></div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-outline" onclick="closeOMRModal()">Cancel</button>
-                <button class="btn btn-success" id="btnProcessOMR" onclick="processOMR()" disabled>
-                    🔍 Process OMR
+            <div class="btn-row">
+                <button class="btn btn-primary btn-block" onclick="openVerificationModal()">
+                    🔍 Verify & Accept
                 </button>
             </div>
         </div>
+
+        <!-- Export Button (appears when all students scanned) -->
+        <div class="card" id="exportCard" style="display:none;">
+            <div class="card-title">
+                <span class="step-badge">📤</span>
+                Export to ClassRecord CIES
+            </div>
+            <div class="status" style="background:#e8f5e9;color:#1b5e20;">
+                <span class="status-icon success">✅</span>
+                <span id="exportStatusText">All students scanned. Ready to export.</span>
+            </div>
+            <div class="btn-row">
+                <button class="btn btn-success btn-block" onclick="exportToCIES()">
+                    📤 Download CSV for ClassRecord CIES
+                </button>
+            </div>
+        </div>
+
+        <!-- Empty State (when no students loaded) -->
+        <div class="empty-state" id="emptyState">
+            <span class="icon">📂</span>
+            <span>No students loaded. Import from ClassRecord CIES first.</span>
+            <button class="btn btn-primary btn-block" style="max-width:300px;margin-top:0.5rem;" onclick="importStudents()">
+                📂 Import Students (CSV)
+            </button>
+        </div>
+
+    </main>
+
+    <!-- BOTTOM NAV -->
+    <nav class="bottom-nav">
+        <button class="nav-item active" id="navScan" onclick="switchNav('scan')">
+            <span class="nav-icon">📷</span>
+            <span>Scan</span>
+        </button>
+        <button class="nav-item" id="navHistory" onclick="switchNav('history')">
+            <span class="nav-icon">📋</span>
+            <span>History</span>
+        </button>
+        <button class="nav-item" id="navSettings" onclick="switchNav('settings')">
+            <span class="nav-icon">⚙️</span>
+            <span>Settings</span>
+        </button>
+    </nav>
+
+    <!-- VERIFICATION MODAL -->
+    <div class="modal-overlay" id="verificationModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>🔍 Verify Scan Results</h2>
+                <button class="modal-close" onclick="closeVerificationModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="verify-summary">
+                    <div class="summary-item">
+                        <div class="summary-value" id="verifyTotalItems">0</div>
+                        <div class="summary-label">Total Items</div>
+                    </div>
+                    <div class="summary-item">
+                        <div class="summary-value correct" id="verifyCorrect">0</div>
+                        <div class="summary-label">Correct</div>
+                    </div>
+                    <div class="summary-item">
+                        <div class="summary-value incorrect" id="verifyIncorrect">0</div>
+                        <div class="summary-label">Incorrect</div>
+                    </div>
+                </div>
+                <div class="verify-results-list" id="verifyResultsList">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closeVerificationModal()">Cancel</button>
+                <button class="btn btn-success" id="btnAcceptScan" onclick="acceptScan()">✅ Accept & Save</button>
+            </div>
+        </div>
     </div>
 
-    <!-- ============================================================
-         TOAST CONTAINER
-         ============================================================ -->
+    <!-- TOAST -->
     <div class="toast-container" id="toastContainer"></div>
 
-    <!-- ============================================================
-         JAVASCRIPT
-         ============================================================ -->
+    <!-- JAVASCRIPT -->
     <script>
         // ============================================================
-        // CONFIGURATION — ITEM-FIRST DESIGN
+        // CONFIGURATION
         // ============================================================
         const CONFIG = {
-            sheets: {
-                st1: {
-                    name: 'ST1',
-                    label: 'Summative Test 1 (ST1)',
-                    totalItems: 30,
-                    levels: [
-                        { name: 'Un', count: 5, color: '#4a90d9' },
-                        { name: 'Re', count: 5, color: '#4caf50' },
-                        { name: 'Ap', count: 5, color: '#f0a500' },
-                        { name: 'An', count: 5, color: '#ff7043' },
-                        { name: 'Ev', count: 3, color: '#ab47bc' },
-                        { name: 'Cr', count: 3, color: '#26a69a' }
-                    ]
-                },
-                st2: {
-                    name: 'ST2',
-                    label: 'Summative Test 2 (ST2)',
-                    totalItems: 30,
-                    levels: [
-                        { name: 'Un', count: 5, color: '#4a90d9' },
-                        { name: 'Re', count: 5, color: '#4caf50' },
-                        { name: 'Ap', count: 5, color: '#f0a500' },
-                        { name: 'An', count: 5, color: '#ff7043' },
-                        { name: 'Ev', count: 3, color: '#ab47bc' },
-                        { name: 'Cr', count: 3, color: '#26a69a' }
-                    ]
-                },
-                te: {
-                    name: 'TE',
-                    label: 'Term Exam (TE)',
-                    totalItems: 60,
-                    levels: [
-                        { name: 'Un', count: 10, color: '#4a90d9' },
-                        { name: 'Re', count: 10, color: '#4caf50' },
-                        { name: 'Ap', count: 10, color: '#f0a500' },
-                        { name: 'An', count: 10, color: '#ff7043' },
-                        { name: 'Ev', count: 10, color: '#ab47bc' },
-                        { name: 'Cr', count: 10, color: '#26a69a' }
-                    ]
-                }
+            assessments: {
+                st1: { name: 'ST1', label: 'Summative Test 1', totalItems: 30 },
+                st2: { name: 'ST2', label: 'Summative Test 2', totalItems: 30 },
+                te: { name: 'TE', label: 'Term Exam', totalItems: 60 }
             }
         };
 
@@ -1259,524 +495,112 @@
         // STATE
         // ============================================================
         let state = {
-            currentSheet: 'st1',
+            currentAssessment: 'st1',
             students: [],
             scores: {
                 st1: {},
                 st2: {},
                 te: {}
             },
-            answerKey: {
-                st1: {},
-                st2: {},
-                te: {}
-            },
-            settings: {
-                logo: null,
-                testTitle: 'Summative Test 1 (ST1)',
-                schoolYear: '2026-2027',
-                scoringMode: '1-0',
-                showLevelTotals: true,
-                showPercentage: true
-            },
-            lastSaved: null,
-            importedFileName: null,
-            // OMR state
             omr: {
                 imageDataUrl: null,
-                selectedStudentId: null,
-                processing: false,
+                detectedMarks: [],
+                isProcessing: false,
                 cameraStream: null,
-                detectedMarks: []
-            }
+                pendingScan: null
+            },
+            history: []
         };
 
         // ============================================================
-        // UTILITY FUNCTIONS
+        // UTILITY
         // ============================================================
 
         function showToast(message, type = 'info', duration = 3500) {
             const container = document.getElementById('toastContainer');
             const toast = document.createElement('div');
             toast.className = `toast ${type}`;
-            const icons = {
-                success: '✅',
-                warning: '⚠️',
-                error: '❌',
-                info: 'ℹ️'
-            };
-            toast.innerHTML = `<span>${icons[type] || 'ℹ️'}</span> ${message}`;
+            const icons = { success: '✅', warning: '⚠️', error: '❌', info: 'ℹ️' };
+            toast.innerHTML = `<span>${icons[type] || 'ℹ️'}</span> <span>${message}</span>`;
             container.appendChild(toast);
             setTimeout(() => {
                 toast.style.opacity = '0';
-                toast.style.transform = 'translateX(30px)';
+                toast.style.transform = 'translateY(20px)';
                 toast.style.transition = 'all 0.3s ease';
                 setTimeout(() => toast.remove(), 300);
             }, duration);
         }
 
-        function getLevelForItem(sheetKey, itemNumber) {
-            const config = CONFIG.sheets[sheetKey];
-            let count = 0;
-            for (const level of config.levels) {
-                count += level.count;
-                if (itemNumber <= count) {
-                    return level;
-                }
-            }
-            return config.levels[config.levels.length - 1];
+        function getTotalItems() {
+            return CONFIG.assessments[state.currentAssessment].totalItems;
         }
 
-        function getLevelRanges(sheetKey) {
-            const config = CONFIG.sheets[sheetKey];
-            const ranges = [];
-            let start = 1;
-            for (const level of config.levels) {
-                const end = start + level.count - 1;
-                ranges.push({
-                    name: level.name,
-                    start: start,
-                    end: end,
-                    count: level.count,
-                    color: level.color
-                });
-                start = end + 1;
-            }
-            return ranges;
+        function getStudentById(id) {
+            return state.students.find(s => s.id === id) || null;
         }
 
-        function getTotalItems(sheetKey) {
-            return CONFIG.sheets[sheetKey].totalItems;
+        function getAssessmentLabel(key) {
+            return CONFIG.assessments[key]?.label || key;
         }
 
-        function getScore(studentId, sheetKey, itemNumber) {
-            const key = `${studentId}_${itemNumber}`;
-            const val = state.scores[sheetKey][key];
-            if (val === undefined || val === null) return '';
-            return val;
+        function setStatus(icon, text, type = 'pending') {
+            const statusIcon = document.getElementById('statusIcon');
+            const statusText = document.getElementById('statusText');
+            statusIcon.textContent = icon;
+            statusIcon.className = `status-icon ${type}`;
+            statusText.textContent = text;
         }
 
-        function setScore(studentId, sheetKey, itemNumber, value) {
-            const key = `${studentId}_${itemNumber}`;
-            if (value === '' || value === null || value === undefined) {
-                delete state.scores[sheetKey][key];
-            } else {
-                state.scores[sheetKey][key] = value;
-            }
-            state.lastSaved = new Date().toISOString();
-        }
-
-        function getTotalScore(studentId, sheetKey) {
-            const total = getTotalItems(sheetKey);
-            let sum = 0;
-            for (let i = 1; i <= total; i++) {
-                const val = getScore(studentId, sheetKey, i);
-                if (val === 1 || val === '1') sum++;
-            }
-            return sum;
-        }
-
-        function isStudentComplete(studentId, sheetKey) {
-            const total = getTotalItems(sheetKey);
-            for (let i = 1; i <= total; i++) {
-                const val = getScore(studentId, sheetKey, i);
-                if (val === '' || val === null || val === undefined) return false;
-            }
-            return true;
-        }
-
-        // ============================================================
-        // TABLE RENDERING
-        // ============================================================
-
-        function renderTable() {
-            const sheetKey = state.currentSheet;
-            const config = CONFIG.sheets[sheetKey];
-            const levels = getLevelRanges(sheetKey);
-
-            // ---- THEAD ----
-            let headHtml = '<tr>';
-            headHtml += '<th rowspan="2" style="min-width:40px;">#</th>';
-            headHtml += '<th rowspan="2" style="min-width:140px;">Student Name</th>';
-
-            for (const level of levels) {
-                headHtml += `<th colspan="${level.count}" style="border-left:2px solid ${level.color};">${level.name}</th>`;
-            }
-
-            headHtml += '<th rowspan="2" style="background:#1a237e;min-width:50px;">TOTAL</th>';
-            headHtml += '<th rowspan="2" style="background:#2e7d32;min-width:40px;">✓</th>';
-            headHtml += '</tr><tr>';
-
-            let itemNum = 1;
-            for (const level of levels) {
-                for (let i = 0; i < level.count; i++) {
-                    headHtml += `<th class="sub-header" style="border-left:1px solid ${level.color};">${itemNum}</th>`;
-                    itemNum++;
-                }
-            }
-
-            headHtml += '</tr>';
-            document.getElementById('tableHead').innerHTML = headHtml;
-
-            // ---- TBODY ----
-            const tbody = document.getElementById('tableBody');
-            if (state.students.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="${4 + config.totalItems + 2}" style="padding:2rem;text-align:center;color:#999;">
-                    📂 No students loaded. Click "Import CIES Template" to begin.
-                </td></tr>`;
-                return;
-            }
-
-            let bodyHtml = '';
-            for (let idx = 0; idx < state.students.length; idx++) {
-                const student = state.students[idx];
-                const studentId = student.id || `student_${idx}`;
-                if (!student.id) student.id = studentId;
-
-                const totalScore = getTotalScore(studentId, sheetKey);
-                const complete = isStudentComplete(studentId, sheetKey);
-                const totalItems = config.totalItems;
-
-                bodyHtml += '<tr>';
-                bodyHtml += `<td class="student-info narrow">${idx + 1}</td>`;
-                bodyHtml += `<td class="student-info" title="${student.lastName}, ${student.firstName} ${student.middleName || ''}">${student.lastName}, ${student.firstName}</td>`;
-
-                for (let i = 1; i <= totalItems; i++) {
-                    const val = getScore(studentId, sheetKey, i);
-                    const display = val === '' ? '' : val;
-                    bodyHtml += `<td class="score-cell" data-score="${display}" data-student="${studentId}" data-sheet="${sheetKey}" data-item="${i}" onclick="toggleScore(this)" oncontextmenu="clearScore(event, this)">${display}</td>`;
-                }
-
-                const totalStatus = complete ? 'complete' : 'incomplete';
-                bodyHtml += `<td class="total-cell" data-status="${totalStatus}" title="${totalScore} / ${totalItems} (${((totalScore/totalItems)*100).toFixed(1)}%)">${totalScore}</td>`;
-
-                const checkIcon = complete ? '✅' : (totalScore > 0 ? '⚠️' : '⏳');
-                const checkClass = complete ? 'pass' : (totalScore > 0 ? 'pending' : '');
-                bodyHtml += `<td class="check-cell ${checkClass}">${checkIcon}</td>`;
-                bodyHtml += '</tr>';
-            }
-
-            tbody.innerHTML = bodyHtml;
-
-            // ---- UPDATE VERIFICATION PANEL ----
-            updateVerification();
-            updateBadges();
-            updateFooter();
-            populateStudentSelect();
-        }
-
-        // ============================================================
-        // SCORE INTERACTION
-        // ============================================================
-
-        function toggleScore(cell) {
-            const studentId = cell.dataset.student;
-            const sheetKey = cell.dataset.sheet;
-            const item = parseInt(cell.dataset.item);
-            const current = cell.dataset.score;
-
-            let next;
-            if (current === '') {
-                next = '1';
-            } else if (current === '1') {
-                next = '0';
-            } else {
-                next = '';
-            }
-
-            cell.dataset.score = next;
-            cell.textContent = next;
-            setScore(studentId, sheetKey, item, next === '' ? '' : parseInt(next));
-
-            // Update total for this row
-            const row = cell.closest('tr');
-            const totalCell = row.querySelector('.total-cell');
-            if (totalCell) {
-                const totalScore = getTotalScore(studentId, sheetKey);
-                const totalItems = getTotalItems(sheetKey);
-                const complete = isStudentComplete(studentId, sheetKey);
-                totalCell.textContent = totalScore;
-                totalCell.dataset.status = complete ? 'complete' : 'incomplete';
-                totalCell.title = `${totalScore} / ${totalItems} (${((totalScore/totalItems)*100).toFixed(1)}%)`;
-
-                const checkCell = row.querySelector('.check-cell');
-                if (checkCell) {
-                    const checkIcon = complete ? '✅' : (totalScore > 0 ? '⚠️' : '⏳');
-                    const checkClass = complete ? 'pass' : (totalScore > 0 ? 'pending' : '');
-                    checkCell.textContent = checkIcon;
-                    checkCell.className = `check-cell ${checkClass}`;
-                }
-            }
-
-            updateVerification();
-            updateBadges();
-            updateFooter();
-        }
-
-        function clearScore(event, cell) {
-            event.preventDefault();
-            const studentId = cell.dataset.student;
-            const sheetKey = cell.dataset.sheet;
-            const item = parseInt(cell.dataset.item);
-            cell.dataset.score = '';
-            cell.textContent = '';
-            setScore(studentId, sheetKey, item, '');
-
-            const row = cell.closest('tr');
-            const totalCell = row.querySelector('.total-cell');
-            if (totalCell) {
-                const totalScore = getTotalScore(studentId, sheetKey);
-                const totalItems = getTotalItems(sheetKey);
-                const complete = isStudentComplete(studentId, sheetKey);
-                totalCell.textContent = totalScore;
-                totalCell.dataset.status = complete ? 'complete' : 'incomplete';
-                totalCell.title = `${totalScore} / ${totalItems} (${((totalScore/totalItems)*100).toFixed(1)}%)`;
-
-                const checkCell = row.querySelector('.check-cell');
-                if (checkCell) {
-                    const checkIcon = complete ? '✅' : (totalScore > 0 ? '⚠️' : '⏳');
-                    const checkClass = complete ? 'pass' : (totalScore > 0 ? 'pending' : '');
-                    checkCell.textContent = checkIcon;
-                    checkCell.className = `check-cell ${checkClass}`;
-                }
-            }
-
-            updateVerification();
-            updateBadges();
-            updateFooter();
-        }
-
-        // ============================================================
-        // QUICK ENCODE
-        // ============================================================
-
-        function fillAllScores() {
-            if (state.students.length === 0) {
-                showToast('No students loaded. Import a template first.', 'warning');
-                return;
-            }
-            const sheetKey = state.currentSheet;
-            const totalItems = getTotalItems(sheetKey);
-            let filled = 0;
-
-            for (const student of state.students) {
-                const studentId = student.id;
-                for (let i = 1; i <= totalItems; i++) {
-                    if (getScore(studentId, sheetKey, i) === '') {
-                        setScore(studentId, sheetKey, i, 0);
-                        filled++;
-                    }
-                }
-            }
-
-            renderTable();
-            showToast(`Filled ${filled} empty scores with 0.`, 'info');
-        }
-
-        // ============================================================
-        // VERIFICATION
-        // ============================================================
-
-        function updateVerification() {
-            const sheetKey = state.currentSheet;
-            const config = CONFIG.sheets[sheetKey];
-            const totalItems = config.totalItems;
+        function updateExportVisibility() {
+            const assessment = state.currentAssessment;
             const totalStudents = state.students.length;
-            const totalCells = totalStudents * totalItems;
-
-            let encodedCells = 0;
-            let validCells = 0;
-            let studentsWithTotal = 0;
-
+            if (totalStudents === 0) {
+                document.getElementById('exportCard').style.display = 'none';
+                return;
+            }
+            let scanned = 0;
             for (const student of state.students) {
-                const studentId = student.id;
-                let hasAny = false;
-                for (let i = 1; i <= totalItems; i++) {
-                    const val = getScore(studentId, sheetKey, i);
-                    if (val !== '' && val !== null && val !== undefined) {
-                        encodedCells++;
-                        hasAny = true;
-                        if (val === 0 || val === 1 || val === '0' || val === '1') {
-                            validCells++;
-                        }
+                const studentScores = state.scores[assessment] || {};
+                let hasAll = true;
+                for (let i = 1; i <= getTotalItems(); i++) {
+                    if (studentScores[`${student.id}_${i}`] === undefined) {
+                        hasAll = false;
+                        break;
                     }
                 }
-                if (hasAny) studentsWithTotal++;
+                if (hasAll) scanned++;
             }
-
-            document.getElementById('verifyStudents').textContent = `${totalStudents} / ${totalStudents}`;
-            document.getElementById('verifyItems').textContent = `${encodedCells} / ${totalCells}`;
-            document.getElementById('verifyValid').textContent = `${validCells} / ${totalCells}`;
-            document.getElementById('verifyTotals').textContent = `${studentsWithTotal} / ${totalStudents}`;
-
-            const iconStudents = document.getElementById('iconStudents');
-            const iconItems = document.getElementById('iconItems');
-            const iconValid = document.getElementById('iconValid');
-            const iconTotals = document.getElementById('iconTotals');
-
-            iconStudents.textContent = totalStudents > 0 ? '✅' : '⏳';
-            iconStudents.className = `check-icon ${totalStudents > 0 ? 'pass' : 'pending'}`;
-
-            iconItems.textContent = encodedCells === totalCells && totalCells > 0 ? '✅' : (encodedCells > 0 ? '⚠️' : '⏳');
-            iconItems.className = `check-icon ${encodedCells === totalCells && totalCells > 0 ? 'pass' : (encodedCells > 0 ? 'pending' : '')}`;
-
-            iconValid.textContent = validCells === totalCells && totalCells > 0 ? '✅' : (validCells > 0 ? '⚠️' : '⏳');
-            iconValid.className = `check-icon ${validCells === totalCells && totalCells > 0 ? 'pass' : (validCells > 0 ? 'pending' : '')}`;
-
-            iconTotals.textContent = studentsWithTotal === totalStudents && totalStudents > 0 ? '✅' : (studentsWithTotal > 0 ? '⚠️' : '⏳');
-            iconTotals.className = `check-icon ${studentsWithTotal === totalStudents && totalStudents > 0 ? 'pass' : (studentsWithTotal > 0 ? 'pending' : '')}`;
-
-            const statusEl = document.getElementById('verifyStatus');
-            if (totalStudents === 0) {
-                statusEl.textContent = '⏳ Waiting for data';
-                statusEl.className = 'verify-status warning';
-            } else if (encodedCells === totalCells && validCells === totalCells && studentsWithTotal === totalStudents) {
-                statusEl.textContent = '✅ Ready to export';
-                statusEl.className = 'verify-status ready';
-            } else if (validCells < totalCells) {
-                statusEl.textContent = '⚠️ Incomplete encoding';
-                statusEl.className = 'verify-status warning';
+            if (scanned === totalStudents) {
+                document.getElementById('exportCard').style.display = 'flex';
+                document.getElementById('exportStatusText').textContent =
+                    `All ${totalStudents} students scanned. Ready to export.`;
             } else {
-                statusEl.textContent = '⏳ In progress';
-                statusEl.className = 'verify-status warning';
-            }
-
-            const footerDot = document.getElementById('footerDot');
-            const footerStatus = document.getElementById('footerStatus');
-            if (totalStudents === 0) {
-                footerDot.className = 'status-dot warning';
-                footerStatus.textContent = 'Waiting';
-            } else if (encodedCells === totalCells && validCells === totalCells && studentsWithTotal === totalStudents) {
-                footerDot.className = 'status-dot ready';
-                footerStatus.textContent = 'Ready';
-            } else {
-                footerDot.className = 'status-dot warning';
-                footerStatus.textContent = 'In progress';
+                document.getElementById('exportCard').style.display = 'none';
             }
         }
 
-        function updateBadges() {
-            for (const key of ['st1', 'st2', 'te']) {
-                const totalItems = getTotalItems(key);
-                let encoded = 0;
-                for (const student of state.students) {
-                    for (let i = 1; i <= totalItems; i++) {
-                        if (getScore(student.id, key, i) !== '') encoded++;
-                    }
-                }
-                const totalCells = state.students.length * totalItems;
-                const badge = document.getElementById(`badge${key.charAt(0).toUpperCase() + key.slice(1)}`);
-                if (badge) {
-                    badge.textContent = `${encoded}/${totalCells}`;
-                }
-            }
+        // ============================================================
+        // ASSESSMENT & STUDENT SELECTION
+        // ============================================================
+
+        function onAssessmentChange() {
+            state.currentAssessment = document.getElementById('assessmentSelect').value;
+            document.getElementById('headerSubtitle').textContent =
+                `OMR Scanner | ${CONFIG.assessments[state.currentAssessment].name}`;
+            updateStudentSelect();
+            clearScanResult();
+            setStatus('⏳', 'Assessment changed. Select a student and scan.', 'pending');
+            updateExportVisibility();
         }
 
-        function updateFooter() {
-            document.getElementById('footerCurrentSheet').textContent = CONFIG.sheets[state.currentSheet].name;
-            document.getElementById('footerStudentCount').textContent = state.students.length;
-            const lastSaved = state.lastSaved ? new Date(state.lastSaved).toLocaleTimeString() : 'Never';
-            document.getElementById('footerLastSaved').textContent = lastSaved;
-        }
-
-        function verifyAll() {
-            updateVerification();
-            showToast('Verification updated.', 'info');
-        }
-
-        // ============================================================
-        // SHEET SWITCHING
-        // ============================================================
-
-        function switchSheet(sheetKey) {
-            if (state.currentSheet === sheetKey) return;
-            state.currentSheet = sheetKey;
-
-            document.querySelectorAll('.tab').forEach(tab => {
-                tab.classList.toggle('active', tab.dataset.sheet === sheetKey);
-            });
-
-            const config = CONFIG.sheets[sheetKey];
-            document.querySelector('.header-text p').textContent = `Test Checker | ${config.label}`;
-
-            renderTable();
-            updateFooter();
-        }
-
-        // ============================================================
-        // FILE IMPORT (Simulated - for demo; replace with real XLSX parser)
-        // ============================================================
-
-        function handleFileImport(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-
-            state.importedFileName = file.name;
-
-            if (state.students.length === 0) {
-                const sampleStudents = [
-                    { lastName: 'ADLAON', firstName: 'VINCE KENNETH', middleName: '' },
-                    { lastName: 'BERMEJO', firstName: 'JAN KARL', middleName: '' },
-                    { lastName: 'LLOPEZ', firstName: 'DAVID GABRIEL', middleName: '' },
-                    { lastName: 'MACMOD', firstName: 'AHSAN', middleName: '' },
-                    { lastName: 'MAGBANUA', firstName: 'JOHN VERGEL', middleName: '' },
-                    { lastName: 'ORTE', firstName: 'SAMUEL III', middleName: '' },
-                    { lastName: 'SEVILLE', firstName: 'JAZEN', middleName: '' },
-                    { lastName: 'YABO', firstName: 'VINCENT KYLE', middleName: '' },
-                    { lastName: 'ACOSTA', firstName: 'AMBER TEFFAME', middleName: '' },
-                    { lastName: 'ALISER', firstName: 'STACY MARIAE', middleName: '' },
-                    { lastName: 'BACACAO', firstName: 'ALEIA', middleName: '' },
-                    { lastName: 'BALUCOS', firstName: 'AVRIEL ROSE', middleName: '' },
-                    { lastName: 'BAÑAS', firstName: 'RHEA LOURINE', middleName: '' },
-                    { lastName: 'CALIAO', firstName: 'KRISTY LEE', middleName: '' },
-                    { lastName: 'CAMIGUING', firstName: 'ALTHEA KITH', middleName: '' },
-                    { lastName: 'CASAS', firstName: 'PRECIOUS LARA', middleName: '' },
-                    { lastName: 'DELA CERNA', firstName: 'ARVENA MARIE', middleName: '' },
-                    { lastName: 'DIAN', firstName: 'SHAIRA', middleName: '' },
-                    { lastName: 'DIZON', firstName: 'ATHENA MARIE', middleName: '' },
-                    { lastName: 'EMBUSCADO', firstName: 'AUDREY NICOLE', middleName: '' },
-                    { lastName: 'JOROLAN', firstName: 'ZYRIELANNE', middleName: '' },
-                    { lastName: 'MAGHANOY', firstName: 'LAIKA', middleName: '' },
-                    { lastName: 'MANAYAN', firstName: 'GREMAILA', middleName: '' },
-                    { lastName: 'MOLEJON', firstName: 'ELLEN MAE', middleName: '' },
-                    { lastName: 'PACULBA', firstName: 'JHONAH JANE', middleName: '' },
-                    { lastName: 'PRIETO', firstName: 'ALLYSSA JESHELLE', middleName: '' },
-                    { lastName: 'QUEZON', firstName: 'RHEA MAE', middleName: '' },
-                    { lastName: 'REMONDE', firstName: 'CHRISTINE JHOY', middleName: '' },
-                    { lastName: 'ROBLE', firstName: 'JHAMAIKAH ZNEIL', middleName: '' },
-                    { lastName: 'URSABIA', firstName: 'ANGEL FAITH', middleName: '' },
-                    { lastName: 'VARGAS', firstName: 'ELLYSSA MAE', middleName: '' },
-                    { lastName: 'WAMINAL', firstName: 'DAPHNIE SOPHIA MAEVE', middleName: '' }
-                ];
-
-                state.students = sampleStudents.map((s, i) => ({
-                    id: `student_${i}`,
-                    ...s
-                }));
-
-                showToast(`✅ Imported ${state.students.length} students from "${file.name}"`, 'success');
-
-                for (const key of ['st1', 'st2', 'te']) {
-                    if (!state.scores[key]) state.scores[key] = {};
-                }
-
-                renderTable();
-                updateFooter();
-            } else {
-                showToast(`File "${file.name}" selected. (Student data already loaded.)`, 'info');
-            }
-
-            event.target.value = '';
-        }
-
-        // ============================================================
-        // OMR FUNCTIONS
-        // ============================================================
-
-        function populateStudentSelect() {
-            const select = document.getElementById('omrStudentSelect');
-            if (!select) return;
+        function updateStudentSelect() {
+            const select = document.getElementById('studentSelect');
             select.innerHTML = '<option value="">— Select student —</option>';
+            if (state.students.length === 0) {
+                document.getElementById('emptyState').style.display = 'flex';
+                return;
+            }
+            document.getElementById('emptyState').style.display = 'none';
             for (const student of state.students) {
                 const option = document.createElement('option');
                 option.value = student.id;
@@ -1785,77 +609,110 @@
             }
         }
 
-        function openOMRModal() {
-            if (state.students.length === 0) {
-                showToast('No students loaded. Import a template first.', 'warning');
-                return;
+        function onStudentChange() {
+            const studentId = document.getElementById('studentSelect').value;
+            if (studentId) {
+                const student = getStudentById(studentId);
+                setStatus('✅', `Student selected: ${student.lastName}, ${student.firstName}. Ready to scan.`, 'success');
+                document.getElementById('btnCapture').disabled = false;
+                document.getElementById('btnStartCamera').disabled = false;
+            } else {
+                setStatus('⏳', 'Select a student to begin scanning.', 'pending');
+                document.getElementById('btnCapture').disabled = true;
             }
-            // Reset OMR state
-            state.omr.imageDataUrl = null;
-            state.omr.selectedStudentId = null;
-            state.omr.processing = false;
-            state.omr.detectedMarks = [];
-            document.getElementById('omrImage').src = '';
-            document.getElementById('omrImage').style.display = 'none';
-            document.getElementById('omrPlaceholder').style.display = 'block';
-            document.getElementById('omrProgressContainer').style.display = 'none';
-            document.getElementById('omrProgressBar').style.width = '0%';
-            document.getElementById('omrStatus').style.display = 'none';
-            document.getElementById('omrResults').style.display = 'none';
-            document.getElementById('omrResultsList').innerHTML = '';
-            document.getElementById('btnProcessOMR').disabled = true;
-            document.getElementById('cameraContainer').style.display = 'none';
-
-            populateStudentSelect();
-            document.getElementById('omrModal').classList.add('active');
+            clearScanResult();
         }
 
-        function closeOMRModal() {
+        // ============================================================
+        // CAMERA
+        // ============================================================
+
+        async function startCamera() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({
+                    video: { facingMode: 'environment', width: { ideal: 1280 }, height: { ideal: 1700 } }
+                });
+                state.omr.cameraStream = stream;
+                const video = document.getElementById('cameraVideo');
+                video.srcObject = stream;
+                video.style.display = 'block';
+                document.getElementById('cameraPlaceholder').style.display = 'none';
+                document.getElementById('capturedImage').style.display = 'none';
+                document.getElementById('btnCapture').disabled = false;
+                document.getElementById('btnStartCamera').disabled = true;
+                document.getElementById('btnRetake').disabled = true;
+                document.getElementById('btnClearImage').disabled = true;
+                setStatus('📸', 'Camera active. Position the answer sheet and tap Capture.', 'pending');
+            } catch (err) {
+                showToast('Camera access denied or not available.', 'error');
+                setStatus('❌', 'Camera not available. Use Upload instead.', 'error');
+            }
+        }
+
+        function captureImage() {
+            const video = document.getElementById('cameraVideo');
+            const canvas = document.createElement('canvas');
+            canvas.width = video.videoWidth || 1280;
+            canvas.height = video.videoHeight || 1700;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            const dataUrl = canvas.toDataURL('image/jpeg', 0.9);
+            state.omr.imageDataUrl = dataUrl;
+
             stopCamera();
-            document.getElementById('omrModal').classList.remove('active');
+            document.getElementById('capturedImage').src = dataUrl;
+            document.getElementById('capturedImage').style.display = 'block';
+            document.getElementById('cameraPlaceholder').style.display = 'none';
+            document.getElementById('btnCapture').disabled = true;
+            document.getElementById('btnStartCamera').disabled = false;
+            document.getElementById('btnRetake').disabled = false;
+            document.getElementById('btnClearImage').disabled = false;
+            setStatus('✅', 'Image captured. Tap Process OMR to check.', 'success');
+            document.getElementById('scanResultCard').style.display = 'none';
+            processOMR();
         }
 
-        function handleOMRImage(event) {
+        function retakeImage() {
+            clearImage();
+            startCamera();
+        }
+
+        function clearImage() {
+            state.omr.imageDataUrl = null;
+            state.omr.detectedMarks = [];
+            stopCamera();
+            document.getElementById('capturedImage').src = '';
+            document.getElementById('capturedImage').style.display = 'none';
+            document.getElementById('cameraPlaceholder').style.display = 'flex';
+            document.getElementById('cameraVideo').style.display = 'none';
+            document.getElementById('omrOverlay').innerHTML = '';
+            document.getElementById('btnCapture').disabled = true;
+            document.getElementById('btnStartCamera').disabled = false;
+            document.getElementById('btnRetake').disabled = true;
+            document.getElementById('btnClearImage').disabled = true;
+            document.getElementById('progressContainer').classList.remove('active');
+            document.getElementById('progressBar').style.width = '0%';
+            document.getElementById('scanResultCard').style.display = 'none';
+            setStatus('⏳', 'Image cleared. Ready to scan again.', 'pending');
+        }
+
+        function handleFileUpload(event) {
             const file = event.target.files[0];
             if (!file) return;
             const reader = new FileReader();
             reader.onload = function(e) {
                 state.omr.imageDataUrl = e.target.result;
-                document.getElementById('omrImage').src = e.target.result;
-                document.getElementById('omrImage').style.display = 'block';
-                document.getElementById('omrPlaceholder').style.display = 'none';
-                checkOMRReady();
+                document.getElementById('capturedImage').src = e.target.result;
+                document.getElementById('capturedImage').style.display = 'block';
+                document.getElementById('cameraPlaceholder').style.display = 'none';
+                document.getElementById('cameraVideo').style.display = 'none';
+                document.getElementById('btnRetake').disabled = false;
+                document.getElementById('btnClearImage').disabled = false;
+                setStatus('✅', 'Image uploaded. Tap Process OMR to check.', 'success');
+                processOMR();
             };
             reader.readAsDataURL(file);
             event.target.value = '';
-        }
-
-        function clearOMRImage() {
-            state.omr.imageDataUrl = null;
-            document.getElementById('omrImage').src = '';
-            document.getElementById('omrImage').style.display = 'none';
-            document.getElementById('omrPlaceholder').style.display = 'block';
-            document.getElementById('omrOverlay').innerHTML = '';
-            document.getElementById('omrResults').style.display = 'none';
-            document.getElementById('btnProcessOMR').disabled = true;
-        }
-
-        function checkOMRReady() {
-            const studentId = document.getElementById('omrStudentSelect').value;
-            const hasImage = !!state.omr.imageDataUrl;
-            document.getElementById('btnProcessOMR').disabled = !(studentId && hasImage);
-        }
-
-        // Camera functions
-        async function startCamera() {
-            try {
-                const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
-                state.omr.cameraStream = stream;
-                document.getElementById('cameraPreview').srcObject = stream;
-                document.getElementById('cameraContainer').style.display = 'block';
-            } catch (err) {
-                showToast('Camera access denied or not available.', 'error');
-            }
         }
 
         function stopCamera() {
@@ -1863,54 +720,31 @@
                 state.omr.cameraStream.getTracks().forEach(track => track.stop());
                 state.omr.cameraStream = null;
             }
-            document.getElementById('cameraContainer').style.display = 'none';
-        }
-
-        function captureCamera() {
-            const video = document.getElementById('cameraPreview');
-            const canvas = document.createElement('canvas');
-            canvas.width = video.videoWidth || 640;
-            canvas.height = video.videoHeight || 480;
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-            const dataUrl = canvas.toDataURL('image/png');
-            state.omr.imageDataUrl = dataUrl;
-            document.getElementById('omrImage').src = dataUrl;
-            document.getElementById('omrImage').style.display = 'block';
-            document.getElementById('omrPlaceholder').style.display = 'none';
-            stopCamera();
-            checkOMRReady();
+            document.getElementById('cameraVideo').style.display = 'none';
         }
 
         // ============================================================
-        // OMR PROCESSING (3 CORE FUNCTIONS)
+        // OMR PROCESSING
         // ============================================================
 
         async function processOMR() {
-            const studentId = document.getElementById('omrStudentSelect').value;
+            const studentId = document.getElementById('studentSelect').value;
             if (!studentId) {
-                showToast('Please select a student.', 'warning');
+                showToast('Please select a student first.', 'warning');
                 return;
             }
             if (!state.omr.imageDataUrl) {
-                showToast('Please upload or capture an answer sheet.', 'warning');
+                showToast('Please capture or upload an answer sheet.', 'warning');
                 return;
             }
 
-            state.omr.selectedStudentId = studentId;
-            state.omr.processing = true;
-            document.getElementById('btnProcessOMR').disabled = true;
-            document.getElementById('omrProgressContainer').style.display = 'block';
-            document.getElementById('omrStatus').style.display = 'flex';
-            document.getElementById('omrStatusIcon').textContent = '⏳';
-            document.getElementById('omrStatusIcon').className = 'status-icon pending';
-            document.getElementById('omrStatusText').textContent = 'Processing OMR...';
-            document.getElementById('omrResults').style.display = 'none';
+            state.omr.isProcessing = true;
+            document.getElementById('progressContainer').classList.add('active');
+            document.getElementById('progressBar').style.width = '0%';
+            setStatus('⏳', 'Processing OMR...', 'pending');
+            document.getElementById('scanResultCard').style.display = 'none';
 
-            const sheetKey = state.currentSheet;
-            const totalItems = getTotalItems(sheetKey);
-
-            // Simulate OMR processing steps
+            const totalItems = getTotalItems();
             const steps = [
                 { name: 'Detecting marked bubbles...', progress: 25 },
                 { name: 'Mapping to item numbers...', progress: 50 },
@@ -1919,38 +753,64 @@
             ];
 
             for (const step of steps) {
-                await new Promise(resolve => setTimeout(resolve, 600));
-                document.getElementById('omrProgressBar').style.width = step.progress + '%';
-                document.getElementById('omrStatusText').textContent = step.name;
+                await new Promise(resolve => setTimeout(resolve, 500));
+                document.getElementById('progressBar').style.width = step.progress + '%';
+                setStatus('⏳', step.name, 'pending');
             }
 
-            // Simulate detected marks (random for demo)
+            // Simulate OMR detection (70% correct rate for demo)
             const detectedMarks = [];
             for (let i = 1; i <= totalItems; i++) {
-                // Simulate 70% correct rate
                 const isCorrect = Math.random() < 0.7;
-                const mark = {
+                detectedMarks.push({
                     item: i,
-                    detected: isCorrect ? 'A' : 'B', // Simulated bubble
                     correct: isCorrect,
                     score: isCorrect ? 1 : 0
-                };
-                detectedMarks.push(mark);
-                setScore(studentId, sheetKey, i, mark.score);
+                });
             }
 
             state.omr.detectedMarks = detectedMarks;
-            state.omr.processing = false;
+            state.omr.pendingScan = {
+                studentId,
+                assessment: state.currentAssessment,
+                marks: detectedMarks,
+                totalScore: detectedMarks.filter(m => m.correct).length,
+                totalItems
+            };
+            state.omr.isProcessing = false;
 
-            // Update UI
-            document.getElementById('omrStatusIcon').textContent = '✅';
-            document.getElementById('omrStatusIcon').className = 'status-icon success';
-            document.getElementById('omrStatusText').textContent = `OMR complete! ${detectedMarks.filter(m => m.correct).length}/${totalItems} correct.`;
+            // Show scan result
+            const student = getStudentById(studentId);
+            document.getElementById('resultStudentName').textContent =
+                `${student.lastName}, ${student.firstName}`;
+            document.getElementById('resultScore').textContent = state.omr.pendingScan.totalScore;
+            document.getElementById('resultTotal').textContent = totalItems;
+            document.getElementById('scanResultCard').style.display = 'flex';
+            document.getElementById('progressContainer').classList.remove('active');
+            setStatus('✅', `OMR complete. ${state.omr.pendingScan.totalScore}/${totalItems} correct. Verify to accept.`, 'success');
+        }
 
-            // Show results
-            const resultsList = document.getElementById('omrResultsList');
-            resultsList.innerHTML = '';
-            for (const mark of detectedMarks) {
+        // ============================================================
+        // VERIFICATION
+        // ============================================================
+
+        function openVerificationModal() {
+            if (!state.omr.pendingScan) {
+                showToast('No scan result to verify.', 'warning');
+                return;
+            }
+            const scan = state.omr.pendingScan;
+            const marks = scan.marks;
+            const correct = marks.filter(m => m.correct).length;
+            const incorrect = marks.length - correct;
+
+            document.getElementById('verifyTotalItems').textContent = marks.length;
+            document.getElementById('verifyCorrect').textContent = correct;
+            document.getElementById('verifyIncorrect').textContent = incorrect;
+
+            const list = document.getElementById('verifyResultsList');
+            list.innerHTML = '';
+            for (const mark of marks) {
                 const row = document.createElement('div');
                 row.className = 'result-row';
                 row.innerHTML = `
@@ -1959,227 +819,255 @@
                         ${mark.correct ? '✅ 1' : '❌ 0'}
                     </span>
                 `;
-                resultsList.appendChild(row);
-            }
-            document.getElementById('omrResults').style.display = 'block';
-
-            // Re-enable button
-            document.getElementById('btnProcessOMR').disabled = false;
-
-            // Refresh table
-            renderTable();
-
-            showToast(`OMR scan complete for ${state.students.find(s => s.id === studentId)?.lastName || 'student'}.`, 'success');
-        }
-
-        // ============================================================
-        // LOGO HANDLING
-        // ============================================================
-
-        function handleLogoUpload(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const dataUrl = e.target.result;
-                state.settings.logo = dataUrl;
-
-                const logoImage = document.getElementById('logoImage');
-                const logoPlaceholder = document.getElementById('logoPlaceholder');
-                logoImage.src = dataUrl;
-                logoImage.style.display = 'block';
-                logoPlaceholder.style.display = 'none';
-
-                const settingsPreview = document.getElementById('settingsLogoPreview');
-                const settingsPlaceholder = document.getElementById('settingsLogoPlaceholder');
-                settingsPreview.src = dataUrl;
-                settingsPreview.style.display = 'block';
-                settingsPlaceholder.style.display = 'none';
-
-                showToast('Logo uploaded successfully.', 'success');
-            };
-            reader.readAsDataURL(file);
-        }
-
-        function removeLogo() {
-            state.settings.logo = null;
-            const logoImage = document.getElementById('logoImage');
-            const logoPlaceholder = document.getElementById('logoPlaceholder');
-            logoImage.src = '';
-            logoImage.style.display = 'none';
-            logoPlaceholder.style.display = 'block';
-
-            const settingsPreview = document.getElementById('settingsLogoPreview');
-            const settingsPlaceholder = document.getElementById('settingsLogoPlaceholder');
-            settingsPreview.src = '';
-            settingsPreview.style.display = 'none';
-            settingsPlaceholder.style.display = 'block';
-
-            showToast('Logo removed.', 'info');
-        }
-
-        // ============================================================
-        // SETTINGS MODAL
-        // ============================================================
-
-        function openSettings() {
-            document.getElementById('settingsTestTitle').value = state.settings.testTitle;
-            document.getElementById('settingsSchoolYear').value = state.settings.schoolYear;
-            document.getElementById('settingsScoringMode').value = state.settings.scoringMode;
-            document.getElementById('settingsShowLevelTotals').checked = state.settings.showLevelTotals;
-            document.getElementById('settingsShowPercentage').checked = state.settings.showPercentage;
-
-            const settingsPreview = document.getElementById('settingsLogoPreview');
-            const settingsPlaceholder = document.getElementById('settingsLogoPlaceholder');
-            if (state.settings.logo) {
-                settingsPreview.src = state.settings.logo;
-                settingsPreview.style.display = 'block';
-                settingsPlaceholder.style.display = 'none';
-            } else {
-                settingsPreview.src = '';
-                settingsPreview.style.display = 'none';
-                settingsPlaceholder.style.display = 'block';
+                list.appendChild(row);
             }
 
-            document.getElementById('settingsModal').classList.add('active');
+            document.getElementById('verificationModal').classList.add('active');
         }
 
-        function closeSettings() {
-            document.getElementById('settingsModal').classList.remove('active');
+        function closeVerificationModal() {
+            document.getElementById('verificationModal').classList.remove('active');
         }
 
-        function saveSettings() {
-            state.settings.testTitle = document.getElementById('settingsTestTitle').value;
-            state.settings.schoolYear = document.getElementById('settingsSchoolYear').value;
-            state.settings.scoringMode = document.getElementById('settingsScoringMode').value;
-            state.settings.showLevelTotals = document.getElementById('settingsShowLevelTotals').checked;
-            state.settings.showPercentage = document.getElementById('settingsShowPercentage').checked;
+        function acceptScan() {
+            if (!state.omr.pendingScan) return;
+            const scan = state.omr.pendingScan;
+            const assessment = scan.assessment;
+            const studentId = scan.studentId;
 
-            document.querySelector('.header-text p').textContent = state.settings.testTitle;
-            document.querySelector('.header-text .sub-info').textContent = `School Year ${state.settings.schoolYear} | Molave Vocational Technical School`;
+            if (!state.scores[assessment]) state.scores[assessment] = {};
+            for (const mark of scan.marks) {
+                state.scores[assessment][`${studentId}_${mark.item}`] = mark.score;
+            }
 
-            closeSettings();
-            showToast('Settings saved.', 'success');
+            state.history.push({
+                timestamp: new Date().toISOString(),
+                studentId,
+                studentName: `${getStudentById(studentId).lastName}, ${getStudentById(studentId).firstName}`,
+                assessment,
+                totalScore: scan.totalScore,
+                totalItems: scan.totalItems
+            });
+
+            closeVerificationModal();
+            document.getElementById('scanResultCard').style.display = 'none';
+            state.omr.pendingScan = null;
+            state.omr.imageDataUrl = null;
+            clearImage();
+
+            showToast('Scan accepted and saved.', 'success');
+            setStatus('✅', 'Scan accepted. Select next student to continue.', 'success');
+            updateExportVisibility();
+
+            // Clear student selection for next scan
+            document.getElementById('studentSelect').value = '';
+            document.getElementById('btnCapture').disabled = true;
+            document.getElementById('btnStartCamera').disabled = true;
+        }
+
+        function clearScanResult() {
+            document.getElementById('scanResultCard').style.display = 'none';
+            state.omr.pendingScan = null;
+            state.omr.detectedMarks = [];
         }
 
         // ============================================================
-        // RESET
+        // IMPORT STUDENTS (CSV)
         // ============================================================
 
-        function resetAll() {
-            if (!confirm('Are you sure you want to reset all data? This cannot be undone.')) return;
-
-            state.students = [];
-            state.scores = { st1: {}, st2: {}, te: {} };
-            state.answerKey = { st1: {}, st2: {}, te: {} };
-            state.lastSaved = null;
-            state.importedFileName = null;
-            state.omr = {
-                imageDataUrl: null,
-                selectedStudentId: null,
-                processing: false,
-                cameraStream: null,
-                detectedMarks: []
+        function importStudents() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.csv,.xlsx,.xls';
+            input.onchange = function(e) {
+                const file = e.target.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = function(ev) {
+                    const text = ev.target.result;
+                    const lines = text.split('\n').filter(l => l.trim());
+                    if (lines.length < 2) {
+                        showToast('CSV file is empty or invalid.', 'error');
+                        return;
+                    }
+                    // Assume header row: Student No., Last Name, First Name, Middle Name
+                    const students = [];
+                    for (let i = 1; i < lines.length; i++) {
+                        const parts = lines[i].split(',').map(p => p.trim().replace(/^"|"$/g, ''));
+                        if (parts.length >= 3) {
+                            students.push({
+                                id: `student_${i}`,
+                                studentNo: parts[0] || '',
+                                lastName: parts[1] || '',
+                                firstName: parts[2] || '',
+                                middleName: parts[3] || ''
+                            });
+                        }
+                    }
+                    if (students.length === 0) {
+                        showToast('No valid students found in CSV.', 'error');
+                        return;
+                    }
+                    state.students = students;
+                    state.scores = { st1: {}, st2: {}, te: {} };
+                    updateStudentSelect();
+                    updateExportVisibility();
+                    showToast(`Imported ${students.length} students from "${file.name}".`, 'success');
+                };
+                reader.readAsText(file);
             };
-
-            renderTable();
-            updateFooter();
-            showToast('All data reset.', 'info');
+            input.click();
         }
 
         // ============================================================
-        // EVENT LISTENERS
+        // EXPORT TO CIES (CSV)
         // ============================================================
 
-        document.getElementById('omrStudentSelect')?.addEventListener('change', checkOMRReady);
+        function exportToCIES() {
+            if (state.students.length === 0) {
+                showToast('No students to export.', 'warning');
+                return;
+            }
 
-        // Keyboard shortcuts
-        document.addEventListener('keydown', function(e) {
-            if (e.ctrlKey && e.key === '1') { e.preventDefault(); switchSheet('st1'); }
-            if (e.ctrlKey && e.key === '2') { e.preventDefault(); switchSheet('st2'); }
-            if (e.ctrlKey && e.key === '3') { e.preventDefault(); switchSheet('te'); }
-            if (e.ctrlKey && e.key === 'i') { e.preventDefault(); document.getElementById('fileInput').click(); }
-            if (e.ctrlKey && e.key === 'o') { e.preventDefault(); openOMRModal(); }
-            if (e.key === 'Escape') { closeSettings(); closeOMRModal(); }
-        });
+            const assessment = state.currentAssessment;
+            const totalItems = getTotalItems();
+            const config = CONFIG.assessments[assessment];
+
+            // Build CSV
+            const header1 = ['Student No.', 'Last Name', 'First Name', 'Middle Name'];
+            const header2 = ['', '', '', ''];
+            for (let i = 1; i <= totalItems; i++) {
+                header1.push(i);
+                header2.push('');
+            }
+            header1.push('TOTAL');
+            header2.push('');
+
+            const rows = [header1, header2];
+            for (const student of state.students) {
+                const row = [
+                    student.studentNo || '',
+                    student.lastName,
+                    student.firstName,
+                    student.middleName || ''
+                ];
+                let total = 0;
+                for (let i = 1; i <= totalItems; i++) {
+                    const val = state.scores[assessment]?.[`${student.id}_${i}`];
+                    const score = val === undefined ? '' : val;
+                    row.push(score);
+                    if (score === 1) total++;
+                }
+                row.push(total);
+                rows.push(row);
+            }
+
+            const csvContent = rows.map(r => r.join(',')).join('\n');
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `${config.name}_CIES_Export_${new Date().toISOString().slice(0, 10)}.csv`;
+            link.click();
+            URL.revokeObjectURL(link.href);
+
+            showToast(`✅ Exported ${state.students.length} students to CSV.`, 'success', 5000);
+        }
+
+        // ============================================================
+        // BOTTOM NAV
+        // ============================================================
+
+        function switchNav(view) {
+            document.querySelectorAll('.bottom-nav .nav-item').forEach(el => el.classList.remove('active'));
+            if (view === 'scan') {
+                document.getElementById('navScan').classList.add('active');
+                // Show scan view (all cards)
+                document.querySelectorAll('.card').forEach(el => {
+                    if (el.id !== 'exportCard') el.style.display = '';
+                });
+            } else if (view === 'history') {
+                document.getElementById('navHistory').classList.add('active');
+                showHistory();
+            } else if (view === 'settings') {
+                document.getElementById('navSettings').classList.add('active');
+                showSettings();
+            }
+        }
+
+        function showHistory() {
+            if (state.history.length === 0) {
+                showToast('No scan history yet.', 'info');
+                return;
+            }
+            let msg = 'Recent scans:\n';
+            for (const h of state.history.slice(-10)) {
+                msg += `${h.studentName} — ${h.assessment.toUpperCase()} — ${h.totalScore}/${h.totalItems}\n`;
+            }
+            alert(msg);
+        }
+
+        function showSettings() {
+            showToast('Settings: Use ClassRecord CIES for advanced configuration.', 'info');
+        }
 
         // ============================================================
         // INITIALIZATION
         // ============================================================
 
         function init() {
-            switchSheet('st1');
-            renderTable();
-            updateFooter();
+            document.getElementById('assessmentSelect').value = 'st1';
+            state.currentAssessment = 'st1';
+            updateStudentSelect();
+            setStatus('⏳', 'Import students first, then select assessment and student.', 'pending');
 
+            // Auto-load from localStorage if available
             try {
-                const saved = localStorage.getItem('itemTemplateState');
+                const saved = localStorage.getItem('testCheckerState');
                 if (saved) {
                     const parsed = JSON.parse(saved);
                     if (parsed.students && parsed.students.length > 0) {
                         state.students = parsed.students;
                         state.scores = parsed.scores || { st1: {}, st2: {}, te: {} };
-                        state.settings = { ...state.settings, ...parsed.settings };
-                        state.lastSaved = parsed.lastSaved || null;
-
-                        if (parsed.settings && parsed.settings.logo) {
-                            const logoImage = document.getElementById('logoImage');
-                            const logoPlaceholder = document.getElementById('logoPlaceholder');
-                            logoImage.src = parsed.settings.logo;
-                            logoImage.style.display = 'block';
-                            logoPlaceholder.style.display = 'none';
-                        }
-
-                        renderTable();
-                        updateFooter();
+                        state.history = parsed.history || [];
+                        updateStudentSelect();
+                        updateExportVisibility();
                         showToast('Restored previous session.', 'info');
                     }
                 }
-            } catch (e) {
-                // Ignore parse errors
-            }
+            } catch (e) { /* ignore */ }
 
             // Auto-save every 30 seconds
             setInterval(() => {
                 if (state.students.length > 0) {
                     try {
-                        localStorage.setItem('itemTemplateState', JSON.stringify({
+                        localStorage.setItem('testCheckerState', JSON.stringify({
                             students: state.students,
                             scores: state.scores,
-                            settings: state.settings,
-                            lastSaved: state.lastSaved
+                            history: state.history
                         }));
-                    } catch (e) {
-                        // Ignore storage errors
-                    }
+                    } catch (e) { /* ignore */ }
                 }
             }, 30000);
         }
 
         document.addEventListener('DOMContentLoaded', init);
 
-        // Expose functions globally
-        window.toggleScore = toggleScore;
-        window.clearScore = clearScore;
-        window.switchSheet = switchSheet;
-        window.handleFileImport = handleFileImport;
-        window.fillAllScores = fillAllScores;
-        window.verifyAll = verifyAll;
-        window.openSettings = openSettings;
-        window.closeSettings = closeSettings;
-        window.saveSettings = saveSettings;
-        window.resetAll = resetAll;
-        window.handleLogoUpload = handleLogoUpload;
-        window.removeLogo = removeLogo;
-        window.openOMRModal = openOMRModal;
-        window.closeOMRModal = closeOMRModal;
-        window.handleOMRImage = handleOMRImage;
-        window.clearOMRImage = clearOMRImage;
+        // Expose functions
+        window.onAssessmentChange = onAssessmentChange;
+        window.onStudentChange = onStudentChange;
         window.startCamera = startCamera;
-        window.stopCamera = stopCamera;
-        window.captureCamera = captureCamera;
+        window.captureImage = captureImage;
+        window.retakeImage = retakeImage;
+        window.clearImage = clearImage;
+        window.handleFileUpload = handleFileUpload;
         window.processOMR = processOMR;
+        window.openVerificationModal = openVerificationModal;
+        window.closeVerificationModal = closeVerificationModal;
+        window.acceptScan = acceptScan;
+        window.clearScanResult = clearScanResult;
+        window.importStudents = importStudents;
+        window.exportToCIES = exportToCIES;
+        window.switchNav = switchNav;
     </script>
 </body>
 </html>
