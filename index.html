@@ -612,7 +612,8 @@
     <div class="toast-container" id="toastContainer"></div>
 
     <!-- JAVASCRIPT -->
-    <script src="xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  //  <script src="xlsx.full.min.js"></script> //
     <script>
 const $=id=>document.getElementById(id),LET='ABCDEFGH';
 const ASSESS={st1:{name:'ST1',re:/st\s*1/i},st2:{name:'ST2',re:/st\s*2/i},te:{name:'TE',re:/\bte\b|term/i}};
@@ -736,7 +737,7 @@ async function handleClassFile(file){
   if(!state.meta[state.cur]){state.cur=ks[0];$('assessmentSelect').value=state.cur}
   state.mode='key';clearImage();clearPending();refreshUI();persist();
   toast(`Loaded ${state.students.length} students · ${ks.map(k=>ASSESS[k].name+' '+state.meta[k].n+' items').join(', ')}`,'success',5000);
-  if(miss)toast(`${miss} student name(s) in another sheet did not match the roster.`,'warning',6000);
+  if(miss)toast(`${miss} student name(s) in another sheet did not match the .`,'warning',6000);
   setStatus('🔑','Class loaded. Scan the MASTER answer key first.','success')
  }catch(err){toast(err.message||'Could not read file.','error',6000)}}
 function resumeClass(){if(loadSaved()){clearImage();clearPending();refreshUI();toast(`Resumed ${state.students.length} students.`,'success');setStatus('✅','Resumed previous session.','success')}else toast('No saved session found.','warning')}
