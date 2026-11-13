@@ -612,7 +612,7 @@
     <div class="toast-container" id="toastContainer"></div>
 
     <!-- JAVASCRIPT -->
-    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>    
     <script>
 const $=id=>document.getElementById(id),LET='ABCDEFGH';
 const ASSESS={st1:{name:'ST1',re:/st\s*1/i},st2:{name:'ST2',re:/st\s*2/i},te:{name:'TE',re:/\bte\b|term/i}};
@@ -686,30 +686,52 @@ function snapGrid(g,W,H,x0,y0,aw,ah){
  const ok=n>=5&&Math.abs(w1/aw-1)<0.12&&Math.abs(h1/ah-1)<0.12&&c.every((p,i)=>Math.hypot(p[0]-[x0,x0+aw,x0+aw,x0][i],p[1]-[y0,y0,y0+ah,y0+ah][i])<0.12*aw);
  return ok?{c,snapped:true}:{c:[[x0,y0],[x0+aw,y0],[x0+aw,y0+ah],[x0,y0+ah]],snapped:false}}
 function detectAnswers(g,W,H,n,L){
+ // v3: "odd one out" detection. Every unmarked bubble on the sheet looks the same (ring + printed letter), so we learn what a
+ // clean bubble of each letter looks like FROM THIS SAME PHOTO (median of all bubbles of that letter) and measure how much
+ // EXTRA ink each bubble has on top of that. Printed letters, lighting and paper tone cancel out; only the pencil mark is left.
  const K=L.choices,cols=L.cols||Math.ceil(n/20),rows=L.rows||Math.ceil(n/cols);
  const x0=W*L.left/100,y0=H*L.top/100,aw=W*(1-(L.left+L.right)/100),ah=H*(1-(L.top+L.bottom)/100);
  const sg=snapGrid(g,W,H,x0,y0,aw,ah),c=sg.c;
  const pos=(u,v)=>[(1-u)*(1-v)*c[0][0]+u*(1-v)*c[1][0]+u*v*c[2][0]+(1-u)*v*c[3][0],(1-u)*(1-v)*c[0][1]+u*(1-v)*c[1][1]+u*v*c[2][1]+(1-u)*v*c[3][1]];
  const gw=(Math.hypot(c[1][0]-c[0][0],c[1][1]-c[0][1])+Math.hypot(c[2][0]-c[3][0],c[2][1]-c[3][1]))/2,gh=(Math.hypot(c[3][0]-c[0][0],c[3][1]-c[0][1])+Math.hypot(c[2][0]-c[1][0],c[2][1]-c[1][1]))/2;
  const colW=gw/cols,rowH=gh/rows,numW=colW*L.numW/100,cellW=(colW-numW)/K,rb=0.385*Math.min(cellW,rowH),rs=Math.max(2,0.65*rb);
- // ink reference = darkest 2% inside the grid
  const hist=new Uint32Array(256);let tot=0;
  for(let y=Math.floor(Math.max(0,y0));y<Math.min(H,y0+ah);y+=2)for(let x=Math.floor(Math.max(0,x0));x<Math.min(W,x0+aw);x+=2){hist[g[y*W+x]]++;tot++}
  let acc=0,ink=0;for(let i=0;i<256;i++){acc+=hist[i];if(acc>=tot*0.02){ink=i;break}}
  const paper=(cx,cy)=>{const h=new Uint32Array(256);let t=0;const hx=colW/2,hy=rowH/2;
   for(let y=Math.floor(cy-hy);y<=cy+hy;y+=2)for(let x=Math.floor(cx-hx);x<=cx+hx;x+=2)if(x>=0&&y>=0&&x<W&&y<H){h[g[y*W+x]]++;t++}
   let a=0;for(let i=0;i<256;i++){a+=h[i];if(a>=t*0.85)return i}return 255};
+ // sampling points inside the bubble (a disc just inside the printed ring)
+ const S=11,pts=[];for(let a=0;a<S;a++)for(let b=0;b<S;b++){const dx=(a/(S-1)*2-1)*rs,dy=(b/(S-1)*2-1)*rs;if(dx*dx+dy*dy<=rs*rs)pts.push([dx,dy])}
+ const P=pts.length,at=(x,y)=>{x=Math.round(x);y=Math.round(y);return x<0||y<0||x>=W||y>=H?255:g[y*W+x]};
+ const patch=(cx,cy,bg)=>{const o=new Float32Array(P);for(let p=0;p<P;p++){const[dx,dy]=pts[p];
+   let s=0;for(let u=-1;u<=1;u++)for(let w=-1;w<=1;w++)s+=at(cx+dx+u,cy+dy+w);o[p]=s/9/bg}return o};
+ const dl=rb*0.25,offs=[[0,0],[dl,0],[-dl,0],[0,dl],[0,-dl]];
  const disc=(cx,cy)=>{let s=0,t=0;const r2=rs*rs;for(let y=Math.floor(cy-rs);y<=cy+rs;y++)for(let x=Math.floor(cx-rs);x<=cx+rs;x++)
    if((x-cx)**2+(y-cy)**2<=r2&&x>=0&&y>=0&&x<W&&y<H){s+=g[y*W+x];t++}return t?s/t:255};
- const dl=rb*0.25,offs=[[0,0],[dl,0],[-dl,0],[0,dl],[0,-dl]],out=[];
- for(let i=0;i<n;i++){const col=Math.floor(i/rows),r=i%rows,v=(r+0.5)/rows,fills=[];
-  const bg=paper(...pos((col*colW+numW+K*cellW/2)/gw,v)),den=Math.max(40,bg-ink);
-  for(let k=0;k<K;k++){const[cx,cy]=pos((col*colW+numW+(k+0.5)*cellW)/gw,v);let best=0;
-   for(const[ox,oy]of offs){const d=(bg-disc(cx+ox,cy+oy))/den;if(d>best)best=d}fills.push(best)}
-  const idx=fills.map((_,j)=>j).sort((a,b)=>fills[b]-fills[a]),top=fills[idx[0]],sec=fills[idx[1]];
-  let ans=null,flag=null;if(top<0.22)flag='blank';else if(sec>=0.22&&sec>=0.6*top)flag='multi';else ans=idx[0];
-  out.push({ans,flag,fills})}
- out.snapped=sg.snapped;return out}
+ // pass 1: sample every bubble (patch normalised by local paper brightness) + the old "how much darker than paper" fill
+ const items=[];
+ for(let i=0;i<n;i++){const col=Math.floor(i/rows),r=i%rows,v=(r+0.5)/rows;
+  const bg=paper(...pos((col*colW+numW+K*cellW/2)/gw,v)),den=Math.max(40,bg-ink),ps=[],fl=[];
+  for(let k=0;k<K;k++){const[cx,cy]=pos((col*colW+numW+(k+0.5)*cellW)/gw,v);ps.push(patch(cx,cy,bg));
+   let best=0;for(const[ox,oy]of offs){const d=(bg-disc(cx+ox,cy+oy))/den;if(d>best)best=d}fl.push(best)}
+  items.push({ps,fl,bg})}
+ // clean template per letter = a LIGHT percentile (65th) of that letter's patches, pixel by pixel (marks only make pixels darker)
+ const tpl=[];for(let k=0;k<K;k++){const t=new Float32Array(P),arr=new Float32Array(n);
+  for(let p=0;p<P;p++){for(let i=0;i<n;i++)arr[i]=items[i].ps[k][p];const s=Array.from(arr).sort((a,b)=>a-b);t[p]=s[Math.min(n-1,Math.floor(0.65*(n-1)+0.5))]}tpl.push(t)}
+ const bgAvg=items.reduce((s,x)=>s+x.bg,0)/Math.max(1,n),dmax=Math.max(0.25,1-ink/Math.max(1,bgAvg));
+ const extra=items.map(it=>it.ps.map((pv,k)=>{let s=0;for(let p=0;p<P;p++){const d=tpl[k][p]-pv[p];if(d>0)s+=d}return s/P/dmax}));
+ // row-relative term: how much darker than the median bubble of the same row (cancels shadows / glare falling on the whole row)
+ const rel=items.map(it=>{const m=it.fl.slice().sort((a,b)=>a-b),med=(m[(K-1)>>1]+m[K>>1])/2;return it.fl.map(f=>f-med)});
+ const sc=items.map((it,i)=>it.fl.map((f,k)=>Math.max(extra[i][k],0.9*rel[i][k])));
+ // adaptive noise floor from THIS photo, measured only on the 2 lowest-scoring bubbles of every item (those are surely unmarked,
+ // so pencil marks can't inflate it): threshold sits just above the clean-bubble noise, never below a safe minimum.
+ const nz=[];for(const s of sc){const q=s.slice().sort((a,b)=>a-b);nz.push(q[0],q[1])}nz.sort((a,b)=>a-b);
+ const p97=nz[Math.min(nz.length-1,Math.floor(0.97*(nz.length-1)))],thr=Math.max(0.07,1.25*p97),out=[];
+ for(let i=0;i<n;i++){const s=sc[i],idx=s.map((_,j)=>j).sort((a,b)=>s[b]-s[a]),top=s[idx[0]],sec=s[idx[1]];
+  let ans=null,flag=null;if(top<thr)flag='blank';else if(sec>=0.7*thr&&sec>=0.4*top)flag='multi';else ans=idx[0];
+  out.push({ans,flag,fills:s})}
+ out.snapped=sg.snapped;out.thr=thr;return out}
 // Largest frame with the sheet's shape (width/height = aspect), centred in the camera box, minus padding.
 function fitMargins(bw,bh,aspect,pad){const f=1-2*pad/100;let fw=f*bw,fh=fw/aspect;if(fh>f*bh){fh=f*bh;fw=fh*aspect}
  const mx=(bw-fw)/2/bw*100,my=(bh-fh)/2/bh*100;return{left:mx,right:mx,top:my,bottom:my}}
