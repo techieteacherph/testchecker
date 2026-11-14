@@ -364,7 +364,22 @@
             .camera-preview { max-height: 80vh; max-height: 80dvh; }
             .header { padding: 0.4rem 1rem; }
         }
-    </style>
+    
+        /* PDF batch review */
+        .batch-note{font-size:.8rem;color:#555;margin:0 0 .6rem;line-height:1.4}
+        .batch-sum{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:.7rem;font-size:.82rem}
+        .batch-sum span{padding:.2rem .6rem;border-radius:999px;background:#eef2f7;color:#1e3a5f;font-weight:600}
+        .batch-sum .ok{background:#e6f4ea;color:#1b6e35}.batch-sum .warn{background:#fff4e0;color:#9a5b00}.batch-sum .done{background:#e3edff;color:#1e3a8a}
+        .batch-row{display:flex;gap:.7rem;align-items:flex-start;padding:.6rem;border:1px solid #d8dde6;border-left-width:5px;border-radius:8px;margin-bottom:.55rem;background:#fff}
+        .batch-row.clean{border-left-color:#2e9e57}.batch-row.check{border-left-color:#e08a00}.batch-row.done{border-left-color:#3b6fd4;background:#f4f8ff}
+        .batch-row img{width:104px;border:1px solid #ccd;border-radius:4px;flex-shrink:0;background:#f3f3f3;min-height:60px}
+        .batch-main{flex:1;min-width:0;display:flex;flex-direction:column;gap:.3rem}
+        .batch-title{font-weight:700;color:#1e3a5f;font-size:.9rem}
+        .batch-main select{width:100%;padding:.35rem;border:1px solid #bbc;border-radius:6px;font-size:.88rem}
+        .batch-notes{font-size:.78rem;color:#9a5b00}.batch-row.clean .batch-notes{color:#1b6e35}.batch-row.done .batch-notes{color:#1e3a8a}
+        .batch-act{display:flex;flex-direction:column;gap:.35rem;align-items:flex-end;flex-shrink:0}
+        .verify-preview{width:100%;border:1px solid #ccd;border-radius:6px;margin-bottom:.6rem}
+</style>
 </head>
 <body>
 
@@ -487,6 +502,10 @@
                 </button>
                 <input type="file" id="photoInput" accept="image/*" capture="environment" style="display:none;" onchange="handleFileUpload(event)">
                 <input type="file" id="fileInput" accept="image/*" style="display:none;" onchange="handleFileUpload(event)">
+                <button class="btn btn-primary" id="btnPdf" onclick="document.getElementById('pdfInput').click()" disabled title="Scan every answer sheet into ONE PDF, then import it here">
+                    📑 PDF (many sheets)
+                </button>
+                <input type="file" id="pdfInput" accept="application/pdf,.pdf" style="display:none;" onchange="handlePdfUpload(event)">
             </div>
             <div class="btn-row">
                 <button class="btn btn-outline" id="btnRetake" onclick="retakeImage()" disabled>
@@ -577,6 +596,25 @@
         <div class="footer-project">Project 2 CIES 2026</div>
     </footer>
 
+    <!-- PDF BATCH MODAL -->
+    <div class="modal-overlay" id="batchModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 id="batchTitle">📑 PDF Batch</h2>
+                <button class="modal-close" onclick="closeBatch()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p class="batch-note">Each student is matched from the shaded <b>class number</b> bubbles on their sheet. Green pages are safe to save together. Orange pages need a quick look — tap <b>Review</b> to see the sheet picture beside the detected answers and fix anything the reader got wrong.</p>
+                <div class="batch-sum" id="batchSummary"></div>
+                <div id="batchList"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="batchByOrder()">🔁 Match by page order</button>
+                <button class="btn btn-success" onclick="batchSaveClean()">✅ Save all green pages</button>
+            </div>
+        </div>
+    </div>
+
     <!-- VERIFICATION MODAL -->
     <div class="modal-overlay" id="verificationModal">
         <div class="modal">
@@ -612,7 +650,7 @@
     <div class="toast-container" id="toastContainer"></div>
 
     <!-- JAVASCRIPT -->
-   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>    
+    <script src="xlsx.full.min.js"></script>
     <script>
 const $=id=>document.getElementById(id),LET='ABCDEFGH';
 const ASSESS={st1:{name:'ST1',re:/st\s*1/i},st2:{name:'ST2',re:/st\s*2/i},te:{name:'TE',re:/\bte\b|term/i}};
@@ -735,6 +773,94 @@ function detectAnswers(g,W,H,n,L){
 // Largest frame with the sheet's shape (width/height = aspect), centred in the camera box, minus padding.
 function fitMargins(bw,bh,aspect,pad){const f=1-2*pad/100;let fw=f*bw,fh=fw/aspect;if(fh>f*bh){fh=f*bh;fw=fh*aspect}
  const mx=(bw-fw)/2/bw*100,my=(bh-fh)/2/bh*100;return{left:mx,right:mx,top:my,bottom:my}}
+// ===== PDF / scanner batch: pure helpers (no DOM) =====
+// Printed positions of the SEQ (class no.) bubbles and Type bubbles, as fractions of the thick grid's WIDTH, measured from the answer-sheet PDFs.
+const SHEET_GEO={
+ half:{seqX0:0.6315,seqStep:0.06365,seqY:-0.1598,seqR:0.0177,typeX:[0.5495,0.6344,0.7192],typeY:-0.0523,typeR:0.0149},
+ full:{seqX0:0.6315,seqStep:0.06365,seqY:-0.2532,seqR:0.0177,typeX:[0.0969,0.2313,0.3657],typeY:-0.0863,typeR:0.017}};
+function boxDown(g,W,H,Wd){const f=W/Wd,Hd=Math.max(1,Math.round(H/f)),o=new Uint8ClampedArray(Wd*Hd);
+ for(let y=0;y<Hd;y++){const y0=Math.floor(y*f),y1=Math.max(y0+1,Math.min(H,Math.floor((y+1)*f)));
+  for(let x=0;x<Wd;x++){const x0=Math.floor(x*f),x1=Math.max(x0+1,Math.min(W,Math.floor((x+1)*f)));let s=0,c=0;
+   for(let yy=y0;yy<y1;yy++){const r=yy*W;for(let xx=x0;xx<x1;xx++){s+=g[r+xx];c++}}o[y*Wd+x]=s/c}}
+ return{d:o,Wd,Hd,f}}
+// Finds every thick-bordered answer grid on a scanned page: pairs of long thick horizontal lines whose shape matches the sheet.
+// Tries small tilts (+/-2 degrees) because an automatic document feeder rarely feeds perfectly straight.
+function locateGrids(g,W,H,aspect){
+ const{d,Wd,Hd,f}=boxDown(g,W,H,Math.min(W,900));
+ const hist=new Uint32Array(256);let n=0;for(let i=0;i<d.length;i+=3){hist[d[i]|0]++;n++}
+ let a=0,p3=-1,med=255;for(let i=0;i<256;i++){a+=hist[i];if(p3<0&&a>=n*0.03)p3=i;if(a>=n*0.5){med=i;break}}
+ if(med-p3<50)return[];
+ const thr=p3+(med-p3)*0.62,med1=v=>{v=v.slice().sort((p,q)=>p-q);return v[v.length>>1]};
+ const bandsFor=t=>{const bands=[];let cur=null;
+  for(let y=0;y<Hd;y++){let best=0,bs=0,run=0,rs=0,gap=0;
+   for(let x=0;x<Wd;x++){const yy=Math.round(y+(x-Wd/2)*t);const dk=yy>=0&&yy<Hd&&d[yy*Wd+x]<thr;
+    if(dk){if(!run)rs=x;run++;gap=0;if(run>best){best=run;bs=rs}}else if(run&&gap<2){gap++;run++}else{run=0;gap=0}}
+   if(best>=0.4*Wd){const e={y,x0:bs,x1:bs+best};if(cur&&y-cur.last<=1){cur.rows.push(e);cur.last=y}else{cur={rows:[e],last:y};bands.push(cur)}}}
+  return bands.filter(b=>b.rows.length>=2).map(b=>({y:b.rows.reduce((s,r)=>s+r.y,0)/b.rows.length+0.5,t:b.rows.length,x0:med1(b.rows.map(r=>r.x0)),x1:med1(b.rows.map(r=>r.x1))+1}))};
+ const pairsFor=(B,t,tol)=>{const out=[],used=new Set();
+  for(let i=0;i<B.length;i++){if(used.has(i))continue;let best=null;
+   for(let j=i+1;j<B.length;j++){if(used.has(j))continue;const p=B[i],q=B[j];
+    if(Math.abs(p.x0-q.x0)>0.07*Wd||Math.abs(p.x1-q.x1)>0.07*Wd)continue;
+    const w=(p.x1-p.x0)-(p.t+q.t)/4,h=q.y-p.y;if(h<=0)continue;const r=(w/h)/aspect;if(Math.abs(r-1)>tol)continue;
+    const sc=Math.abs(r-1);if(!best||sc<best.sc)best={j,sc}}
+   if(best){const p=B[i],q=B[best.j];used.add(i);used.add(best.j);const xl=(p.x0+q.x0)/2+p.t/2,xr=(p.x1+q.x1)/2-p.t/2;
+    const yl=p.y+(xl-Wd/2)*t;out.push({x:xl*f,y:yl*f,w:(xr-xl)*f,h:(q.y-p.y)*f,t,sc:best.sc})}}
+  return out};
+ // coarse search over tilts (rank by how long the thick lines run), then a fine search around the best tilts and pair the lines up
+ const score=P=>P.length*10+P.reduce((s,r)=>s+r.w/(Wd*f),0)-P.reduce((s,r)=>s+r.sc,0)*3;
+ const coarse=[];for(let k=-8;k<=8;k++){const t=k*0.0044,B=bandsFor(t);coarse.push({t,s:B.map(b=>b.x1-b.x0).sort((p,q)=>q-p).slice(0,4).reduce((a,c)=>a+c,0)})}
+ coarse.sort((p,q)=>q.s-p.s);const seeds=coarse.filter(c=>c.s>0).slice(0,3);
+ for(const tol of[0.14,0.25]){let best=null;
+  for(const sd of seeds)for(let j=-4;j<=4;j++){const t=sd.t+j*0.0011,B=bandsFor(t);if(B.length<2)continue;const P=pairsFor(B,t,tol);if(!P.length)continue;const sc=score(P);if(!best||sc>best.sc)best={sc,P}}
+  if(best)return best.P.sort((p,q)=>p.y-q.y)}
+ return[]}
+function rot180(g){const r=new Uint8ClampedArray(g.length);for(let i=0;i<g.length;i++)r[i]=g[g.length-1-i];return r}
+function rot90(g,W,H,cw){const r=new Uint8ClampedArray(g.length);// result is H wide, W tall
+ for(let y=0;y<H;y++)for(let x=0;x<W;x++){const nx=cw?H-1-y:y,ny=cw?x:W-1-x;r[ny*H+nx]=g[y*W+x]}return r}
+function inkIn(g,W,H,x0,y0,x1,y1){x0=Math.max(0,Math.floor(x0));y0=Math.max(0,Math.floor(y0));x1=Math.min(W,Math.ceil(x1));y1=Math.min(H,Math.ceil(y1));
+ let s=0,c=0;for(let y=y0;y<y1;y+=2)for(let x=x0;x<x1;x+=2){s+=255-g[y*W+x];c++}return c?s/c:0}
+// Orientation check: the six class-number circles are big empty rings in a known place. If we do not see rings there, the page is probably upside down.
+function ringScore(nz,geo){const{g,Wn,Hn,ox,oy,gwN}=nz;let tot=0,cnt=0;
+ for(let k=0;k<6;k++){const cx=ox+(geo.seqX0+k*geo.seqStep)*gwN,cy=oy+geo.seqY*gwN,r=geo.seqR*gwN;let s=0;
+  for(let a=0;a<24;a++){const th=a*Math.PI/12;let dmin=255;for(let dr=-2;dr<=2;dr++){const x=Math.round(cx+(r+dr)*Math.cos(th)),y=Math.round(cy+(r+dr)*Math.sin(th));if(x>=0&&y>=0&&x<Wn&&y<Hn)dmin=Math.min(dmin,g[y*Wn+x])}s+=255-dmin}
+  tot+=s/24/255;cnt++}
+ return tot/cnt}
+// Cuts one sheet out of the page into a fixed-size picture: grid 1400 px wide, with room above it for the class-number bubbles.
+function normalizeSheet(g,W,H,r){const gwN=1400,s=gwN/r.w,ghN=Math.round(r.h*s),ox=70,oy=Math.round(0.3*gwN),bot=70,Wn=gwN+2*ox,Hn=oy+ghN+bot,o=new Uint8ClampedArray(Wn*Hn),t=r.t||0;
+ for(let v=0;v<Hn;v++){const b=(v-oy)/s;
+  for(let u=0;u<Wn;u++){const a=(u-ox)/s,sx=r.x+a-b*t,sy=r.y+a*t+b,x0=Math.floor(sx),y0=Math.floor(sy),fx=sx-x0,fy=sy-y0;
+   if(x0<0||y0<0||x0+1>=W||y0+1>=H){o[v*Wn+u]=255;continue}
+   const i=y0*W+x0;o[v*Wn+u]=(g[i]*(1-fx)+g[i+1]*fx)*(1-fy)+(g[i+W]*(1-fx)+g[i+W+1]*fx)*fy}}
+ return{g:o,Wn,Hn,ox,oy,gwN,ghN,bot}}
+// How dark is the inside of a printed circle compared with the paper around it (0 = clean, 1 = solid black).
+function circleFill(g,W,H,cx,cy,r,ink){
+ const hist=new Uint32Array(256);let t=0,R=Math.ceil(2.4*r);
+ for(let y=Math.floor(cy-R);y<=cy+R;y+=2)for(let x=Math.floor(cx-R);x<=cx+R;x+=2)if(x>=0&&y>=0&&x<W&&y<H){hist[g[y*W+x]]++;t++}
+ let a=0,bg=255;for(let i=0;i<256;i++){a+=hist[i];if(a>=t*0.85){bg=i;break}}
+ const rr=0.62*r;let s=0,c=0;for(let y=Math.floor(cy-rr);y<=cy+rr;y++)for(let x=Math.floor(cx-rr);x<=cx+rr;x++)if((x-cx)**2+(y-cy)**2<=rr*rr&&x>=0&&y>=0&&x<W&&y<H){s+=g[y*W+x];c++}
+ return c?Math.max(0,(bg-s/c)/Math.max(40,bg-ink)):0}
+// Reads the binary class number (32,16,8,4,2,1) and the ST1/ST2/TE circle printed above the grid.
+function readSeqType(nz,geo){
+ const{g,Wn,Hn,ox,oy,gwN,ghN}=nz,hist=new Uint32Array(256);let tot=0;
+ for(let y=oy;y<Math.min(Hn,oy+ghN);y+=3)for(let x=ox;x<Math.min(Wn,ox+gwN);x+=3){hist[g[y*Wn+x]]++;tot++}
+ let a=0,ink=0;for(let i=0;i<256;i++){a+=hist[i];if(a>=tot*0.02){ink=i;break}}
+ const fs=[],vals=[32,16,8,4,2,1];
+ for(let k=0;k<6;k++)fs.push(circleFill(g,Wn,Hn,ox+(geo.seqX0+k*geo.seqStep)*gwN,oy+geo.seqY*gwN,geo.seqR*gwN,ink));
+ const mx=Math.max(...fs);let seq=null,seqUnsure=false;
+ if(mx>=0.12){const thr=Math.max(0.10,0.45*mx);seq=0;fs.forEach((f,k)=>{if(f>=thr)seq+=vals[k];if(f>=0.6*thr&&f<thr)seqUnsure=true});if(!seq)seq=null}
+ const tf=geo.typeX.map(x=>circleFill(g,Wn,Hn,ox+x*gwN,oy+geo.typeY*gwN,geo.typeR*gwN,ink)),ti=tf.map((_,i)=>i).sort((p,q)=>tf[q]-tf[p]);
+ let type=null,typeUnsure=false;if(tf[ti[0]]>=0.12){if(tf[ti[1]]>=0.6*tf[ti[0]])typeUnsure=true;else type=['st1','st2','te'][ti[0]]}
+ return{seq,seqUnsure,type,typeUnsure,seqFills:fs}}
+// One scanned page -> every answer sheet on it (a cut half-sheet gives 1; an uncut 2-up page gives 2).
+function processPageSheets(g,W,H,pk,p,n){
+ const geo=SHEET_GEO[pk]||SHEET_GEO.half;let rects=locateGrids(g,W,H,p.aspect);
+ if(!rects.length){const gc=rot90(g,W,H,true),rc=locateGrids(gc,H,W,p.aspect);
+  if(rc.length){g=gc;[W,H]=[H,W];rects=rc}else{const gw=rot90(g,W,H,false),rw=locateGrids(gw,H,W,p.aspect);if(rw.length){g=gw;[W,H]=[H,W];rects=rw}}}
+ if(!rects.length)return[];
+ {const nz0=normalizeSheet(g,W,H,rects[0]),sc0=ringScore(nz0,geo);
+  if(sc0<0.55){const f=rot180(g),rf=locateGrids(f,W,H,p.aspect);if(rf.length&&ringScore(normalizeSheet(f,W,H,rf[0]),geo)>sc0+0.1){g=f;rects=rf}}}
+ return rects.map(rc=>{const nz=normalizeSheet(g,W,H,rc),L={choices:p.choices,cols:p.cols,rows:p.rows,numW:p.numW,left:nz.ox/nz.Wn*100,right:nz.ox/nz.Wn*100,top:nz.oy/nz.Hn*100,bottom:nz.bot/nz.Hn*100};
+  const res=detectAnswers(nz.g,nz.Wn,nz.Hn,n,L);return{res,snapped:!!res.snapped,...readSeqType(nz,geo),nz}})}
 /*ENDPURE*/
 
 // ---------- helpers ----------
@@ -757,7 +883,7 @@ function loadSaved(){try{const p=JSON.parse(localStorage.getItem(LS)||'null');if
 // ---------- UI refresh ----------
 function canScan(){const m=state.meta[state.cur];return !!m&&(state.mode==='key'||!!(state.keys[state.cur]&&$('studentSelect').value))}
 function syncButtons(){const ok=canScan();
- $('btnStartCamera').disabled=!ok||!!state.stream;$('btnCapture').disabled=!state.stream;$('btnPhoto').disabled=!ok;$('btnUpload').disabled=!ok;
+ $('btnStartCamera').disabled=!ok||!!state.stream;$('btnCapture').disabled=!state.stream;$('btnPhoto').disabled=!ok;$('btnUpload').disabled=!ok;$('btnPdf').disabled=!state.keys[state.cur];
  $('btnRetake').disabled=!state.img;$('btnClearImage').disabled=!state.img;
  $('cameraPreview').classList.toggle('idle',!state.stream&&!state.img)}
 function refreshUI(){
@@ -887,6 +1013,7 @@ function openVerify(){const p=state.pending;if(!p){toast('Nothing to verify.','w
   const cr=document.createElement('span');cr.className='choice-row';
   for(let k=0;k<K;k++){const b=document.createElement('button');b.type='button';b.className='choice';b.dataset.k=k;b.textContent=LET[k];cr.appendChild(b)}
   const r=document.createElement('span');r.className='item-result';row.append(num,cr,r);list.appendChild(row);paintRow(row,i)});
+ if(p.preview){const im=document.createElement('img');im.className='verify-preview';im.src=p.preview;im.alt='Scanned sheet';list.prepend(im)}
  paintSummary();$('verificationModal').classList.add('active')}
 function closeVerificationModal(){$('verificationModal').classList.remove('active')}
 function rescore(a){const key=state.keys[a];if(!key)return;
@@ -900,6 +1027,8 @@ function acceptScan(){const p=state.pending;if(!p)return;const a=p.a;
  state.answers[a][p.sid]=p.answers.slice();rescore(a);
  const s=state.students.find(x=>x.id===p.sid),sc=p.answers.filter((x,i)=>x&&x===key[i]).length;
  state.history.push({timestamp:new Date().toISOString(),studentId:p.sid,studentName:`${s.lastName}, ${s.firstName}`,assessment:a,totalScore:sc,totalItems:p.answers.length});
+ if(p.batch!=null&&batch&&batch.rows[p.batch]){const r=batch.rows[p.batch];r.saved=true;r.answers=p.answers.slice();r.flags=p.flags.slice();
+  closeVerificationModal();clearPending();refreshUI();persist();renderBatch();toast(`Saved ${sc}/${p.answers.length} — ${s.lastName}, ${s.firstName}`,'success');return}
  const wasLive=state.live;closeVerificationModal();clearPending();clearImage();refreshUI();persist();
  const next=state.students.find(x=>!state.answers[a][x.id]);
  if(next){$('studentSelect').value=next.id;onStudentChange();if(wasLive)startCamera();toast(`Saved ${sc}/${p.answers.length}. Next: ${next.lastName}, ${next.firstName}`,'success')}
@@ -959,6 +1088,90 @@ const SHEETS={full:'JVBERi0xLjMKJZOMi54gUmVwb3J0TGFiIEdlbmVyYXRlZCBQREYgZG9jdW1l
 function downloadSheet(k){const bin=atob(SHEETS[k]),u8=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)u8[i]=bin.charCodeAt(i);
  download(new Blob([u8],{type:'application/pdf'}),k==='half'?'AnswerSheet_HALF_2up_8x13.pdf':'AnswerSheet_FULL_8x13.pdf');toast('PDF ready. Print at 100% (Actual Size) on 8 x 13 in.','success',6000)}
 
+// ---------- PDF batch: one scanned PDF with many answer sheets ----------
+let batch=null,pdfLibP=null,pdfBusy=false;
+const PDFJS_CDN='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/';
+const loadScript=src=>new Promise((res,rej)=>{const e=document.createElement('script');e.src=src;e.onload=res;e.onerror=()=>{e.remove();rej(new Error('load '+src))};document.head.appendChild(e)});
+async function useCdnWorker(lib){const t=await(await fetch(PDFJS_CDN+'pdf.worker.min.js')).text();lib.GlobalWorkerOptions.workerSrc=URL.createObjectURL(new Blob([t],{type:'text/javascript'}))}
+// pdf.min.js + pdf.worker.min.js (pdf.js 3.11.174) placed next to this file = fully offline; otherwise they are fetched from the CDN when online.
+function loadPdfJs(){if(window.pdfjsLib)return Promise.resolve(window.pdfjsLib);if(pdfLibP)return pdfLibP;
+ pdfLibP=(async()=>{let local=true;try{await loadScript('pdf.min.js')}catch(e){local=false;await loadScript(PDFJS_CDN+'pdf.min.js')}
+  const lib=window.pdfjsLib;if(!lib)throw new Error('pdf.js missing');
+  if(local)lib.GlobalWorkerOptions.workerSrc='pdf.worker.min.js';else await useCdnWorker(lib);lib._local=local;return lib})();
+ pdfLibP.catch(()=>{pdfLibP=null});return pdfLibP}
+async function openPdf(lib,bytes){
+ try{return await lib.getDocument({data:bytes.slice(0)}).promise}
+ catch(e){if(!lib._local)throw e;await useCdnWorker(lib);lib._local=false;return await lib.getDocument({data:bytes.slice(0)}).promise}}
+function previewOf(nz){const c=document.createElement('canvas');c.width=nz.Wn;c.height=nz.Hn;const x=c.getContext('2d'),id=x.createImageData(nz.Wn,nz.Hn);
+ for(let i=0,j=0;i<nz.g.length;i++,j+=4){id.data[j]=id.data[j+1]=id.data[j+2]=nz.g[i];id.data[j+3]=255}x.putImageData(id,0,0);
+ const o=document.createElement('canvas');o.width=1000;o.height=Math.round(1000*nz.Hn/nz.Wn);o.getContext('2d').drawImage(c,0,0,o.width,o.height);return o.toDataURL('image/jpeg',0.62)}
+async function handlePdfUpload(e){const f=e.target.files[0];e.target.value='';if(!f)return;
+ const a=state.cur,m=state.meta[a];if(!m||!state.keys[a]){toast('Save the answer key for this assessment first.','warning');return}
+ if(pdfBusy)return;pdfBusy=true;state.live=false;stopCamera();
+ try{
+  setStatus('⏳','Opening PDF…');const lib=await loadPdfJs(),doc=await openPdf(lib,new Uint8Array(await f.arrayBuffer()));
+  const rows=[],p=prof(),pk=profKey(),n=m.n;
+  for(let pg=1;pg<=doc.numPages;pg++){
+   setStatus('⏳',`Reading page ${pg} of ${doc.numPages}…`);await new Promise(r=>setTimeout(r,30));
+   const page=await doc.getPage(pg),v0=page.getViewport({scale:1}),sc=Math.min(4,Math.max(1,2400/Math.max(v0.width,v0.height))),vp=page.getViewport({scale:sc});
+   const cv=document.createElement('canvas');cv.width=Math.round(vp.width);cv.height=Math.round(vp.height);
+   const cx=cv.getContext('2d',{willReadFrequently:true});cx.fillStyle='#fff';cx.fillRect(0,0,cv.width,cv.height);
+   await page.render({canvasContext:cx,viewport:vp}).promise;
+   const W=cv.width,H=cv.height,d=cx.getImageData(0,0,W,H).data,g=new Uint8ClampedArray(W*H);
+   for(let i=0;i<W*H;i++)g[i]=(d[4*i]*77+d[4*i+1]*150+d[4*i+2]*29)>>8;
+   cv.width=cv.height=1;page.cleanup();
+   let sheets=[];try{sheets=processPageSheets(g,W,H,pk,p,n)}catch(err){sheets=[]}
+   if(!sheets.length)rows.push({page:pg,sub:0,fail:true,seq:null,sid:'',answers:Array(n).fill(null),flags:Array(n).fill('blank'),saved:false});
+   sheets.forEach((s,si)=>{const answers=s.res.map(r=>r.ans==null?null:LET[r.ans]),flags=s.res.map(r=>r.flag);
+    const stu=s.seq!=null?state.students.find(x=>String(x.studentNo).trim()!==''&&Number(x.studentNo)===s.seq):null;
+    rows.push({page:pg,sub:si,multi:sheets.length>1,seq:s.seq,seqUnsure:s.seqUnsure,type:s.type,snapped:s.snapped,sid:stu?stu.id:'',answers,flags,preview:previewOf(s.nz),saved:false})})}
+  batch={file:f.name,assess:a,rows};setStatus('✅',`Read ${rows.length} sheet(s) from ${doc.numPages} page(s). Review the list.`,'success');
+  $('batchTitle').textContent=`📑 ${ASSESS[a].name} — ${f.name}`;renderBatch();$('batchModal').classList.add('active')
+ }catch(err){console.error(err);const m2=/pdf\.js|pdf\.min|worker|fetch|load/i.test(String(err&&err.message))?'PDF reader could not load. Online it downloads automatically; for offline put pdf.min.js and pdf.worker.min.js (pdf.js 3.11.174) next to this file.':'Could not read that PDF.';toast(m2,'error',8000);setStatus('❌',m2,'error')}
+ finally{pdfBusy=false}}
+function rowInfo(r,i){const b=batch,notes=[];let clean=true;
+ if(r.fail)return{clean:false,notes:['No answer grid found on this page — rescan it with Take Photo.'],score:null};
+ if(!r.sid){notes.push(r.seq==null?'Class number not read — choose the student.':`Class number ${r.seq} is not in the roster — choose the student.`);clean=false}
+ else{const dup=b.rows.findIndex((o,j)=>j!==i&&o.sid===r.sid&&!o.fail);if(dup>=0){notes.push(`Same student as page ${b.rows[dup].page}.`);clean=false}
+  if(!r.saved&&state.answers[b.assess][r.sid]){notes.push('Already scanned before — saving will replace it.');clean=false}}
+ if(!r.snapped){notes.push('Grid border not aligned — check carefully.');clean=false}
+ const nf=r.flags.filter(Boolean).length;if(nf){notes.push(`${nf} item(s) blank or multiple — tap Review.`);clean=false}
+ if(r.seqUnsure){notes.push('Class number unclear — confirm the student.');clean=false}
+ if(r.type&&r.type!==b.assess){notes.push(`Sheet is marked ${ASSESS[r.type].name}, not ${ASSESS[b.assess].name}.`);clean=false}
+ const key=state.keys[b.assess]||[];return{clean,notes,score:r.answers.filter((x,k)=>x&&x===key[k]).length}}
+function renderBatch(){const b=batch;if(!b)return;const list=$('batchList');list.innerHTML='';let green=0,orange=0,done=0;
+ b.rows.forEach((r,i)=>{const inf=rowInfo(r,i);if(r.saved)done++;else if(inf.clean)green++;else orange++;
+  const row=document.createElement('div');row.className='batch-row '+(r.saved?'done':inf.clean?'clean':'check');
+  const img=document.createElement('img');if(r.preview)img.src=r.preview;img.alt='';
+  const main=document.createElement('div');main.className='batch-main';
+  const t=document.createElement('div');t.className='batch-title';t.textContent=`Page ${r.page}${r.multi?` · sheet ${r.sub+1}`:''}${r.seq!=null?` · class no. ${r.seq}`:''}${inf.score!=null?` · ${inf.score}/${state.meta[b.assess].n}`:''}`;
+  const sel=document.createElement('select');sel.dataset.r=i;sel.disabled=!!r.saved||!!r.fail;
+  const o0=document.createElement('option');o0.value='';o0.textContent='— choose student —';sel.appendChild(o0);
+  state.students.forEach(s=>{const o=document.createElement('option');o.value=s.id;o.textContent=`${s.studentNo?s.studentNo+'. ':''}${s.lastName}, ${s.firstName}`;sel.appendChild(o)});sel.value=r.sid||'';
+  const nt=document.createElement('div');nt.className='batch-notes';nt.textContent=r.saved?'✓ Saved':inf.clean?'✓ Ready to save':inf.notes.join(' ');
+  main.append(t,sel,nt);const act=document.createElement('div');act.className='batch-act';
+  const bt=document.createElement('button');bt.className='btn btn-outline btn-sm';bt.dataset.act='review';bt.dataset.r=i;bt.textContent=r.saved?'View':'Review';bt.disabled=!!r.fail;act.appendChild(bt);
+  row.append(img,main,act);list.appendChild(row)});
+ const sm=$('batchSummary');sm.innerHTML='';[['ok',`✅ ${green} ready`],['warn',`⚠ ${orange} need a look`],['done',`💾 ${done} saved`]].forEach(([c,tx])=>{const sp=document.createElement('span');sp.className=c;sp.textContent=tx;sm.appendChild(sp)})}
+function openBatchRow(i){const r=batch&&batch.rows[i];if(!r||r.fail)return;
+ if(!r.sid){toast('Choose the student for this page first.','warning');return}
+ const s=state.students.find(x=>x.id===r.sid);state.mode='student';
+ state.pending={mode:'student',a:batch.assess,sid:r.sid,answers:r.answers.slice(),flags:r.flags.slice(),batch:i,preview:r.preview};
+ openVerify();$('verifyTitle').textContent=`🔍 ${s.lastName}, ${s.firstName} — page ${r.page}`}
+function batchSaveClean(){const b=batch;if(!b)return;let n=0;
+ b.rows.forEach((r,i)=>{if(r.saved)return;const inf=rowInfo(r,i);if(!inf.clean)return;
+  state.answers[b.assess][r.sid]=r.answers.slice();const s=state.students.find(x=>x.id===r.sid);
+  state.history.push({timestamp:new Date().toISOString(),studentId:r.sid,studentName:`${s.lastName}, ${s.firstName}`,assessment:b.assess,totalScore:inf.score,totalItems:r.answers.length});r.saved=true;n++});
+ if(n){rescore(b.assess);refreshUI();persist()}renderBatch();
+ toast(n?`Saved ${n} page(s). Review the orange ones next.`:'No green pages to save — use Review on the orange rows.',n?'success':'info',5000)}
+function batchByOrder(){const b=batch;if(!b)return;if(!confirm('Assign students in roster order (first sheet = first student, and so on) instead of by class number?'))return;
+ let k=0;b.rows.forEach(r=>{if(r.fail||r.saved)return;const s=state.students[k++];r.sid=s?s.id:''});renderBatch()}
+function closeBatch(){if(batch&&batch.rows.some(r=>!r.saved&&!r.fail)&&!confirm('Close the batch? Pages not saved yet will need to be imported again.'))return;
+ $('batchModal').classList.remove('active');batch=null;syncButtons()}
+document.addEventListener('DOMContentLoaded',()=>{const L=$('batchList');if(!L)return;
+ L.addEventListener('change',e=>{const s=e.target.closest('select[data-r]');if(!s||!batch)return;batch.rows[+s.dataset.r].sid=s.value;renderBatch()});
+ L.addEventListener('click',e=>{const b=e.target.closest('button[data-act="review"]');if(b)openBatchRow(+b.dataset.r)})});
+
 // ---------- init ----------
 function init(){
  try{const p=JSON.parse(localStorage.getItem(LS_L)||'{}');if(p.v===LAYOUT_V&&p.profiles)for(const k in state.profiles)Object.assign(state.profiles[k],p.profiles[k]||{});if(p.v===LAYOUT_V&&p.stSheet)state.stSheet=p.stSheet}catch(e){}
@@ -970,7 +1183,7 @@ function init(){
  addEventListener('pagehide',saveNow);addEventListener('resize',applyGuide);
  setStatus(restored?'✅':'⏳',restored?'Previous session restored.':'Upload a class file (CSV/XLSX) from ClassRecord CIES to begin.',restored?'success':'pending')}
 document.addEventListener('DOMContentLoaded',init);
-Object.assign(window,{uploadNewClass,resumeClass,exitAndReset,onAssessmentChange,onStudentChange,scanKey,manualKey,clearKey,startCamera,captureImage,retakeImage,clearImage,handleFileUpload,openVerify,openVerificationModal:openVerify,closeVerificationModal,acceptScan,exportToCIES,switchNav});
+Object.assign(window,{uploadNewClass,resumeClass,exitAndReset,onAssessmentChange,onStudentChange,scanKey,manualKey,clearKey,startCamera,captureImage,retakeImage,clearImage,handleFileUpload,openVerify,openVerificationModal:openVerify,closeVerificationModal,acceptScan,exportToCIES,switchNav,handlePdfUpload,closeBatch,batchSaveClean,batchByOrder});
 
     </script>
 </body>
