@@ -379,6 +379,58 @@
         .batch-notes{font-size:.78rem;color:#9a5b00}.batch-row.clean .batch-notes{color:#1b6e35}.batch-row.done .batch-notes{color:#1e3a8a}
         .batch-act{display:flex;flex-direction:column;gap:.35rem;align-items:flex-end;flex-shrink:0}
         .verify-preview{width:100%;border:1px solid #ccd;border-radius:6px;margin-bottom:.6rem}
+        /* ===== PORTRAIT, CAMERA-FIRST SHELL (phones, iPad, Android tablets) ===== */
+        html,body{height:100%;overflow:hidden;overscroll-behavior:none}
+        body{height:100vh;height:100dvh;min-height:0;background:#0b1220}
+        .header{padding:.35rem .75rem;gap:.55rem}
+        .logo-container{width:30px;height:30px}
+        .header-text h1{font-size:.85rem}.header-text p{display:none}
+        .views{flex:1;min-height:0;position:relative;background:#f0f2f5}
+        .view{position:absolute;inset:0;display:none;overflow-y:auto;-webkit-overflow-scrolling:touch}
+        .view.active{display:block}
+        .view-inner{max-width:720px;margin:0 auto;padding:.75rem 1rem 1.25rem;display:flex;flex-direction:column;gap:.75rem}
+        #viewScan{background:#000;overflow:hidden}
+        #viewScan .camera-preview{position:absolute;inset:0;width:100%;height:100%;max-height:none !important;margin:0 !important;aspect-ratio:auto !important;border:0;border-radius:0;background:#000}
+        #viewScan .camera-preview video{position:absolute;inset:0}
+        #viewScan .camera-preview img{position:absolute;inset:0;object-fit:contain;background:#000}
+        .guide{border:3px solid #f0c040 !important;border-radius:10px !important;box-shadow:0 0 0 9999px rgba(0,0,0,.28) !important}
+        .camera-preview .placeholder{color:#cfd8e3;z-index:1}
+        .camera-preview .placeholder .btn{margin-top:.4rem;min-width:200px;font-size:1rem;padding:.8rem 1.2rem}
+        .hud-top{position:absolute;top:0;left:0;right:0;padding:.5rem .6rem 1rem;display:flex;flex-direction:column;gap:.45rem;background:linear-gradient(#000b,#0000);z-index:5;pointer-events:none}
+        .hud-top>*{pointer-events:auto}
+        .hud-row{display:flex;gap:.4rem;align-items:center}
+        .hud-row .sp{flex:1}
+        .chip{background:rgba(255,255,255,.18);color:#fff;border:1px solid rgba(255,255,255,.35);border-radius:999px;padding:.25rem .7rem;font-size:.76rem;font-weight:700;white-space:nowrap;cursor:pointer;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+        .chip.key{background:#f0a500;color:#1a1a2e;border-color:#f0a500}
+        .hud-btn{width:40px;height:40px;border-radius:50%;border:1px solid rgba(255,255,255,.4);background:rgba(0,0,0,.45);color:#fff;font-size:1rem;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0}
+        .hud-btn.on{background:#f0c040;color:#000}
+        .hud-student{display:flex;gap:.4rem;align-items:center}
+        .hud-student select{flex:1;min-width:0;height:40px;border-radius:999px;border:1px solid rgba(255,255,255,.4);background:rgba(0,0,0,.55);color:#fff;padding:0 .9rem;font-size:.92rem;font-weight:600;-webkit-appearance:none;appearance:none;text-align:center;text-align-last:center}
+        .hud-student select option{color:#000}
+        .hud-bottom{position:absolute;left:0;right:0;bottom:0;padding:1rem .6rem .45rem;display:flex;flex-direction:column;gap:.35rem;background:linear-gradient(#0000,rgba(0,0,0,.78));z-index:5}
+        .hud-bottom .status{background:rgba(0,0,0,.6);color:#fff;border-radius:12px;font-size:.74rem;padding:.3rem .7rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+        .hud-bottom .status span{overflow:hidden;text-overflow:ellipsis}
+        .ctl-row{display:flex;align-items:center;justify-content:space-around;gap:.3rem}
+        .ctl{display:flex;flex-direction:column;align-items:center;gap:.1rem;min-width:56px;border:none;background:transparent;color:#fff;font-size:1.4rem;cursor:pointer;padding:.2rem}
+        .ctl small{font-size:.62rem;font-weight:600;opacity:.92}
+        .ctl:disabled,.shutter:disabled{opacity:.35}
+        .shutter{width:66px;height:66px;border-radius:50%;border:5px solid #fff;background:rgba(255,255,255,.2);position:relative;cursor:pointer;flex-shrink:0}
+        .shutter::after{content:'';position:absolute;inset:6px;border-radius:50%;background:#fff;transition:inset .08s}
+        .shutter:active::after{inset:10px}
+        body.immersive .header,body.immersive .bottom-nav{display:none}
+        .res-head{display:flex;gap:.5rem;flex-wrap:wrap;font-size:.82rem}
+        .res-head span{padding:.25rem .7rem;border-radius:999px;background:#e3edff;color:#1e3a8a;font-weight:700}
+        .res-row{display:flex;align-items:center;gap:.6rem;background:#fff;border:1px solid #d8dde6;border-radius:10px;padding:.65rem .8rem;margin-bottom:.45rem;cursor:pointer}
+        .res-row .no{width:2rem;color:#889;font-size:.8rem}.res-row .nm{flex:1;font-weight:600;color:#1e3a5f;min-width:0}
+        .res-row .sc{font-weight:700}.res-row.done .sc{color:#1b6e35}.res-row.todo .sc{color:#999;font-weight:500}
+        .res-row.sel{outline:2px solid #2d6a9f}
+        @media (max-width:700px){.modal{max-width:none;max-height:100vh;max-height:100dvh;height:100vh;height:100dvh;border-radius:0}.modal-overlay{align-items:stretch}}
+        @media (max-width:700px){
+            #verificationModal .verify-results-list{max-height:none !important;overflow:visible !important;border:0;background:transparent}
+            #verificationModal .modal-body{padding:.6rem .75rem}
+            .verify-preview{position:sticky;top:-.6rem;z-index:3;background:#fff;box-shadow:0 4px 10px rgba(0,0,0,.18)}
+        }
+        #viewResults #scanResultCard{display:none !important}
 </style>
 </head>
 <body>
@@ -397,8 +449,9 @@
     </header>
 
     <!-- MAIN -->
-    <main class="main"><div class="cols"><div class="col">
-
+    <main class="views">
+        <!-- TAB 1: CLASS & ANSWER KEY -->
+        <section class="view" id="viewClass"><div class="view-inner">
         <!-- CLASS INFO PANEL — Upload / Resume / Exit & Reset -->
         <div class="class-info-panel" id="classInfoPanel">
             <div class="class-info-title">
@@ -436,6 +489,7 @@
             </div>
         </div>
 
+        
         <!-- Step 1: Select Assessment -->
         <div class="card">
             <div class="card-title">
@@ -449,7 +503,8 @@
             </select>
         </div>
 
-                <!-- Step 2: Master Answer Key -->
+                
+        <!-- Step 2: Master Answer Key -->
         <div class="card" id="keyCard">
             <div class="card-title"><span class="step-badge">2</span> Master Answer Key</div>
             <div class="status" id="keyStatus"><span class="status-icon pending">🔑</span><span id="keyStatusText">Import your class file first.</span></div>
@@ -460,71 +515,96 @@
             </div>
         </div>
 
-        <!-- Step 3: Select Student -->
-        <div class="card">
-            <div class="card-title">
-                <span class="step-badge">3</span>
-                Select Student
-            </div>
-            <select class="form-select" id="studentSelect" onchange="onStudentChange()">
-                <option value="">— Select student —</option>
-            </select>
+        
+        <!-- Empty State (when no students loaded) -->
+        <div class="empty-state" id="emptyState">
+            <span class="icon">📂</span>
+            <span>No students loaded. Import from ClassRecord CIES first.</span>
+            <button class="btn btn-primary btn-block" style="max-width:300px;margin-top:0.5rem;" onclick="uploadNewClass()">
+                📂 Upload New Class
+            </button>
         </div>
 
-        </div><div class="col">
-        <!-- Step 4: Scan Answer Sheet -->
-        <div class="card">
-            <div class="card-title">
-                <span class="step-badge">4</span>
-                <span id="scanTitle">Scan Answer Sheet</span>
-            </div>
-            <div class="camera-preview" id="cameraPreview">
+    
+        <footer class="footer">
+        <div class="footer-brand">Developed by explainexplore TechieTeacher and Deepseek</div>
+        <div class="footer-project">Project 2 CIES 2026</div>
+    </footer>
+        </div></section>
+
+        <!-- TAB 2: SCAN (camera fills the whole area) -->
+        <section class="view active" id="viewScan">
+            <div class="camera-preview idle" id="cameraPreview">
                 <div class="placeholder" id="cameraPlaceholder">
                     <span class="icon">📷</span>
-                    <span>Camera preview will appear here</span>
+                    <span id="placeholderMsg">Pick a student, then start the camera</span>
+                    <button class="btn btn-primary" id="btnStartCamera" onclick="startCamera()" disabled>📸 Start Camera</button>
                 </div>
                 <video id="cameraVideo" autoplay muted playsinline webkit-playsinline style="display:none;"></video>
                 <img id="capturedImage" style="display:none;" alt="Captured answer sheet">
                 <div class="omr-overlay" id="omrOverlay"><div class="guide" id="guide"></div></div>
+
+                <div class="hud-top">
+                    <div class="hud-row">
+                        <span class="chip" id="hudAssess" onclick="switchNav('class')" title="Change assessment">ST1</span>
+                        <span class="chip" id="hudMode">👤 Student</span>
+                        <span class="chip" id="hudProgress" onclick="switchNav('results')" title="See all students">0/0</span>
+                        <span class="sp"></span>
+                        <button class="hud-btn" id="btnTorch" onclick="toggleTorch()" style="display:none;" aria-label="Light">🔦</button>
+                        <button class="hud-btn" id="btnImmersive" onclick="toggleImmersive()" aria-label="Full screen">⛶</button>
+                    </div>
+                    <div class="hud-student" id="hudStudentRow">
+                        <button class="hud-btn" onclick="stepStudent(-1)" aria-label="Previous student">◀</button>
+                        <select class="form-select" id="studentSelect" onchange="onStudentChange()"><option value="">— Select student —</option></select>
+                        <button class="hud-btn" onclick="stepStudent(1)" aria-label="Next student">▶</button>
+                    </div>
+                </div>
+
+                <div class="hud-bottom">
+                    <div class="progress-container" id="progressContainer"><div class="progress-bar" id="progressBar"></div></div>
+                    <div class="status" id="statusBar">
+                        <span class="status-icon" id="statusIcon">⏳</span>
+                        <span id="statusText">Select assessment and student to begin.</span>
+                    </div>
+                    <div class="ctl-row">
+                        <button class="ctl" id="btnUpload" onclick="document.getElementById('fileInput').click()" disabled><span>📁</span><small>Upload</small></button>
+                        <button class="ctl" id="btnPhoto" onclick="document.getElementById('photoInput').click()" disabled><span>📷</span><small>Photo</small></button>
+                        <button class="shutter" id="btnCapture" onclick="captureImage()" disabled aria-label="Capture"></button>
+                        <button class="ctl" id="btnPdf" onclick="document.getElementById('pdfInput').click()" disabled title="Scan every answer sheet into ONE PDF, then import it here"><span>📑</span><small>PDF</small></button>
+                        <button class="ctl" id="btnRetake" onclick="retakeImage()" disabled><span>🔄</span><small>Retake</small></button>
+                    </div>
+                    <button id="btnClearImage" onclick="clearImage()" disabled style="display:none;">Clear</button>
+                    <input type="file" id="photoInput" accept="image/*" capture="environment" style="display:none;" onchange="handleFileUpload(event)">
+                    <input type="file" id="fileInput" accept="image/*" style="display:none;" onchange="handleFileUpload(event)">
+                    <input type="file" id="pdfInput" accept="application/pdf,.pdf" style="display:none;" onchange="handlePdfUpload(event)">
+                </div>
             </div>
+            <span id="scanTitle" hidden>Scan Answer Sheet</span>
+        </section>
+
+        <!-- TAB 3: RESULTS & EXPORT -->
+        <section class="view" id="viewResults"><div class="view-inner">
+            <div class="res-head" id="resultsHead"></div>
+            <div id="resultsList"></div>
+            <!-- Export Button (appears when all students scanned) -->
+        <div class="card" id="exportCard" style="display:none;">
+            <div class="card-title">
+                <span class="step-badge">📤</span>
+                Export to ClassRecord CIES
+            </div>
+            <div class="status" style="background:#e8f5e9;color:#1b5e20;">
+                <span class="status-icon success">✅</span>
+                <span id="exportStatusText">Ready to export.</span>
+            </div>
+            <div class="hint" style="margin:0">Files save to your Downloads folder. On iPhone/iPad a share sheet opens: choose <b>Save to Files</b>.</div>
             <div class="btn-row">
-                <button class="btn btn-primary" id="btnStartCamera" onclick="startCamera()" disabled>
-                    📸 Start Camera
-                </button>
-                <button class="btn btn-success" id="btnCapture" onclick="captureImage()" disabled>
-                    ⏺ Capture
-                </button>
-                <button class="btn btn-primary" id="btnPhoto" onclick="document.getElementById('photoInput').click()" disabled>
-                    📷 Take Photo
-                </button>
-                <button class="btn btn-outline" id="btnUpload" onclick="document.getElementById('fileInput').click()" disabled>
-                    📁 Upload
-                </button>
-                <input type="file" id="photoInput" accept="image/*" capture="environment" style="display:none;" onchange="handleFileUpload(event)">
-                <input type="file" id="fileInput" accept="image/*" style="display:none;" onchange="handleFileUpload(event)">
-                <button class="btn btn-primary" id="btnPdf" onclick="document.getElementById('pdfInput').click()" disabled title="Scan every answer sheet into ONE PDF, then import it here">
-                    📑 PDF (many sheets)
-                </button>
-                <input type="file" id="pdfInput" accept="application/pdf,.pdf" style="display:none;" onchange="handlePdfUpload(event)">
-            </div>
-            <div class="btn-row">
-                <button class="btn btn-outline" id="btnRetake" onclick="retakeImage()" disabled>
-                    🔄 Retake
-                </button>
-                <button class="btn btn-danger" id="btnClearImage" onclick="clearImage()" disabled>
-                    🗑️ Clear
-                </button>
-            </div>
-            <div class="progress-container" id="progressContainer">
-                <div class="progress-bar" id="progressBar"></div>
-            </div>
-            <div class="status" id="statusBar">
-                <span class="status-icon" id="statusIcon">⏳</span>
-                <span id="statusText">Select assessment and student to begin.</span>
+                <button class="btn btn-success" onclick="exportToCIES('xlsx')">📤 Download XLSX</button>
+                <button class="btn btn-outline" onclick="exportToCIES('csv')">📄 Download CSV</button>
             </div>
         </div>
 
-        <!-- Scan Result -->
+        
+            <!-- Scan Result -->
         <div class="card" id="scanResultCard" style="display:none;">
             <div class="card-title">
                 <span class="step-badge">✓</span>
@@ -546,55 +626,19 @@
             </div>
         </div>
 
-        <!-- Export Button (appears when all students scanned) -->
-        <div class="card" id="exportCard" style="display:none;">
-            <div class="card-title">
-                <span class="step-badge">📤</span>
-                Export to ClassRecord CIES
-            </div>
-            <div class="status" style="background:#e8f5e9;color:#1b5e20;">
-                <span class="status-icon success">✅</span>
-                <span id="exportStatusText">Ready to export.</span>
-            </div>
-            <div class="hint" style="margin:0">Files save to your Downloads folder. On iPhone/iPad a share sheet opens: choose <b>Save to Files</b>.</div>
-            <div class="btn-row">
-                <button class="btn btn-success" onclick="exportToCIES('xlsx')">📤 Download XLSX</button>
-                <button class="btn btn-outline" onclick="exportToCIES('csv')">📄 Download CSV</button>
-            </div>
-        </div>
-
-        <!-- Empty State (when no students loaded) -->
-        <div class="empty-state" id="emptyState">
-            <span class="icon">📂</span>
-            <span>No students loaded. Import from ClassRecord CIES first.</span>
-            <button class="btn btn-primary btn-block" style="max-width:300px;margin-top:0.5rem;" onclick="uploadNewClass()">
-                📂 Upload New Class
-            </button>
-        </div>
-
-    </div></div></main>
+        
+        </div></section>
+    </main>
 
     <!-- BOTTOM NAV -->
     <nav class="bottom-nav">
-        <button class="nav-item active" id="navScan" onclick="switchNav('scan')">
-            <span class="nav-icon">📷</span>
-            <span>Scan</span>
-        </button>
-        <button class="nav-item" id="navHistory" onclick="switchNav('history')">
-            <span class="nav-icon">📋</span>
-            <span>History</span>
-        </button>
-        <button class="nav-item" id="navSettings" onclick="switchNav('settings')">
-            <span class="nav-icon">⚙️</span>
-            <span>Settings</span>
-        </button>
+        <button class="nav-item" id="navClass" onclick="switchNav('class')"><span class="nav-icon">📋</span><span>Class</span></button>
+        <button class="nav-item active" id="navScan" onclick="switchNav('scan')"><span class="nav-icon">📷</span><span>Scan</span></button>
+        <button class="nav-item" id="navResults" onclick="switchNav('results')"><span class="nav-icon">📊</span><span>Results</span></button>
+        <button class="nav-item" id="navSheet" onclick="switchNav('sheet')"><span class="nav-icon">⚙️</span><span>Sheet</span></button>
     </nav>
 
     <!-- FOOTER -->
-    <footer class="footer">
-        <div class="footer-brand">Developed by explainexplore TechieTeacher and Deepseek</div>
-        <div class="footer-project">Project 2 CIES 2026</div>
-    </footer>
 
     <!-- PDF BATCH MODAL -->
     <div class="modal-overlay" id="batchModal">
@@ -650,7 +694,7 @@
     <div class="toast-container" id="toastContainer"></div>
 
     <!-- JAVASCRIPT -->
-  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <script>
 const $=id=>document.getElementById(id),LET='ABCDEFGH';
 const ASSESS={st1:{name:'ST1',re:/st\s*1/i},st2:{name:'ST2',re:/st\s*2/i},te:{name:'TE',re:/\bte\b|term/i}};
@@ -748,10 +792,11 @@ function detectAnswers(g,W,H,n,L){
  const disc=(cx,cy)=>{let s=0,t=0;const r2=rs*rs;for(let y=Math.floor(cy-rs);y<=cy+rs;y++)for(let x=Math.floor(cx-rs);x<=cx+rs;x++)
    if((x-cx)**2+(y-cy)**2<=r2&&x>=0&&y>=0&&x<W&&y<H){s+=g[y*W+x];t++}return t?s/t:255};
  // pass 1: sample every bubble (patch normalised by local paper brightness) + the old "how much darker than paper" fill
- const items=[];
+ const items=[];let ringSum=0,ringN=0;
  for(let i=0;i<n;i++){const col=Math.floor(i/rows),r=i%rows,v=(r+0.5)/rows;
   const bg=paper(...pos((col*colW+numW+K*cellW/2)/gw,v)),den=Math.max(40,bg-ink),ps=[],fl=[];
   for(let k=0;k<K;k++){const[cx,cy]=pos((col*colW+numW+(k+0.5)*cellW)/gw,v);ps.push(patch(cx,cy,bg));
+   {let rs2=0;for(let q=0;q<16;q++){const th=q*Math.PI/8;let dm=255;for(let dr=-2;dr<=2;dr++){const xx=Math.round(cx+(rb+dr)*Math.cos(th)),yy=Math.round(cy+(rb+dr)*Math.sin(th));if(xx>=0&&yy>=0&&xx<W&&yy<H)dm=Math.min(dm,g[yy*W+xx])}rs2+=Math.max(0,Math.min(1,(bg-dm)/den))}ringSum+=rs2/16;ringN++}
    let best=0;for(const[ox,oy]of offs){const d=(bg-disc(cx+ox,cy+oy))/den;if(d>best)best=d}fl.push(best)}
   items.push({ps,fl,bg})}
  // clean template per letter = a LIGHT percentile (65th) of that letter's patches, pixel by pixel (marks only make pixels darker)
@@ -769,9 +814,10 @@ function detectAnswers(g,W,H,n,L){
  for(let i=0;i<n;i++){const s=sc[i],idx=s.map((_,j)=>j).sort((a,b)=>s[b]-s[a]),top=s[idx[0]],sec=s[idx[1]];
   let ans=null,flag=null;if(top<thr)flag='blank';else if(sec>=0.7*thr&&sec>=0.4*top)flag='multi';else ans=idx[0];
   out.push({ans,flag,fills:s})}
- out.snapped=sg.snapped;out.thr=thr;return out}
+ out.snapped=sg.snapped;out.thr=thr;out.corners=c;out.gw=gw;out.gh=gh;out.ring=ringN?ringSum/ringN:0;return out}
 // Largest frame with the sheet's shape (width/height = aspect), centred in the camera box, minus padding.
-function fitMargins(bw,bh,aspect,pad){const f=1-2*pad/100;let fw=f*bw,fh=fw/aspect;if(fh>f*bh){fh=f*bh;fw=fh*aspect}
+function fitMargins(bw,bh,aspect,pad,maxLong){const f=1-2*pad/100;let fw=f*bw,fh=fw/aspect;if(fh>f*bh){fh=f*bh;fw=fh*aspect}
+ if(maxLong&&fw>maxLong*bw){fw=maxLong*bw;fh=fw/aspect}
  const mx=(bw-fw)/2/bw*100,my=(bh-fh)/2/bh*100;return{left:mx,right:mx,top:my,bottom:my}}
 // ===== PDF / scanner batch: pure helpers (no DOM) =====
 // Printed positions of the SEQ (class no.) bubbles and Type bubbles, as fractions of the thick grid's WIDTH, measured from the answer-sheet PDFs.
@@ -784,35 +830,43 @@ function boxDown(g,W,H,Wd){const f=W/Wd,Hd=Math.max(1,Math.round(H/f)),o=new Uin
    for(let yy=y0;yy<y1;yy++){const r=yy*W;for(let xx=x0;xx<x1;xx++){s+=g[r+xx];c++}}o[y*Wd+x]=s/c}}
  return{d:o,Wd,Hd,f}}
 // Finds every thick-bordered answer grid on a scanned page: pairs of long thick horizontal lines whose shape matches the sheet.
-// Tries small tilts (+/-2 degrees) because an automatic document feeder rarely feeds perfectly straight.
+// Tries tilts up to +/-6 degrees because a sheet held by hand (or fed by a scanner) is rarely perfectly straight.
 function locateGrids(g,W,H,aspect){
  const{d,Wd,Hd,f}=boxDown(g,W,H,Math.min(W,900));
  const hist=new Uint32Array(256);let n=0;for(let i=0;i<d.length;i+=3){hist[d[i]|0]++;n++}
  let a=0,p3=-1,med=255;for(let i=0;i<256;i++){a+=hist[i];if(p3<0&&a>=n*0.03)p3=i;if(a>=n*0.5){med=i;break}}
  if(med-p3<50)return[];
  const thr=p3+(med-p3)*0.62,med1=v=>{v=v.slice().sort((p,q)=>p-q);return v[v.length>>1]};
- const bandsFor=t=>{const bands=[];let cur=null;
-  for(let y=0;y<Hd;y++){let best=0,bs=0,run=0,rs=0,gap=0;
-   for(let x=0;x<Wd;x++){const yy=Math.round(y+(x-Wd/2)*t);const dk=yy>=0&&yy<Hd&&d[yy*Wd+x]<thr;
+ const bandsFor=(arr,w,h,t,minRows)=>{const bands=[];let cur=null;
+  for(let y=0;y<h;y++){let best=0,bs=0,run=0,rs=0,gap=0;
+   for(let x=0;x<w;x++){const yy=Math.round(y+(x-w/2)*t);const dk=yy>=0&&yy<h&&arr[yy*w+x]<thr;
     if(dk){if(!run)rs=x;run++;gap=0;if(run>best){best=run;bs=rs}}else if(run&&gap<2){gap++;run++}else{run=0;gap=0}}
-   if(best>=0.4*Wd){const e={y,x0:bs,x1:bs+best};if(cur&&y-cur.last<=1){cur.rows.push(e);cur.last=y}else{cur={rows:[e],last:y};bands.push(cur)}}}
-  return bands.filter(b=>b.rows.length>=2).map(b=>({y:b.rows.reduce((s,r)=>s+r.y,0)/b.rows.length+0.5,t:b.rows.length,x0:med1(b.rows.map(r=>r.x0)),x1:med1(b.rows.map(r=>r.x1))+1}))};
- const pairsFor=(B,t,tol)=>{const out=[],used=new Set();
-  for(let i=0;i<B.length;i++){if(used.has(i))continue;let best=null;
-   for(let j=i+1;j<B.length;j++){if(used.has(j))continue;const p=B[i],q=B[j];
+   if(best>=0.4*w){const e={y,x0:bs,x1:bs+best};if(cur&&y-cur.last<=1){cur.rows.push(e);cur.last=y}else{cur={rows:[e],last:y};bands.push(cur)}}}
+  return bands.filter(b=>b.rows.length>=minRows).map(b=>({y:b.rows.reduce((s,r)=>s+r.y,0)/b.rows.length+0.5,t:b.rows.length,x0:med1(b.rows.map(r=>r.x0)),x1:med1(b.rows.map(r=>r.x1))+1}))};
+ // coarse pass on a half-size copy (cheap) ranks the tilts by how long the thick lines run
+ const W2=Wd>>1,H2=Hd>>1,d2=new Uint8ClampedArray(W2*H2);
+ for(let y=0;y<H2;y++)for(let x=0;x<W2;x++){const i=2*y*Wd+2*x;d2[y*W2+x]=(d[i]+d[i+1]+d[i+Wd]+d[i+Wd+1])>>2}
+ const coarse=[];for(let k=-12;k<=12;k++){const t=k*0.0087,B=bandsFor(d2,W2,H2,t,1);coarse.push({t,s:B.map(b=>b.x1-b.x0).sort((p,q)=>q-p).slice(0,4).reduce((a,c)=>a+c,0)})}
+ coarse.sort((p,q)=>q.s-p.s);const seeds=coarse.filter(c=>c.s>0).slice(0,2);
+ // fine pass: collect thick lines at slightly different tilts. A photo has perspective, so the top and bottom lines of the grid are NOT
+ // parallel: keep every physical line at the tilt where it runs longest, then pair them up.
+ const all=[];for(const sd of seeds)for(let j=-5;j<=5;j++){const t=sd.t+j*0.0022;for(const b of bandsFor(d,Wd,Hd,t,2))all.push({...b,tt:t,xm:(b.x0+b.x1)/2,len:b.x1-b.x0})}
+ all.sort((p,q)=>q.len-p.len);const lines=[];
+ for(const b of all){b.ym=b.y+(b.xm-Wd/2)*b.tt;if(!lines.some(l=>Math.abs(l.ym-b.ym)<10&&Math.abs(l.xm-b.xm)<80))lines.push(b)}
+ lines.sort((p,q)=>p.ym-q.ym);
+ for(const tol of[0.14,0.25]){const out=[],used=new Set();
+  for(let i=0;i<lines.length;i++){if(used.has(i))continue;let best=null;
+   for(let j=i+1;j<lines.length;j++){if(used.has(j))continue;const p=lines[i],q=lines[j];
     if(Math.abs(p.x0-q.x0)>0.07*Wd||Math.abs(p.x1-q.x1)>0.07*Wd)continue;
-    const w=(p.x1-p.x0)-(p.t+q.t)/4,h=q.y-p.y;if(h<=0)continue;const r=(w/h)/aspect;if(Math.abs(r-1)>tol)continue;
+    const w=((p.x1-p.x0)+(q.x1-q.x0))/2-(p.t+q.t)/4,h=q.ym-p.ym;if(h<=0)continue;const r=(w/h)/aspect;if(Math.abs(r-1)>tol)continue;
     const sc=Math.abs(r-1);if(!best||sc<best.sc)best={j,sc}}
-   if(best){const p=B[i],q=B[best.j];used.add(i);used.add(best.j);const xl=(p.x0+q.x0)/2+p.t/2,xr=(p.x1+q.x1)/2-p.t/2;
-    const yl=p.y+(xl-Wd/2)*t;out.push({x:xl*f,y:yl*f,w:(xr-xl)*f,h:(q.y-p.y)*f,t,sc:best.sc})}}
-  return out};
- // coarse search over tilts (rank by how long the thick lines run), then a fine search around the best tilts and pair the lines up
- const score=P=>P.length*10+P.reduce((s,r)=>s+r.w/(Wd*f),0)-P.reduce((s,r)=>s+r.sc,0)*3;
- const coarse=[];for(let k=-8;k<=8;k++){const t=k*0.0044,B=bandsFor(t);coarse.push({t,s:B.map(b=>b.x1-b.x0).sort((p,q)=>q-p).slice(0,4).reduce((a,c)=>a+c,0)})}
- coarse.sort((p,q)=>q.s-p.s);const seeds=coarse.filter(c=>c.s>0).slice(0,3);
- for(const tol of[0.14,0.25]){let best=null;
-  for(const sd of seeds)for(let j=-4;j<=4;j++){const t=sd.t+j*0.0011,B=bandsFor(t);if(B.length<2)continue;const P=pairsFor(B,t,tol);if(!P.length)continue;const sc=score(P);if(!best||sc>best.sc)best={sc,P}}
-  if(best)return best.P.sort((p,q)=>p.y-q.y)}
+   if(best){const p=lines[i],q=lines[best.j];used.add(i);used.add(best.j);const xl=(p.x0+q.x0)/2+p.t/2,xr=(p.x1+q.x1)/2-p.t/2;
+    const yl=p.ym+(xl-p.xm)*p.tt,tm=(p.tt+q.tt)/2,yt=x=>p.ym+(x-p.xm)*p.tt,yb=x=>q.ym+(x-q.xm)*q.tt,ymid=(yt(xl)+yb(xl))/2,xmid=(xl+xr)/2;
+    // corners: the left/right edges lean by the average tilt; intersect them with the top and bottom lines
+    const corner=(x0,line,xm)=>{let x=x0,y=line(x);for(let k=0;k<3;k++){x=x0-tm*(y-ymid);y=line(x)}return[x*f,y*f]};
+    const TL=corner(xl,yt),BL=corner(xl,yb),TR=corner(xr,yt),BR=corner(xr,yb);
+    out.push({x:xl*f,y:yl*f,w:(xr-xl)*f,h:(q.ym-p.ym)*f,t:tm,sc:best.sc,quad:[TL,TR,BR,BL]})}}
+  if(out.length)return out.sort((p,q)=>p.y-q.y)}
  return[]}
 function rot180(g){const r=new Uint8ClampedArray(g.length);for(let i=0;i<g.length;i++)r[i]=g[g.length-1-i];return r}
 function rot90(g,W,H,cw){const r=new Uint8ClampedArray(g.length);// result is H wide, W tall
@@ -826,9 +880,12 @@ function ringScore(nz,geo){const{g,Wn,Hn,ox,oy,gwN}=nz;let tot=0,cnt=0;
   tot+=s/24/255;cnt++}
  return tot/cnt}
 // Cuts one sheet out of the page into a fixed-size picture: grid 1400 px wide, with room above it for the class-number bubbles.
-function normalizeSheet(g,W,H,r){const gwN=1400,s=gwN/r.w,ghN=Math.round(r.h*s),ox=70,oy=Math.round(0.3*gwN),bot=70,Wn=gwN+2*ox,Hn=oy+ghN+bot,o=new Uint8ClampedArray(Wn*Hn),t=r.t||0;
- for(let v=0;v<Hn;v++){const b=(v-oy)/s;
-  for(let u=0;u<Wn;u++){const a=(u-ox)/s,sx=r.x+a-b*t,sy=r.y+a*t+b,x0=Math.floor(sx),y0=Math.floor(sy),fx=sx-x0,fy=sy-y0;
+function normalizeSheet(g,W,H,r){const gwN=1400,s=gwN/r.w,ghN=Math.round(r.h*s),ox=70,oy=Math.round(0.3*gwN),bot=70,Wn=gwN+2*ox,Hn=oy+ghN+bot,o=new Uint8ClampedArray(Wn*Hn),t=r.t||0,q=r.quad;
+ for(let v=0;v<Hn;v++){const b=(v-oy)/s,bf=(v-oy)/ghN;
+  for(let u=0;u<Wn;u++){let sx,sy;
+   if(q){const af=(u-ox)/gwN;sx=(1-af)*(1-bf)*q[0][0]+af*(1-bf)*q[1][0]+af*bf*q[2][0]+(1-af)*bf*q[3][0];sy=(1-af)*(1-bf)*q[0][1]+af*(1-bf)*q[1][1]+af*bf*q[2][1]+(1-af)*bf*q[3][1]}
+   else{const a=(u-ox)/s;sx=r.x+a-b*t;sy=r.y+a*t+b}
+   const x0=Math.floor(sx),y0=Math.floor(sy),fx=sx-x0,fy=sy-y0;
    if(x0<0||y0<0||x0+1>=W||y0+1>=H){o[v*Wn+u]=255;continue}
    const i=y0*W+x0;o[v*Wn+u]=(g[i]*(1-fx)+g[i+1]*fx)*(1-fy)+(g[i+W]*(1-fx)+g[i+W+1]*fx)*fy}}
  return{g:o,Wn,Hn,ox,oy,gwN,ghN,bot}}
@@ -851,16 +908,40 @@ function readSeqType(nz,geo){
  const tf=geo.typeX.map(x=>circleFill(g,Wn,Hn,ox+x*gwN,oy+geo.typeY*gwN,geo.typeR*gwN,ink)),ti=tf.map((_,i)=>i).sort((p,q)=>tf[q]-tf[p]);
  let type=null,typeUnsure=false;if(tf[ti[0]]>=0.12){if(tf[ti[1]]>=0.6*tf[ti[0]])typeUnsure=true;else type=['st1','st2','te'][ti[0]]}
  return{seq,seqUnsure,type,typeUnsure,seqFills:fs}}
+// Live camera: finds which way the sheet is facing (upright / upside-down, or turned sideways to fill a portrait screen) by checking
+// which direction shows the printed bubble rings where the grid says they should be, then reads the answers in that direction.
+function detectOriented(g,W,H,n,mkL,sideways){
+ const cands=sideways?[()=>[rot90(g,W,H,true),H,W],()=>[rot90(g,W,H,false),H,W]]:[()=>[g,W,H],()=>[rot180(g),W,H]];
+ let best=null;
+ for(let i=0;i<2;i++){const[gg,w,h]=cands[i]();const res=detectAnswers(gg,w,h,n,mkL(w,h));
+  if(!best||res.ring>best.res.ring)best={res,g:gg,W:w,H:h,other:best?best.res.ring:-1};else best.other=Math.max(best.other,res.ring);
+  if(i===0&&res.ring>=0.5)break}
+ best.sure=best.res.ring>=0.35&&(best.other<0||best.res.ring>=best.other+0.06||best.res.ring>=0.5);
+ return best}
 // One scanned page -> every answer sheet on it (a cut half-sheet gives 1; an uncut 2-up page gives 2).
 function processPageSheets(g,W,H,pk,p,n){
- const geo=SHEET_GEO[pk]||SHEET_GEO.half;let rects=locateGrids(g,W,H,p.aspect);
- if(!rects.length){const gc=rot90(g,W,H,true),rc=locateGrids(gc,H,W,p.aspect);
-  if(rc.length){g=gc;[W,H]=[H,W];rects=rc}else{const gw=rot90(g,W,H,false),rw=locateGrids(gw,H,W,p.aspect);if(rw.length){g=gw;[W,H]=[H,W];rects=rw}}}
- if(!rects.length)return[];
- {const nz0=normalizeSheet(g,W,H,rects[0]),sc0=ringScore(nz0,geo);
-  if(sc0<0.55){const f=rot180(g),rf=locateGrids(f,W,H,p.aspect);if(rf.length&&ringScore(normalizeSheet(f,W,H,rf[0]),geo)>sc0+0.1){g=f;rects=rf}}}
- return rects.map(rc=>{const nz=normalizeSheet(g,W,H,rc),L={choices:p.choices,cols:p.cols,rows:p.rows,numW:p.numW,left:nz.ox/nz.Wn*100,right:nz.ox/nz.Wn*100,top:nz.oy/nz.Hn*100,bottom:nz.bot/nz.Hn*100};
-  const res=detectAnswers(nz.g,nz.Wn,nz.Hn,n,L);return{res,snapped:!!res.snapped,...readSeqType(nz,geo),nz}})}
+ const geo=SHEET_GEO[pk]||SHEET_GEO.half;
+ // find the grid upright, or turned 90 degrees either way; keep the candidate whose lines fit the sheet's shape best
+ const cands=[],tryR=(gg,w,h)=>{const r=locateGrids(gg,w,h,p.aspect);if(r.length)cands.push({g:gg,W:w,H:h,rects:r,sc:Math.min(...r.map(x=>x.sc))})};
+ for(const o of(H>W?['cw','ccw','0']:['0','cw','ccw'])){if(cands.some(c=>c.sc<0.08))break;if(o==='0')tryR(g,W,H);else tryR(rot90(g,W,H,o==='cw'),H,W)}
+ if(!cands.length)return[];
+ cands.sort((x,y)=>x.sc-y.sc);let rects=cands[0].rects;g=cands[0].g;W=cands[0].W;H=cands[0].H;
+ const run=(gg,rc)=>{const nz=normalizeSheet(gg,W,H,rc),L={choices:p.choices,cols:p.cols,rows:p.rows,numW:p.numW,left:nz.ox/nz.Wn*100,right:nz.ox/nz.Wn*100,top:nz.oy/nz.Hn*100,bottom:nz.bot/nz.Hn*100};
+  return{nz,res:detectAnswers(nz.g,nz.Wn,nz.Hn,n,L)}};
+ let cache={0:run(g,rects[0])};
+ // upside down? the printed bubble rings only line up with the grid in the right direction
+ if(cache[0].res.ring<0.45&&rects.every(r=>r.quad)){   // same four corners, read from the other end (no second search needed)
+  const fr=rects.map(r=>({...r,quad:[r.quad[2],r.quad[3],r.quad[0],r.quad[1]]})).reverse(),alt=run(g,fr[0]);
+  if(alt.res.ring>cache[0].res.ring+0.05){rects=fr;cache={0:alt}}}
+ return rects.map((rc,i)=>{const r=cache[i]||run(g,rc);return{res:r.res,snapped:!!r.res.snapped,...readSeqType(r.nz,geo),nz:r.nz}})}
+// A photo or uploaded picture (any framing): try to find the grid anywhere in it; if that is not convincing, fall back to the framing guide.
+function detectFromFile(g,W,H,n,pk,p,mkL,framed){
+ let best=null;
+ const viaGuide=()=>{const o=detectOriented(g,W,H,n,mkL,W<H);return{res:o.res,nz:{g:o.g,Wn:o.W,Hn:o.H},ring:o.res.ring,sure:o.sure,how:'frame'}};
+ if(framed){best=viaGuide();if(best.ring>=0.5)return best}   // live camera: the sheet is lined up with the guide
+ try{const sh=processPageSheets(g,W,H,pk,p,n);if(sh.length){const s=sh.reduce((a,b)=>a.res.ring>b.res.ring?a:b);const c={res:s.res,nz:s.nz,ring:s.res.ring,sure:s.res.ring>=0.45,how:'grid'};if(!best||c.ring>best.ring)best=c}}catch(e){}
+ if(!best||!best.sure){const c=viaGuide();if(!best||c.ring>best.ring)best=c}
+ return best}
 /*ENDPURE*/
 
 // ---------- helpers ----------
@@ -886,7 +967,8 @@ function syncButtons(){const ok=canScan();
  $('btnStartCamera').disabled=!ok||!!state.stream;$('btnCapture').disabled=!state.stream;$('btnPhoto').disabled=!ok;$('btnUpload').disabled=!ok;$('btnPdf').disabled=!state.keys[state.cur];
  $('btnRetake').disabled=!state.img;$('btnClearImage').disabled=!state.img;
  $('cameraPreview').classList.toggle('idle',!state.stream&&!state.img)}
-function refreshUI(){
+function refreshUI(){refreshUIBase();updateHud();if(state.view==='results')renderResults()}
+function refreshUIBase(){
  const a=state.cur,m=state.meta[a],key=state.keys[a],has=state.students.length>0,done=state.students.filter(s=>state.answers[a][s.id]).length;
  $('classInfoClassName').textContent=state.className;$('classInfoStudentCount').textContent=state.students.length;
  $('classInfoAssessment').textContent=ASSESS[a].name+(m?` · ${m.n} items`:'');$('classInfoScanned').textContent=`${done} / ${state.students.length}`;
@@ -942,8 +1024,8 @@ function onAssessmentChange(){state.cur=$('assessmentSelect').value;state.mode='
  setStatus('⏳',state.keys[state.cur]?'Select a student and scan.':'Scan the master answer key for this assessment first.')}
 function onStudentChange(){const s=state.students.find(x=>x.id===$('studentSelect').value);state.mode='student';clearPending();
  if(s)setStatus('✅',`${s.lastName}, ${s.firstName} — ready to scan.`,'success');else setStatus('⏳','Select a student to begin scanning.');
- $('scanTitle').textContent='Scan Student Answer Sheet';syncButtons()}
-function scanKey(){state.mode='key';clearImage();clearPending();refreshUI();
+ $('scanTitle').textContent='Scan Student Answer Sheet';syncButtons();if(state.view==='scan'&&!state.stream&&!state.img&&canScan())startCamera()}
+function scanKey(){state.mode='key';clearImage();clearPending();refreshUI();setTimeout(()=>switchNav('scan'),0);
  setStatus('🔑','Place the MASTER answer sheet (correct answers shaded) inside the yellow frame.')}
 function manualKey(){const m=state.meta[state.cur];if(!m)return;state.mode='key';
  state.pending={mode:'key',a:state.cur,answers:(state.keys[state.cur]||Array(m.n).fill(null)).slice(),flags:Array(m.n).fill(null)};openVerify()}
@@ -951,32 +1033,38 @@ function clearKey(){if(!confirm('Clear this answer key? Scanned answers are kept
  state.keys[state.cur]=null;state.mode='key';refreshUI();persist()}
 
 // ---------- camera / image ----------
-async function startCamera(){
+let camBusy=false;
+async function startCamera(){if(camBusy||state.stream)return;camBusy=true;try{await startCameraRaw()}finally{camBusy=false}}
+async function startCameraRaw(){
  if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){toast('Live camera needs HTTPS. Use Take Photo instead.','warning',5000);return}
- try{stopCamera();const s=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'},width:{ideal:1920},height:{ideal:1440}},audio:false});
+ try{stopCamera();const pb=$('cameraPreview'),por=pb.clientHeight>pb.clientWidth;const s=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'},width:{ideal:por?1440:1920},height:{ideal:por?1920:1440}},audio:false});
   const v=$('cameraVideo');v.muted=true;v.setAttribute('playsinline','');v.srcObject=s;await v.play();
   try{await s.getVideoTracks()[0].applyConstraints({advanced:[{focusMode:'continuous'}]})}catch(e){}
-  state.stream=s;state.live=true;state.img=null;v.style.display='block';$('capturedImage').style.display='none';$('cameraPlaceholder').style.display='none';
-  setStatus('📸','Camera on. Put the thick grid border inside the yellow frame (it auto-aligns), hold steady, tap Capture.');syncButtons()
+  state.stream=s;state.live=true;state.img=null;try{const cp=s.getVideoTracks()[0].getCapabilities();$('btnTorch').style.display=cp&&cp.torch?'flex':'none'}catch(e){}
+  v.style.display='block';$('capturedImage').style.display='none';$('cameraPlaceholder').style.display='none';
+  setStatus('📸',(state.mode==='key'?'MASTER KEY — ':'')+(por?'Sheet sideways · fit grid in frame':'Fit the grid in the frame')+' · tap ⚪');syncButtons()
  }catch(err){state.stream=null;toast('Camera blocked or unavailable. Use Take Photo or Upload.','error',5000);setStatus('❌','Camera not available. Use Take Photo / Upload.','error');syncButtons()}}
-function stopCamera(){if(state.stream){state.stream.getTracks().forEach(t=>t.stop());state.stream=null}$('cameraVideo').style.display='none';$('cameraVideo').srcObject=null}
+function stopCamera(){state.torch=false;try{$('btnTorch').classList.remove('on')}catch(e){}if(state.stream){state.stream.getTracks().forEach(t=>t.stop());state.stream=null}$('cameraVideo').style.display='none';$('cameraVideo').srcObject=null}
 // Crops the source to the preview box (same view the teacher saw) and caps size for phone memory.
 function toCanvas(src,sw,sh){const b=$('cameraPreview'),ar=b.clientWidth/b.clientHeight;let cw=sw,ch=sw/ar;if(ch>sh){ch=sh;cw=sh*ar}
- const k=Math.min(1,1600/Math.max(cw,ch)),c=document.createElement('canvas');c.width=Math.round(cw*k);c.height=Math.round(ch*k);
+ const k=Math.min(1,1800/Math.max(cw,ch)),c=document.createElement('canvas');c.width=Math.round(cw*k);c.height=Math.round(ch*k);
  c.getContext('2d').drawImage(src,(sw-cw)/2,(sh-ch)/2,cw,ch,0,0,c.width,c.height);return c}
-function captureImage(){const v=$('cameraVideo');if(!state.stream||!v.videoWidth)return;setImage(toCanvas(v,v.videoWidth,v.videoHeight))}
+function toCanvasFull(src,sw,sh){const k=Math.min(1,2000/Math.max(sw,sh)),c=document.createElement('canvas');c.width=Math.round(sw*k);c.height=Math.round(sh*k);c.getContext('2d').drawImage(src,0,0,c.width,c.height);return c}
+function captureImage(){const v=$('cameraVideo');if(!state.stream||!v.videoWidth)return;setImage(toCanvas(v,v.videoWidth,v.videoHeight),'cam')}
 async function loadFile(f){let b;try{b=await createImageBitmap(f,{imageOrientation:'from-image'})}
  catch(e){b=await new Promise((ok,no)=>{const im=new Image();im.onload=()=>ok(im);im.onerror=no;im.src=URL.createObjectURL(f)})}
- setImage(toCanvas(b,b.width||b.naturalWidth,b.height||b.naturalHeight))}
+ setImage(toCanvasFull(b,b.width||b.naturalWidth,b.height||b.naturalHeight),'file')}
 function handleFileUpload(e){const f=e.target.files[0];e.target.value='';if(!f)return;state.live=false;loadFile(f).catch(()=>toast('Could not read that image.','error'))}
-function setImage(cv){stopCamera();state.img=cv;const im=$('capturedImage');im.src=cv.toDataURL('image/jpeg',0.85);im.style.display='block';$('cameraPlaceholder').style.display='none';syncButtons();
+function setImage(cv,src){stopCamera();state.img=cv;state.imgSrc=src||'cam';const im=$('capturedImage');im.src=cv.toDataURL('image/jpeg',0.85);im.style.display='block';$('cameraPlaceholder').style.display='none';syncButtons();
  requestAnimationFrame(()=>setTimeout(processOMR,30))}
 function retakeImage(){const l=state.live;clearImage();l?startCamera():toast('Take or upload a new photo.','info')}
 function clearImage(){stopCamera();state.img=null;const im=$('capturedImage');im.removeAttribute('src');im.style.display='none';$('cameraPlaceholder').style.display='flex';$('scanResultCard').style.display='none';syncButtons()}
 function clearPending(){state.pending=null;$('scanResultCard').style.display='none'}
 const profKey=()=>state.stSheet,prof=()=>state.profiles[profKey()];
-function effLayout(){const p=prof(),b=$('cameraPreview');return{choices:p.choices,cols:p.cols,rows:p.rows,numW:p.numW,...fitMargins(b.clientWidth||300,b.clientHeight||400,p.aspect,p.pad)}}
-function applyGuide(){const b=$('cameraPreview');b.style.aspectRatio=prof().aspect>=1?'4 / 3':'3 / 4';const L=effLayout();$('guide').style.inset=`${L.top}% ${L.right}% ${L.bottom}% ${L.left}%`}
+function applyGuide(){const b=$('cameraPreview'),bw=b.clientWidth||300,bh=b.clientHeight||400,sw=bw<bh,p=prof();
+ // portrait screen: the sheet is turned sideways, so the guide is the landscape frame turned 90 degrees
+ const L=fitMargins(sw?bh:bw,sw?bw:bh,p.aspect,p.pad,sw?0.74:0);
+ $('guide').style.inset=sw?`${L.left}% ${L.top}% ${L.right}% ${L.bottom}%`:`${L.top}% ${L.right}% ${L.bottom}% ${L.left}%`}
 
 // ---------- OMR ----------
 function processOMR(){
@@ -984,10 +1072,16 @@ function processOMR(){
  setStatus('⏳','Reading bubbles…');
  const cv=state.img,W=cv.width,H=cv.height,d=cv.getContext('2d').getImageData(0,0,W,H).data,g=new Uint8ClampedArray(W*H);
  for(let i=0;i<W*H;i++)g[i]=(d[4*i]*77+d[4*i+1]*150+d[4*i+2]*29)>>8;
- const res=detectAnswers(g,W,H,N(),effLayout());if(!res.snapped)toast('Could not find the thick grid border — results may be off. Retake with the whole border inside the frame.','warning',5000);const answers=res.map(r=>r.ans==null?null:LET[r.ans]),flags=res.map(r=>r.flag),bad=flags.filter(Boolean).length;
- if(state.mode==='key'){state.pending={mode:'key',a:state.cur,answers,flags};openVerify();setStatus(bad?'⚠️':'✅',bad?`${bad} item(s) need checking.`:'Key read. Review and save.',bad?'pending':'success');return}
+ const p0=prof(),live=state.imgSrc!=='file',mkL=(w,h)=>({choices:p0.choices,cols:p0.cols,rows:p0.rows,numW:p0.numW,...fitMargins(w,h,p0.aspect,p0.pad,live&&W<H?0.74:0)});
+ const det=detectFromFile(g,W,H,N(),profKey(),p0,mkL,live);
+ const res=det.res;if(!det.sure){res.forEach(r=>{r.ans=null;r.flag='blank'});toast('Could not recognise the answer grid. Fit the whole thick border inside the yellow frame, hold steady and retake — or enter the answers by hand.','warning',7000)}
+ else if(!res.snapped)toast('Could not find the thick grid border — results may be off. Retake with the whole border inside the frame.','warning',5000);
+ console.log('OMR',det.how,'ring=',det.ring.toFixed(2),'thr=',(res.thr||0).toFixed(3),'snapped=',res.snapped,'flags=',res.filter(r=>r.flag).length,'/',res.length);
+ if(det.sure&&res.filter(r=>r.flag==='multi').length>0.2*res.length)toast('Many items look double-marked — the picture may be blurry or skewed. Check carefully or retake.','warning',6000);
+ const preview=previewOf(det.nz);const answers=res.map(r=>r.ans==null?null:LET[r.ans]),flags=res.map(r=>r.flag),bad=flags.filter(Boolean).length;
+ if(state.mode==='key'){state.pending={mode:'key',a:state.cur,answers,flags,preview};openVerify();setStatus(bad?'⚠️':'✅',bad?`${bad} item(s) need checking.`:'Key read. Review and save.',bad?'pending':'success');return}
  const sid=$('studentSelect').value,s=state.students.find(x=>x.id===sid);
- state.pending={mode:'student',a:state.cur,sid,answers,flags};
+ state.pending={mode:'student',a:state.cur,sid,answers,flags,preview};
  const sc=answers.filter((x,i)=>x&&x===state.keys[state.cur][i]).length;
  $('resultStudentName').textContent=`${s.lastName}, ${s.firstName}`;$('resultScore').textContent=sc;$('resultTotal').textContent=N();
  $('scanResultCard').style.display='flex';
@@ -1058,9 +1152,38 @@ function exportToCIES(kind){
  toast(`Exported ${ASSESS[state.cur].name}. Find it in Downloads (Files app on iPhone/iPad).`,'success',7000)}
 
 // ---------- nav / settings ----------
-function switchNav(v){document.querySelectorAll('.bottom-nav .nav-item').forEach(el=>el.classList.remove('active'));
- $('navScan').classList.add('active');
- if(v==='history')showHistory();else if(v==='settings')showSettings()}
+function switchNav(v){
+ if(v==='sheet'||v==='settings'){showSettings();return}
+ if(v==='history')v='results';
+ const cap={class:'Class',scan:'Scan',results:'Results'};if(!cap[v])v='scan';
+ for(const k in cap){$('view'+cap[k]).classList.toggle('active',k===v);$('nav'+cap[k]).classList.toggle('active',k===v)}
+ state.view=v;
+ if(v!=='scan'){stopCamera();state.live=false;if(document.body.classList.contains('immersive'))toggleImmersive();syncButtons()}
+ if(v==='scan'){applyGuide();if(!state.stream&&!state.img&&canScan())startCamera();else if(!canScan())setStatus('⏳',!state.students.length?'Load your class first (Class tab).':!state.keys[state.cur]&&state.mode!=='key'?'Scan or type the master answer key first (Class tab).':'Pick a student at the top, then start the camera.')}
+ if(v==='results')renderResults()}
+function updateHud(){const a=state.cur,key=state.mode==='key',m=state.meta[a],done=state.students.filter(s=>state.answers[a][s.id]).length;
+ $('hudAssess').textContent=ASSESS[a].name+(m?` · ${m.n}`:'');$('hudProgress').textContent=`${done}/${state.students.length}`;
+ const md=$('hudMode');md.textContent=key?'🔑 MASTER KEY':'👤 Student';md.className='chip'+(key?' key':'');
+ $('hudStudentRow').style.display=key?'none':'flex';$('placeholderMsg').textContent=key?'Master key: start the camera and scan the answer key':'Pick a student, then start the camera'}
+function stepStudent(d){const sel=$('studentSelect'),o=[...sel.options].filter(x=>x.value);if(!o.length){toast('Load a class first.','warning');return}
+ let i=o.findIndex(x=>x.value===sel.value);i=i<0?(d>0?0:o.length-1):(i+d+o.length)%o.length;sel.value=o[i].value;onStudentChange()}
+function pickStudent(id){$('studentSelect').value=id;onStudentChange();switchNav('scan')}
+function renderResults(){const a=state.cur,key=state.keys[a],m=state.meta[a],L=$('resultsList'),H=$('resultsHead');L.innerHTML='';H.innerHTML='';
+ if(!state.students.length){const p=document.createElement('p');p.className='hint';p.textContent='No class loaded yet. Open the Class tab to upload your class file.';L.appendChild(p);return}
+ const done=state.students.filter(s=>state.answers[a][s.id]);let sum=0;
+ done.forEach(s=>{if(key)sum+=state.answers[a][s.id].filter((x,i)=>x&&x===key[i]).length});
+ [`${ASSESS[a].name}`,`${done.length}/${state.students.length} scanned`,key&&done.length?`avg ${(sum/done.length).toFixed(1)}/${m?m.n:'?'}`:''].filter(Boolean).forEach(t=>{const sp=document.createElement('span');sp.textContent=t;H.appendChild(sp)});
+ state.students.forEach(s=>{const ans=state.answers[a][s.id],row=document.createElement('div');row.className='res-row '+(ans?'done':'todo')+($('studentSelect').value===s.id?' sel':'');
+  const no=document.createElement('span');no.className='no';no.textContent=s.studentNo||'';const nm=document.createElement('span');nm.className='nm';nm.textContent=`${s.lastName}, ${s.firstName}`;
+  const sc=document.createElement('span');sc.className='sc';sc.textContent=ans&&key?`${ans.filter((x,i)=>x&&x===key[i]).length}/${m.n}`:ans?'scanned':'not yet';
+  row.append(no,nm,sc);row.addEventListener('click',()=>pickStudent(s.id));L.appendChild(row)})}
+async function toggleTorch(){const t=state.stream&&state.stream.getVideoTracks()[0];if(!t)return;state.torch=!state.torch;
+ try{await t.applyConstraints({advanced:[{torch:state.torch}]})}catch(e){state.torch=false;toast('Light not available on this camera.','warning')}$('btnTorch').classList.toggle('on',!!state.torch)}
+function toggleImmersive(){const on=!document.body.classList.contains('immersive');document.body.classList.toggle('immersive',on);$('btnImmersive').classList.toggle('on',on);
+ try{if(on&&document.documentElement.requestFullscreen)document.documentElement.requestFullscreen({navigationUI:'hide'}).catch(()=>{});else if(!on&&document.fullscreenElement)document.exitFullscreen()}catch(e){}
+ setTimeout(applyGuide,250)}
+document.addEventListener('fullscreenchange',()=>{if(!document.fullscreenElement&&document.body.classList.contains('immersive')){document.body.classList.remove('immersive');$('btnImmersive').classList.remove('on');setTimeout(applyGuide,250)}});
+addEventListener('orientationchange',()=>setTimeout(()=>{applyGuide();if(state.stream){stopCamera();startCamera()}},350));
 function showHistory(){if(!state.history.length){toast('No scan history yet.','info');return}
  alert('Recent scans:\n'+state.history.slice(-10).map(h=>`${h.studentName} — ${ASSESS[h.assessment].name} — ${h.totalScore}/${h.totalItems}`).join('\n'))}
 function showSettings(edit){let o=$('settingsModal');if(!o){o=document.createElement('div');o.id='settingsModal';o.className='modal-overlay';document.body.appendChild(o)}
@@ -1104,7 +1227,8 @@ async function openPdf(lib,bytes){
  catch(e){if(!lib._local)throw e;await useCdnWorker(lib);lib._local=false;return await lib.getDocument({data:bytes.slice(0)}).promise}}
 function previewOf(nz){const c=document.createElement('canvas');c.width=nz.Wn;c.height=nz.Hn;const x=c.getContext('2d'),id=x.createImageData(nz.Wn,nz.Hn);
  for(let i=0,j=0;i<nz.g.length;i++,j+=4){id.data[j]=id.data[j+1]=id.data[j+2]=nz.g[i];id.data[j+3]=255}x.putImageData(id,0,0);
- const o=document.createElement('canvas');o.width=1000;o.height=Math.round(1000*nz.Hn/nz.Wn);o.getContext('2d').drawImage(c,0,0,o.width,o.height);return o.toDataURL('image/jpeg',0.62)}
+ const y0=nz.oy?Math.max(0,nz.oy-90):0,hh=nz.Hn-y0;   // straightened sheets carry empty head-room above the grid: leave most of it out
+ const o=document.createElement('canvas');o.width=1000;o.height=Math.round(1000*hh/nz.Wn);o.getContext('2d').drawImage(c,0,y0,nz.Wn,hh,0,0,o.width,o.height);return o.toDataURL('image/jpeg',0.62)}
 async function handlePdfUpload(e){const f=e.target.files[0];e.target.value='';if(!f)return;
  const a=state.cur,m=state.meta[a];if(!m||!state.keys[a]){toast('Save the answer key for this assessment first.','warning');return}
  if(pdfBusy)return;pdfBusy=true;state.live=false;stopCamera();
@@ -1175,15 +1299,15 @@ document.addEventListener('DOMContentLoaded',()=>{const L=$('batchList');if(!L)r
 // ---------- init ----------
 function init(){
  try{const p=JSON.parse(localStorage.getItem(LS_L)||'{}');if(p.v===LAYOUT_V&&p.profiles)for(const k in state.profiles)Object.assign(state.profiles[k],p.profiles[k]||{});if(p.v===LAYOUT_V&&p.stSheet)state.stSheet=p.stSheet}catch(e){}
- applyGuide();const restored=loadSaved();refreshUI();
+ applyGuide();const restored=loadSaved();refreshUI();switchNav(state.students.length?'scan':'class');
  $('verifyResultsList').addEventListener('click',e=>{const b=e.target.closest('button[data-k]');if(!b||!state.pending)return;
   const row=b.closest('.result-row'),i=+row.dataset.i,L=LET[+b.dataset.k],p=state.pending;
   p.answers[i]=p.answers[i]===L?null:L;p.flags[i]=null;paintRow(row,i);paintSummary()});
- document.addEventListener('visibilitychange',()=>{if(document.hidden){saveNow();stopCamera();syncButtons()}});
+ document.addEventListener('visibilitychange',()=>{if(document.hidden){saveNow();stopCamera();syncButtons()}else if(state.view==='scan'&&!state.stream&&!state.img&&canScan())startCamera()});
  addEventListener('pagehide',saveNow);addEventListener('resize',applyGuide);
  setStatus(restored?'✅':'⏳',restored?'Previous session restored.':'Upload a class file (CSV/XLSX) from ClassRecord CIES to begin.',restored?'success':'pending')}
 document.addEventListener('DOMContentLoaded',init);
-Object.assign(window,{uploadNewClass,resumeClass,exitAndReset,onAssessmentChange,onStudentChange,scanKey,manualKey,clearKey,startCamera,captureImage,retakeImage,clearImage,handleFileUpload,openVerify,openVerificationModal:openVerify,closeVerificationModal,acceptScan,exportToCIES,switchNav,handlePdfUpload,closeBatch,batchSaveClean,batchByOrder});
+Object.assign(window,{uploadNewClass,resumeClass,exitAndReset,onAssessmentChange,onStudentChange,scanKey,manualKey,clearKey,startCamera,captureImage,retakeImage,clearImage,handleFileUpload,openVerify,openVerificationModal:openVerify,closeVerificationModal,acceptScan,exportToCIES,switchNav,toggleTorch,toggleImmersive,stepStudent,pickStudent,handlePdfUpload,closeBatch,batchSaveClean,batchByOrder});
 
     </script>
 </body>
